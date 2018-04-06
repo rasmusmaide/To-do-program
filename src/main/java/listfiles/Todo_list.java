@@ -27,4 +27,13 @@ public class Todo_list {
     public void setDescription(String description) {
         this.description = description;
     }
+
+    @Override
+    public String toString() {
+        String tasklist="";
+        for (int i = 0; i < tasks.size(); i++) {
+            tasklist+="Task: "+tasks.get(i).getDescription()+"Deadline: "+tasks.get(i).getDeadline();
+        }
+        return description+tasklist;
+    }
 }
