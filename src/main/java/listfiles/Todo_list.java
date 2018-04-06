@@ -1,7 +1,8 @@
 package listfiles;
 
-public class Todo_list {
-    public static void main(String[] args) {
+import java.util.ArrayList;
+import java.util.List;
 
-    }
+public class Todo_list {
+    List<Task> tasks = new ArrayList<>();
 }
