@@ -30,10 +30,12 @@ public class Todo_list {
 
     @Override
     public String toString() {
-        String tasklist="";
+        String tasklist = "";
         for (int i = 0; i < tasks.size(); i++) {
-            tasklist+="Task: "+tasks.get(i).getDescription()+"Deadline: "+tasks.get(i).getDeadline();
+            tasklist += "Task: " + tasks.get(i).getHeadline()
+                    + "Description: " + tasks.get(i).getDescription()
+                    + "Deadline: " + tasks.get(i).getDeadline();
         }
-        return description+tasklist;
+        return description + tasklist;
     }
 }
