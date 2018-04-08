@@ -17,6 +17,7 @@ public class TestRun {
         Scanner scanner = new Scanner(System.in);
 
         while (true) {
+            System.out.println();
             String str = scanner.nextLine();
 
             if (str.equals("exit")) {

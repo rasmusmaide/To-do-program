@@ -65,7 +65,7 @@ public class dataBaseCommands {
 
     }
 
-    private List<List<String>> getAllTasks() throws SQLException {
+    public List<List<String>> getAllTasks() throws SQLException {
 
 
         List<List<String>> allTasks = new ArrayList<List<String>>();
