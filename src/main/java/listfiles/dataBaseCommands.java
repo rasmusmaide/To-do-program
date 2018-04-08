@@ -28,13 +28,11 @@ public class dataBaseCommands {
 
 
     public static void main(String[] args) throws Exception {
-        File file = new File("src/todoBase");
+        File file = new File("todoBase");
 
 
         Class.forName("org.h2.Driver");
         dataBaseCommands db = new dataBaseCommands(
-                /** CHANGE THIS!!!
-                 * AND RUN H2 FIRST */
                 "jdbc:h2:tcp://localhost/" + file.getAbsolutePath());
 
         db.markAsUnDone(2);
