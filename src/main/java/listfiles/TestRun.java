@@ -21,35 +21,31 @@ public class TestRun {
 
         System.out.println(dbc.getAllTasks());
         try {
+            label:
             while (true) {
                 System.out.println("Enter command: ");
                 String str = scanner.nextLine();
-
-                /*switch (str) {
+                
+                switch (str) {
                     case "exit":
                         System.out.println("Bye!");
-                        break;
+                        break label;
                     case "show list":
-                        dbc.getAllTasks();
+                        System.out.println(dbc.getAllTasks());
+
+                        break;
+                    case "add":
+                        System.out.println("placeholder");
+
+                        break;
+                    case "delete":
+                        System.out.println("placeholder");
+
+                        break;
                     default:
                         System.out.println("Not a command!");
-                }*/
-                if (str.equals("exit")) {
-                    System.out.println("Bye!");
-                    break;
-                } else if (str.equals("show list")) {
-                    System.out.println(dbc.getAllTasks());
-
-                } else if (str.equals("add")) {
-                    System.out.println("enter task here");
-
-                } else if (str.equals("delete")) {
-                    System.out.println("enter task here");
-
-                } else {
-                    System.out.println("Not a command!");
+                        break;
                 }
-
 
 
             }
