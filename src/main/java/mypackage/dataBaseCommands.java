@@ -14,6 +14,7 @@ package mypackage;
 //);
 //***
 
+import java.io.File;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,31 +26,46 @@ public class dataBaseCommands {
 
     Connection conn;
 
+
     public static void main(String[] args) throws Exception {
+        File file = new File("src/todoBase");
+
+
         Class.forName("org.h2.Driver");
         dataBaseCommands db = new dataBaseCommands(
                 /** CHANGE THIS!!!
                  * AND RUN H2 FIRST */
-                "jdbc:h2:tcp://localhost/C:\\Users\\Karel\\Desktop\\To-do-program\\src\\todoBase");
+                "jdbc:h2:tcp://localhost/" + file.getAbsolutePath());
 
-        db.deleteTask(5);
+        db.markAsUnDone(2);
+
+        //db.deleteTask(1);
 
         System.out.println(db.getAllTasks());
 
         List<String> newTask = new ArrayList<String>(Arrays.asList("5005-01-12 08:02:00", "2005-01-12 08:02:00", "jkl", "asd", "FALSE"));
 
         //db.addTask(newTask);
+
+
+
     }
 
 
-    dataBaseCommands(String dataBaseURL) throws SQLException {
+    private dataBaseCommands(String dataBaseURL) throws SQLException {
+//         THIS NEEDS WORK
+//        try(Connection connect = DriverManager.getConnection(dataBaseURL) ){
+//
+//            conn = connect;
+//
+//            dataBaseCommands[] dataBase = new dataBaseCommands[1];
+//        }
         conn = DriverManager.getConnection(dataBaseURL);
         dataBaseCommands[] dataBase = new dataBaseCommands[1];
-        // Siin tuleks luua parameetrina antud URL-i põhjal Connection objekt ja salvestada see isendimuutujasse.
-        // Draiveri laadimist ei pea siin enam tegema!
+
     }
 
-    List<List<String>> getAllTasks() throws SQLException {
+    private List<List<String>> getAllTasks() throws SQLException {
 
 
         List<List<String>> allTasks = new ArrayList<List<String>>();
@@ -72,7 +88,7 @@ public class dataBaseCommands {
 
             oneTask.add(rs.getString("text"));
 
-            oneTask.add(Boolean.toString(getBoolean("headline")));
+            oneTask.add(rs.getString("done"));
 
             allTasks.add(oneTask);
 
@@ -130,6 +146,34 @@ public class dataBaseCommands {
 
     }
 
+    void markAsDone(int row) throws SQLException {
+        PreparedStatement statement = conn.prepareStatement("UPDATE `todo_s` SET done = 'TRUE' WHERE id = ?");
+
+
+        statement.setString(1, Integer.toString(row));
+
+
+
+        statement.executeLargeUpdate();
+
+        statement.close();
+
+    }
+
+
+    void markAsUnDone(int row) throws SQLException {
+        PreparedStatement statement = conn.prepareStatement("UPDATE `todo_s` SET done = 'FALSE' WHERE id = ?");
+
+
+        statement.setString(1, Integer.toString(row));
+
+        statement.executeLargeUpdate();
+
+        statement.close();
+
+
+    }
+
 
 
 
@@ -145,7 +189,7 @@ public class dataBaseCommands {
 //        due_date TIMESTAMP,
 //        headline VARCHAR(100),
 //    text VARCHAR,
-//    done BOOLEAN,
+//    done VARCHAR(10),
 //);
 
 //Inserting values to table:
