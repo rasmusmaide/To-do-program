@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="56a41431-0088-47ec-b610-e738b342523f" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change beforePath="$PROJECT_DIR$/src/main/java/mypackage/dataBaseCommands.java" afterPath="$PROJECT_DIR$/src/main/java/mypackage/dataBaseCommands.java" />
       <change beforePath="$PROJECT_DIR$/src/todoBase.mv.db" afterPath="$PROJECT_DIR$/src/todoBase.mv.db" />
     </list>
@@ -23,13 +22,15 @@
       <file leaf-file-name="dataBaseCommands.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/mypackage/dataBaseCommands.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="81">
-              <caret line="75" column="24" lean-forward="true" selection-start-line="75" selection-start-column="24" selection-end-line="75" selection-end-column="24" />
+            <state relative-caret-position="510">
+              <caret line="39" column="0" lean-forward="true" selection-start-line="39" selection-start-column="0" selection-end-line="39" selection-end-column="0" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#1352#1366#0" expanded="true" />
-                <element signature="e#1579#1587#0" expanded="true" />
-                <marker date="1523145131010" expanded="true" signature="1430:1450" ph="select * fro... TODO_S" />
+                <element signature="e#943#951#0" expanded="true" />
+                <element signature="e#1546#1560#0" expanded="true" />
+                <element signature="e#1773#1781#0" expanded="true" />
+                <marker date="1523147983506" expanded="true" signature="1624:1644" ph="select * fro... TODO_S" />
+                <marker date="1523147983506" expanded="true" signature="2490:2580" ph="INSERT INTO todo_s... " />
               </folding>
             </state>
           </provider>
@@ -315,12 +316,12 @@
       <workItem from="1523015087322" duration="45000" />
       <workItem from="1523038489015" duration="2074000" />
       <workItem from="1523040818109" duration="4676000" />
-      <workItem from="1523142699722" duration="2594000" />
+      <workItem from="1523142699722" duration="5329000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="9458000" />
+    <option name="totallyTimeSpent" value="12193000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
@@ -339,7 +340,7 @@
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25" sideWeight="0.49367088" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.49367088" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -372,9 +373,11 @@
           <caret line="32" column="32" lean-forward="true" selection-start-line="32" selection-start-column="32" selection-end-line="32" selection-end-column="32" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#1352#1366#0" expanded="true" />
-            <element signature="e#1579#1587#0" expanded="true" />
-            <marker date="1523145131010" expanded="true" signature="1430:1450" ph="select * fro... TODO_S" />
+            <element signature="e#943#951#0" expanded="true" />
+            <element signature="e#1546#1560#0" expanded="true" />
+            <element signature="e#1773#1781#0" expanded="true" />
+            <marker date="1523147983506" expanded="true" signature="1624:1644" ph="select * fro... TODO_S" />
+            <marker date="1523147983506" expanded="true" signature="2490:2580" ph="INSERT INTO todo_s... " />
           </folding>
         </state>
       </provider>
@@ -385,9 +388,11 @@
           <caret line="4" column="0" lean-forward="false" selection-start-line="4" selection-start-column="0" selection-end-line="12" selection-end-column="3" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#1352#1366#0" expanded="true" />
-            <element signature="e#1579#1587#0" expanded="true" />
-            <marker date="1523145131010" expanded="true" signature="1430:1450" ph="select * fro... TODO_S" />
+            <element signature="e#943#951#0" expanded="true" />
+            <element signature="e#1546#1560#0" expanded="true" />
+            <element signature="e#1773#1781#0" expanded="true" />
+            <marker date="1523147983506" expanded="true" signature="1624:1644" ph="select * fro... TODO_S" />
+            <marker date="1523147983506" expanded="true" signature="2490:2580" ph="INSERT INTO todo_s... " />
           </folding>
         </state>
       </provider>
@@ -433,13 +438,15 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/mypackage/dataBaseCommands.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="81">
-          <caret line="75" column="24" lean-forward="true" selection-start-line="75" selection-start-column="24" selection-end-line="75" selection-end-column="24" />
+        <state relative-caret-position="510">
+          <caret line="39" column="0" lean-forward="true" selection-start-line="39" selection-start-column="0" selection-end-line="39" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#1352#1366#0" expanded="true" />
-            <element signature="e#1579#1587#0" expanded="true" />
-            <marker date="1523145131010" expanded="true" signature="1430:1450" ph="select * fro... TODO_S" />
+            <element signature="e#943#951#0" expanded="true" />
+            <element signature="e#1546#1560#0" expanded="true" />
+            <element signature="e#1773#1781#0" expanded="true" />
+            <marker date="1523147983506" expanded="true" signature="1624:1644" ph="select * fro... TODO_S" />
+            <marker date="1523147983506" expanded="true" signature="2490:2580" ph="INSERT INTO todo_s... " />
           </folding>
         </state>
       </provider>
