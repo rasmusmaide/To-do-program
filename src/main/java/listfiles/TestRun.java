@@ -1,5 +1,6 @@
 package listfiles;
 
+import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -8,10 +9,11 @@ public class TestRun {
     private Connection conn;
     public static void main(String[] args) throws Exception {
         Class.forName("org.h2.Driver");
+        File file = new File("todoBase");
         TestRun db = new TestRun(
                 /** CHANGE THIS!!!
                  * AND RUN H2 FIRST */
-                "jdbc:h2:tcp://localhost/C:\\Users\\Dell\\Desktop\\ \\To-do-program\\src\\todoBase");
+                "jdbc:h2:tcp://localhost/" + file.getAbsolutePath());
 
 
         db.conn.close();
