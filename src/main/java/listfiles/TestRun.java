@@ -4,6 +4,7 @@ import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Scanner;
 
 public class TestRun {
     private Connection conn;
@@ -13,6 +14,16 @@ public class TestRun {
         TestRun db = new TestRun(
                 "jdbc:h2:tcp://localhost/" + file.getAbsolutePath());
 
+        Scanner scanner = new Scanner(System.in);
+
+        while (true) {
+            String str = scanner.nextLine();
+
+            if (str.equals("exit")) {
+                System.out.println("sdasd");
+                break;
+            }
+        }
 
         db.conn.close();
     }
