@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="h2-1.4.197">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/src/h2-1.4.197.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>
