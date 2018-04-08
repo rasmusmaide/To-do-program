@@ -42,10 +42,21 @@ public class TestRun {
                         //System.out.println(dbc.getAllTasks());
                         break;
                     case "delete":
-                        System.out.println("Enter index: ");
-                        int index = Integer.parseInt(scanner.nextLine());
-                        dbc.deleteTask(index);
-                        System.out.println("Task deleted successfully.");
+                        while (true) {
+                            System.out.println("Enter index: ");
+
+                            try {
+                                String indexstring = scanner.nextLine();
+                                if (indexstring.equals("cancel")) break;
+
+                                int index = Integer.parseInt(indexstring);
+                                dbc.deleteTask(index);
+                                System.out.println("Task deleted successfully.");
+                            } catch (NumberFormatException e) {
+                                System.out.println("Not a valid index!");
+                            }
+                        }
+
                         break;
                     default:
                         System.out.println("Not a command!");
