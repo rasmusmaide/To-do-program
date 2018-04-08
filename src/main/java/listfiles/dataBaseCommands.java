@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.getBoolean;
 
 public class dataBaseCommands {
@@ -35,18 +36,19 @@ public class dataBaseCommands {
         dataBaseCommands db = new dataBaseCommands(
                 "jdbc:h2:tcp://localhost/" + file.getAbsolutePath());
 
-        db.markAsUnDone(2);
+        //db.markAsUnDone(2);
 
         //db.deleteTask(1);
 
         db.changeHeadline(1, "jklafjkljsdakjsdfkljsdkljklasdfklasdjkfjsdakl");
         db.changeCreationDate(1, "4505-01-12 08:02:00");
 
+        Task newTask = new Task("2005-01-12 08:03:00", "2005-01-12 08:02:00", "pealkiri", "tegevus", FALSE);
+
+        db.addTask(newTask);
+
         System.out.println(db.getAllTasks());
 
-        List<String> newTask = new ArrayList<String>(Arrays.asList("5005-01-12 08:02:00", "2005-01-12 08:02:00", "jkl", "asd", "FALSE"));
-
-        //db.addTask(newTask);
 
 
     }
@@ -100,15 +102,15 @@ public class dataBaseCommands {
         return allTasks;
     }
 
-    void addTask(List<String> task) throws SQLException {
+    void addTask(Task task) throws SQLException {
         //takes the valeus from task as strings and add them to the sql execution statement
 
         PreparedStatement statement = conn.prepareStatement("INSERT INTO todo_s(CREATION_DATE, DUE_DATE , HEADLINE, TEXT, DONE) VALUES ( ?, ?, ?, ?, ?)");
-        statement.setString(1, task.get(0));
-        statement.setString(2, task.get(1));
-        statement.setString(3, task.get(2));
-        statement.setString(4, task.get(3));
-        statement.setString(5, task.get(4));
+        statement.setString(1, task.getCreationDate());
+        statement.setString(2, task.getDeadline());
+        statement.setString(3, task.getHeadline());
+        statement.setString(4, task.getDescription());
+        statement.setBoolean(5, task.getDone());
         statement.executeUpdate();
         statement.close();
 
