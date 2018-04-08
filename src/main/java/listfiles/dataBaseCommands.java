@@ -17,11 +17,9 @@ package listfiles;
 import java.io.File;
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static java.lang.Boolean.FALSE;
-import static java.lang.Boolean.getBoolean;
 
 public class dataBaseCommands {
 
@@ -54,7 +52,7 @@ public class dataBaseCommands {
     }
 
 
-    private dataBaseCommands(String dataBaseURL) throws SQLException {
+    public dataBaseCommands(String dataBaseURL) throws SQLException {
 //         THIS NEEDS WORK
 //        try(Connection connect = DriverManager.getConnection(dataBaseURL) ){
 //
