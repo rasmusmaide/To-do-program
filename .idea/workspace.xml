@@ -22,15 +22,17 @@
       <file leaf-file-name="dataBaseCommands.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/mypackage/dataBaseCommands.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="510">
-              <caret line="39" column="0" lean-forward="true" selection-start-line="39" selection-start-column="0" selection-end-line="39" selection-end-column="0" />
+            <state relative-caret-position="-208">
+              <caret line="115" column="120" lean-forward="true" selection-start-line="115" selection-start-column="120" selection-end-line="115" selection-end-column="120" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#943#951#0" expanded="true" />
-                <element signature="e#1546#1560#0" expanded="true" />
-                <element signature="e#1773#1781#0" expanded="true" />
-                <marker date="1523147983506" expanded="true" signature="1624:1644" ph="select * fro... TODO_S" />
-                <marker date="1523147983506" expanded="true" signature="2490:2580" ph="INSERT INTO todo_s... " />
+                <element signature="e#971#979#0" expanded="true" />
+                <element signature="e#1576#1590#0" expanded="true" />
+                <element signature="e#1803#1811#0" expanded="true" />
+                <marker date="1523154600160" expanded="true" signature="1654:1674" ph="select * fro... TODO_S" />
+                <marker date="1523154600160" expanded="true" signature="2520:2610" ph="INSERT INTO todo_s... " />
+                <marker date="1523154600160" expanded="true" signature="3522:3553" ph="DELETE FROM todo_s... " />
+                <marker date="1523154600160" expanded="true" signature="3699:3754" ph="ALTER TABLE todo_s... " />
               </folding>
             </state>
           </provider>
@@ -69,9 +71,10 @@
     <sorting>DEFINITION_ORDER</sorting>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="-7" />
-    <option name="width" value="974" />
-    <option name="height" value="1047" />
+    <option name="x" value="-8" />
+    <option name="y" value="-8" />
+    <option name="width" value="1936" />
+    <option name="height" value="1056" />
   </component>
   <component name="ProjectInspectionProfilesVisibleTreeState">
     <entry key="Project Default">
@@ -316,12 +319,12 @@
       <workItem from="1523015087322" duration="45000" />
       <workItem from="1523038489015" duration="2074000" />
       <workItem from="1523040818109" duration="4676000" />
-      <workItem from="1523142699722" duration="5329000" />
+      <workItem from="1523142699722" duration="10914000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="12193000" />
+    <option name="totallyTimeSpent" value="17778000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
@@ -373,11 +376,13 @@
           <caret line="32" column="32" lean-forward="true" selection-start-line="32" selection-start-column="32" selection-end-line="32" selection-end-column="32" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#943#951#0" expanded="true" />
-            <element signature="e#1546#1560#0" expanded="true" />
-            <element signature="e#1773#1781#0" expanded="true" />
-            <marker date="1523147983506" expanded="true" signature="1624:1644" ph="select * fro... TODO_S" />
-            <marker date="1523147983506" expanded="true" signature="2490:2580" ph="INSERT INTO todo_s... " />
+            <element signature="e#971#979#0" expanded="true" />
+            <element signature="e#1576#1590#0" expanded="true" />
+            <element signature="e#1803#1811#0" expanded="true" />
+            <marker date="1523154600160" expanded="true" signature="1654:1674" ph="select * fro... TODO_S" />
+            <marker date="1523154600160" expanded="true" signature="2520:2610" ph="INSERT INTO todo_s... " />
+            <marker date="1523154600160" expanded="true" signature="3522:3553" ph="DELETE FROM todo_s... " />
+            <marker date="1523154600160" expanded="true" signature="3699:3754" ph="ALTER TABLE todo_s... " />
           </folding>
         </state>
       </provider>
@@ -388,11 +393,13 @@
           <caret line="4" column="0" lean-forward="false" selection-start-line="4" selection-start-column="0" selection-end-line="12" selection-end-column="3" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#943#951#0" expanded="true" />
-            <element signature="e#1546#1560#0" expanded="true" />
-            <element signature="e#1773#1781#0" expanded="true" />
-            <marker date="1523147983506" expanded="true" signature="1624:1644" ph="select * fro... TODO_S" />
-            <marker date="1523147983506" expanded="true" signature="2490:2580" ph="INSERT INTO todo_s... " />
+            <element signature="e#971#979#0" expanded="true" />
+            <element signature="e#1576#1590#0" expanded="true" />
+            <element signature="e#1803#1811#0" expanded="true" />
+            <marker date="1523154600160" expanded="true" signature="1654:1674" ph="select * fro... TODO_S" />
+            <marker date="1523154600160" expanded="true" signature="2520:2610" ph="INSERT INTO todo_s... " />
+            <marker date="1523154600160" expanded="true" signature="3522:3553" ph="DELETE FROM todo_s... " />
+            <marker date="1523154600160" expanded="true" signature="3699:3754" ph="ALTER TABLE todo_s... " />
           </folding>
         </state>
       </provider>
@@ -438,15 +445,17 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/mypackage/dataBaseCommands.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="510">
-          <caret line="39" column="0" lean-forward="true" selection-start-line="39" selection-start-column="0" selection-end-line="39" selection-end-column="0" />
+        <state relative-caret-position="-208">
+          <caret line="115" column="120" lean-forward="true" selection-start-line="115" selection-start-column="120" selection-end-line="115" selection-end-column="120" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#943#951#0" expanded="true" />
-            <element signature="e#1546#1560#0" expanded="true" />
-            <element signature="e#1773#1781#0" expanded="true" />
-            <marker date="1523147983506" expanded="true" signature="1624:1644" ph="select * fro... TODO_S" />
-            <marker date="1523147983506" expanded="true" signature="2490:2580" ph="INSERT INTO todo_s... " />
+            <element signature="e#971#979#0" expanded="true" />
+            <element signature="e#1576#1590#0" expanded="true" />
+            <element signature="e#1803#1811#0" expanded="true" />
+            <marker date="1523154600160" expanded="true" signature="1654:1674" ph="select * fro... TODO_S" />
+            <marker date="1523154600160" expanded="true" signature="2520:2610" ph="INSERT INTO todo_s... " />
+            <marker date="1523154600160" expanded="true" signature="3522:3553" ph="DELETE FROM todo_s... " />
+            <marker date="1523154600160" expanded="true" signature="3699:3754" ph="ALTER TABLE todo_s... " />
           </folding>
         </state>
       </provider>

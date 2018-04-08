@@ -31,11 +31,14 @@ public class dataBaseCommands {
                 /** CHANGE THIS!!!
                  * AND RUN H2 FIRST */
                 "jdbc:h2:tcp://localhost/C:\\Users\\Karel\\Desktop\\To-do-program\\src\\todoBase");
+
+        db.deleteTask(5);
+
         System.out.println(db.getAllTasks());
 
         List<String> newTask = new ArrayList<String>(Arrays.asList("5005-01-12 08:02:00", "2005-01-12 08:02:00", "jkl", "asd", "FALSE"));
 
-        db.addTask(newTask);
+        //db.addTask(newTask);
     }
 
 
@@ -93,9 +96,42 @@ public class dataBaseCommands {
         statement.executeUpdate();
         statement.close();
 
+    }
+
+    void deleteTask(int row) throws SQLException {
+        /*Flask
+        *   cur.execute("DELETE FROM users WHERE id = %s", [id])
+            # Number reassesment
+            cur.execute("SET @num := 0")
+            cur.execute("UPDATE users SET id = @num := (@num+1)")
+            cur.execute("ALTER TABLE users AUTO_INCREMENT = 1")*/
+
+        // VERY MOST IMPORTANT: https://stackoverflow.com/questions/740358/reorder-reset-auto-increment-primary-key
+        //(SET @count = 0
+        // UPDATE `todo_s` SET `todo_s`.`id` = @count:= @count + 1;)
+
+
+        PreparedStatement statement = conn.prepareStatement("DELETE FROM todo_s WHERE id = ?");
+        PreparedStatement statement2 = conn.prepareStatement("SET @count = 0");
+        PreparedStatement statement3 = conn.prepareStatement("UPDATE `todo_s` SET `todo_s`.`id` = @count:= @count + 1");
+
+
+        statement.setString(1, Integer.toString(row));
+
+        statement.executeUpdate();
+        statement2.executeUpdate();
+        statement3.executeUpdate();
+
+
+        statement.close();
+        statement2.close();
+        statement3.close();
 
 
     }
+
+
+
 
 }
 
