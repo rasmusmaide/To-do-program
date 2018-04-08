@@ -39,12 +39,14 @@ public class dataBaseCommands {
 
         //db.deleteTask(1);
 
+        db.changeHeadline(1, "jklafjkljsdakjsdfkljsdkljklasdfklasdjkfjsdakl");
+        db.changeCreationDate(1, "4505-01-12 08:02:00");
+
         System.out.println(db.getAllTasks());
 
         List<String> newTask = new ArrayList<String>(Arrays.asList("5005-01-12 08:02:00", "2005-01-12 08:02:00", "jkl", "asd", "FALSE"));
 
         //db.addTask(newTask);
-
 
 
     }
@@ -151,7 +153,6 @@ public class dataBaseCommands {
         statement.setString(1, Integer.toString(row));
 
 
-
         statement.executeLargeUpdate();
 
         statement.close();
@@ -172,8 +173,50 @@ public class dataBaseCommands {
 
     }
 
+    void changeText(int row, String newMessage) throws SQLException {
+        PreparedStatement statement = conn.prepareStatement("UPDATE `todo_s` SET text = ? WHERE id = ?");
+        statement.setString(1, newMessage);
+        statement.setString(2, Integer.toString(row));
+
+        statement.executeUpdate();
+
+        statement.close();
+
+    }
+
+    void changeHeadline(int row, String newHeadline) throws SQLException {
+        PreparedStatement statement = conn.prepareStatement("UPDATE `todo_s` SET headline = ? WHERE id = ?");
+        statement.setString(1, newHeadline);
+        statement.setString(2, Integer.toString(row));
+
+        statement.executeUpdate();
+
+        statement.close();
+
+    }
+
+    void changeCreationDate(int row, String newCreationDate) throws SQLException {
+        PreparedStatement statement = conn.prepareStatement("UPDATE `todo_s` SET creation_date = ? WHERE id = ?");
+        statement.setString(1, newCreationDate);
+        statement.setString(2, Integer.toString(row));
+
+        statement.executeUpdate();
+
+        statement.close();
+
+    }
 
 
+    void changeDueDate(int row, String newDueDate) throws SQLException {
+        PreparedStatement statement = conn.prepareStatement("UPDATE `todo_s` SET due_date = ? WHERE id = ?");
+        statement.setString(1, newDueDate);
+        statement.setString(2, Integer.toString(row));
+
+        statement.executeUpdate();
+
+        statement.close();
+
+    }
 
 }
 
