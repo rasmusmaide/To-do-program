@@ -6,7 +6,6 @@ import java.sql.SQLException;
 
 public class TestRun {
     private Connection conn;
-
     public static void main(String[] args) throws Exception {
         Class.forName("org.h2.Driver");
         TestRun db = new TestRun(
