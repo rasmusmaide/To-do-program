@@ -65,30 +65,22 @@ public class dataBaseCommands {
 
     }
 
-    public List<List<String>> getAllTasks() throws SQLException {
+    public List<Task> getAllTasks() throws SQLException {
 
 
-        List<List<String>> allTasks = new ArrayList<List<String>>();
+        List<Task> allTasks = new ArrayList<Task>();
 
         PreparedStatement context = conn.prepareStatement("select * from TODO_S");
 
         ResultSet rs = context.executeQuery();
 
         while (rs.next()) {
-            List<String> oneTask = new ArrayList<String>();
 
-
-            oneTask.add(Integer.toString(rs.getInt("id")));
-
-            oneTask.add(rs.getTimestamp("creation_date").toString());
-
-            oneTask.add(rs.getTimestamp("due_date").toString());
-
-            oneTask.add(rs.getString("headline"));
-
-            oneTask.add(rs.getString("text"));
-
-            oneTask.add(rs.getString("done"));
+            Task oneTask = new Task(rs.getTimestamp("creation_date").toString(),
+                    rs.getTimestamp("due_date").toString(),
+                    rs.getString("headline"),
+                    rs.getString("text"),
+                    Boolean.parseBoolean(rs.getString("done")));
 
             allTasks.add(oneTask);
 
@@ -96,6 +88,9 @@ public class dataBaseCommands {
         rs.close();
 
         context.close();
+
+        /*String desc = "Pafk";
+        Todo_list todo_list = new Todo_list(allTasks, desc);*/ // juhuks kui tahaks returnida Todo_list isendit
 
         return allTasks;
     }

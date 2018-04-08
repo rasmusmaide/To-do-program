@@ -52,6 +52,7 @@ public class TestRun {
                                 int index = Integer.parseInt(indexstring);
                                 dbc.deleteTask(index);
                                 System.out.println("Task deleted successfully.");
+                                break;
                             } catch (NumberFormatException e) {
                                 System.out.println("Not a valid index!");
                             }
