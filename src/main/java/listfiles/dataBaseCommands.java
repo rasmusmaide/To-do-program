@@ -148,7 +148,8 @@ public class dataBaseCommands {
         statement.setString(1, Integer.toString(row));
 
 
-        statement.executeLargeUpdate();
+        //statement.executeLargeUpdate();
+        statement.executeUpdate();
 
         statement.close();
 
