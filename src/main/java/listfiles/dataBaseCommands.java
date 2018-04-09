@@ -65,7 +65,7 @@ public class dataBaseCommands {
 
     }
 
-    public List<Task> getAllTasks() throws SQLException {
+    public Todo_list getAllTasks() throws SQLException {
 
 
         List<Task> allTasks = new ArrayList<Task>();
@@ -89,10 +89,10 @@ public class dataBaseCommands {
 
         context.close();
 
-        /*String desc = "Pafk";
-        Todo_list todo_list = new Todo_list(allTasks, desc);*/ // juhuks kui tahaks returnida Todo_list isendit
+        String desc = "Listname placeholder";
+        Todo_list todo_list = new Todo_list(allTasks, desc); // juhuks kui tahaks returnida Todo_list isendit
 
-        return allTasks;
+        return todo_list; //allTasks;
     }
 
     void addTask(Task task) throws SQLException {

@@ -10,7 +10,7 @@ import java.util.Date;
 import java.util.Scanner;
 
 public class TestRun {
-    private Connection conn;
+    //private Connection conn;
 
     public static void main(String[] args) throws Exception {
         Class.forName("org.h2.Driver");
@@ -34,7 +34,7 @@ public class TestRun {
                         System.out.println("Bye!");
                         break label;
                     case "show list":
-                        System.out.println(dbc.getAllTasks());
+                        System.out.println(dbc.getAllTasks().toString());
                         break;
                     case "add":   // format: 2005-01-12 08:02:00;juust;kapsas
                         System.out.println("Add task: ");
@@ -107,10 +107,10 @@ public class TestRun {
     }
 
 
-    public TestRun(String dataBaseURL) throws SQLException {
+    /*public TestRun(String dataBaseURL) throws SQLException {
         this.conn = DriverManager.getConnection(dataBaseURL);
 
-    }
+    }*/
 
 
 }
