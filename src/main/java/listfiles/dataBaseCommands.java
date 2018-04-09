@@ -68,7 +68,7 @@ public class dataBaseCommands {
     public Todo_list getAllTasks() throws SQLException {
 
 
-        List<Task> allTasks = new ArrayList<Task>();
+        List<Task> allTasks = new ArrayList<>();
 
         PreparedStatement context = conn.prepareStatement("select * from TODO_S");
 
@@ -191,7 +191,7 @@ public class dataBaseCommands {
 
     }
 
-    void changeCreationDate(int row, String newCreationDate) throws SQLException {
+    void changeCreationDate(int row, String newCreationDate) throws SQLException {  //not needed?
         PreparedStatement statement = conn.prepareStatement("UPDATE `todo_s` SET creation_date = ? WHERE id = ?");
         statement.setString(1, newCreationDate);
         statement.setString(2, Integer.toString(row));
