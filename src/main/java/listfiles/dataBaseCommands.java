@@ -35,7 +35,8 @@ public class dataBaseCommands {
     }
 
     public void initialize() throws Exception {
-        Reader reader = new BufferedReader(new FileReader("tableInitializer.txt"));
+        ClassLoader classLoader = dataBaseCommands.class.getClassLoader();
+        Reader reader = (new InputStreamReader(classLoader.getResourceAsStream("tableInitializer.txt"),"UTF-8"));
         RunScript.execute(conn,reader);
     }
 

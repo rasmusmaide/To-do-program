@@ -15,11 +15,16 @@ import java.util.Scanner;
 public class TestRun {
 
     public static void main(String[] args) throws Exception {
-        Server server = Server.createTcpServer("-tcpPort","9092","-tcpAllowOthers").start();
+        Server server = Server.createTcpServer("-tcpAllowOthers").start();
+        //serverile võiks ette anda portiks 9092, aga mul ühes arvutis sellega tuli viga (port kasutusel), nii et ma pole kindel,
+        //kuidas see toimima peaks (selles arvutis andis alati suvalise porti, teises arvutis oli alati 9092, öelge ise kuidas teil on)
         Class.forName("org.h2.Driver");
         dataBaseCommands dbc;
         dbc = new dataBaseCommands("jdbc:h2:tcp://localhost/~/todoBase");
+        //dbc.initialize(); esmakordsel käivitamisel
+        // TODO: 4/22/2018 välja mõelda, kuidas initialize ainult esimesel korral välja kutsuda, aga muidu mitte 
         System.out.println(server.getURL());
+        System.out.println(server.getPort());
 
 
 
