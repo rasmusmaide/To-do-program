@@ -48,7 +48,6 @@ public class dataBaseCommands {
         System.out.println(db.getAllTasks());
 
 
-
     }
 
 
@@ -69,25 +68,23 @@ public class dataBaseCommands {
 
 
         List<Task> allTasks = new ArrayList<>();
+        try (PreparedStatement context = conn.prepareStatement("select * from TODO_S");
+             ResultSet rs = context.executeQuery()) {
 
-        PreparedStatement context = conn.prepareStatement("select * from TODO_S");
 
-        ResultSet rs = context.executeQuery();
+            while (rs.next()) {
 
-        while (rs.next()) {
+                Task oneTask = new Task(rs.getTimestamp("creation_date").toString(),
+                        rs.getTimestamp("due_date").toString(),
+                        rs.getString("headline"),
+                        rs.getString("text"),
+                        Boolean.parseBoolean(rs.getString("done")));
 
-            Task oneTask = new Task(rs.getTimestamp("creation_date").toString(),
-                    rs.getTimestamp("due_date").toString(),
-                    rs.getString("headline"),
-                    rs.getString("text"),
-                    Boolean.parseBoolean(rs.getString("done")));
+                allTasks.add(oneTask);
 
-            allTasks.add(oneTask);
-
+            }
         }
-        rs.close();
 
-        context.close();
 
         String desc = "Listname placeholder";
         Todo_list todo_list = new Todo_list(allTasks, desc); // juhuks kui tahaks returnida Todo_list isendit
@@ -98,15 +95,15 @@ public class dataBaseCommands {
     void addTask(Task task) throws SQLException {
         //takes the valeus from task as strings and add them to the sql execution statement
 
-        PreparedStatement statement = conn.prepareStatement("INSERT INTO todo_s(CREATION_DATE, DUE_DATE , HEADLINE, TEXT, DONE) VALUES ( ?, ?, ?, ?, ?)");
-        statement.setString(1, task.getCreationDate());
-        statement.setString(2, task.getDeadline());
-        statement.setString(3, task.getHeadline());
-        statement.setString(4, task.getDescription());
-        statement.setBoolean(5, task.getDone());
-        statement.executeUpdate();
-        statement.close();
-
+        try (PreparedStatement statement = conn.prepareStatement("INSERT INTO todo_s(CREATION_DATE, DUE_DATE , HEADLINE, TEXT, DONE) VALUES ( ?, ?, ?, ?, ?)")) {
+            statement.setString(1, task.getCreationDate());
+            statement.setString(2, task.getDeadline());
+            statement.setString(3, task.getHeadline());
+            statement.setString(4, task.getDescription());
+            statement.setBoolean(5, task.getDone());
+            statement.executeUpdate();
+            statement.close();
+        }
     }
 
     void deleteTask(int row) throws SQLException {
@@ -122,96 +119,101 @@ public class dataBaseCommands {
         // UPDATE `todo_s` SET `todo_s`.`id` = @count:= @count + 1;)
 
 
-        PreparedStatement statement = conn.prepareStatement("DELETE FROM todo_s WHERE id = ?");
-        PreparedStatement statement2 = conn.prepareStatement("SET @count = 0");
-        PreparedStatement statement3 = conn.prepareStatement("UPDATE `todo_s` SET `todo_s`.`id` = @count:= @count + 1");
+        try (PreparedStatement statement = conn.prepareStatement("DELETE FROM todo_s WHERE id = ?");
+             PreparedStatement statement2 = conn.prepareStatement("SET @count = 0");
+             PreparedStatement statement3 = conn.prepareStatement("UPDATE `todo_s` SET `todo_s`.`id` = @count:= @count + 1")) {
 
 
-        statement.setString(1, Integer.toString(row));
+            statement.setString(1, Integer.toString(row));
 
-        statement.executeUpdate();
-        statement2.executeUpdate();
-        statement3.executeUpdate();
-
-
-        statement.close();
-        statement2.close();
-        statement3.close();
+            statement.executeUpdate();
+            statement2.executeUpdate();
+            statement3.executeUpdate();
 
 
+            statement.close();
+            statement2.close();
+            statement3.close();
+
+
+        }
     }
 
     void markAsDone(int row) throws SQLException {
-        PreparedStatement statement = conn.prepareStatement("UPDATE `todo_s` SET done = 'TRUE' WHERE id = ?");
+        try(PreparedStatement statement = conn.prepareStatement("UPDATE `todo_s` SET done = 'TRUE' WHERE id = ?")) {
 
 
-        statement.setString(1, Integer.toString(row));
+            statement.setString(1, Integer.toString(row));
 
 
-        //statement.executeLargeUpdate();
-        statement.executeUpdate();
+            //statement.executeLargeUpdate();
+            statement.executeUpdate();
 
-        statement.close();
-
+            statement.close();
+        }
     }
 
 
     void markAsUnDone(int row) throws SQLException {
-        PreparedStatement statement = conn.prepareStatement("UPDATE `todo_s` SET done = 'FALSE' WHERE id = ?");
+        try(PreparedStatement statement = conn.prepareStatement("UPDATE `todo_s` SET done = 'FALSE' WHERE id = ?")) {
 
 
-        statement.setString(1, Integer.toString(row));
+            statement.setString(1, Integer.toString(row));
 
-        statement.executeLargeUpdate();
+            statement.executeLargeUpdate();
 
-        statement.close();
-
+            statement.close();
+        }
 
     }
 
     void changeText(int row, String newMessage) throws SQLException {
-        PreparedStatement statement = conn.prepareStatement("UPDATE `todo_s` SET text = ? WHERE id = ?");
-        statement.setString(1, newMessage);
-        statement.setString(2, Integer.toString(row));
+        try(PreparedStatement statement = conn.prepareStatement("UPDATE `todo_s` SET text = ? WHERE id = ?")) {
+            statement.setString(1, newMessage);
+            statement.setString(2, Integer.toString(row));
 
-        statement.executeUpdate();
+            statement.executeUpdate();
 
-        statement.close();
+            statement.close();
+        }
 
     }
 
     void changeHeadline(int row, String newHeadline) throws SQLException {
-        PreparedStatement statement = conn.prepareStatement("UPDATE `todo_s` SET headline = ? WHERE id = ?");
-        statement.setString(1, newHeadline);
-        statement.setString(2, Integer.toString(row));
+        try(PreparedStatement statement = conn.prepareStatement("UPDATE `todo_s` SET headline = ? WHERE id = ?")) {
+            statement.setString(1, newHeadline);
+            statement.setString(2, Integer.toString(row));
 
-        statement.executeUpdate();
+            statement.executeUpdate();
 
-        statement.close();
+            statement.close();
+        }
 
     }
 
     void changeCreationDate(int row, String newCreationDate) throws SQLException {  //not needed?
-        PreparedStatement statement = conn.prepareStatement("UPDATE `todo_s` SET creation_date = ? WHERE id = ?");
-        statement.setString(1, newCreationDate);
-        statement.setString(2, Integer.toString(row));
+        try(PreparedStatement statement = conn.prepareStatement("UPDATE `todo_s` SET creation_date = ? WHERE id = ?")) {
+            statement.setString(1, newCreationDate);
+            statement.setString(2, Integer.toString(row));
 
-        statement.executeUpdate();
+            statement.executeUpdate();
 
-        statement.close();
+            statement.close();
+        }
 
     }
 
 
     void changeDueDate(int row, String newDueDate) throws SQLException {
-        PreparedStatement statement = conn.prepareStatement("UPDATE `todo_s` SET due_date = ? WHERE id = ?");
-        statement.setString(1, newDueDate);
-        statement.setString(2, Integer.toString(row));
+        try (PreparedStatement statement = conn.prepareStatement("UPDATE `todo_s` SET due_date = ? WHERE id = ?")) {
+            statement.setString(1, newDueDate);
+            statement.setString(2, Integer.toString(row));
 
-        statement.executeUpdate();
+            statement.executeUpdate();
 
-        statement.close();
+            statement.close();
 
+        }
     }
 
 }
