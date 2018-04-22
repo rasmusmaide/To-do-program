@@ -14,7 +14,9 @@ package listfiles;
 //);
 //***
 
-import java.io.File;
+import org.h2.tools.RunScript;
+
+import java.io.*;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +32,6 @@ public class dataBaseCommands {
         File file = new File("todoBase");
 
 
-        Class.forName("org.h2.Driver");
         dataBaseCommands db = new dataBaseCommands(
                 "jdbc:h2:tcp://localhost/" + file.getAbsolutePath());
 
@@ -51,16 +52,10 @@ public class dataBaseCommands {
     }
 
 
-    public dataBaseCommands(String dataBaseURL) throws SQLException {
-//         THIS NEEDS WORK
-//        try(Connection connect = DriverManager.getConnection(dataBaseURL) ){
-//
-//            conn = connect;
-//
-//            dataBaseCommands[] dataBase = new dataBaseCommands[1];
-//        }
+    public dataBaseCommands(String dataBaseURL) throws Exception {
         conn = DriverManager.getConnection(dataBaseURL);
-        dataBaseCommands[] dataBase = new dataBaseCommands[1];
+        Reader reader = new BufferedReader(new FileReader("tableInitializer.txt"));
+        RunScript.execute(conn,reader);
 
     }
 

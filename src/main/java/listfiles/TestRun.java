@@ -1,5 +1,7 @@
 package listfiles;
 
+import org.h2.tools.RunScript;
+
 import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -13,12 +15,7 @@ public class TestRun {
     //private Connection conn;
 
     public static void main(String[] args) throws Exception {
-        Class.forName("org.h2.Driver");
-        File file = new File("todoBase");
-        /*TestRun db = new TestRun(
-                "jdbc:h2:tcp://localhost/" + file.getAbsolutePath());
-*/
-        dataBaseCommands dbc = new dataBaseCommands("jdbc:h2:tcp://localhost/" + file.getAbsolutePath());
+        dataBaseCommands dbc = new dataBaseCommands("jdbc:h2:~/todoBase");
 
         Scanner scanner = new Scanner(System.in);
 
