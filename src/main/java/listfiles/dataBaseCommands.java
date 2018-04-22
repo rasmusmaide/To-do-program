@@ -28,36 +28,15 @@ public class dataBaseCommands {
     Connection conn;
 
 
-    public static void main(String[] args) throws Exception {
-        File file = new File("todoBase");
-
-
-        dataBaseCommands db = new dataBaseCommands(
-                "jdbc:h2:tcp://localhost/" + file.getAbsolutePath());
-
-        //db.markAsUnDone(2);
-
-        //db.deleteTask(1);
-
-        db.changeHeadline(1, "jklafjkljsdakjsdfkljsdkljklasdfklasdjkfjsdakl");
-        db.changeCreationDate(1, "4505-01-12 08:02:00");
-
-        Task newTask = new Task("2005-01-12 08:03:00", "2005-01-12 08:02:00", "pealkiri", "tegevus", FALSE);
-
-        db.addTask(newTask);
-
-        System.out.println(db.getAllTasks());
-
-
-    }
-
 
     public dataBaseCommands(String dataBaseURL) throws Exception {
         conn = DriverManager.getConnection(dataBaseURL);
-        //Reader reader = new BufferedReader(new FileReader("tableInitializer.txt"));
-        //RunScript.execute(conn,reader);
-        //esmakordsel kasutamisel tabeli loomiseks, ma ei tea mis tingimustel selle käivitama peaks
 
+    }
+
+    public void initialize() throws Exception {
+        Reader reader = new BufferedReader(new FileReader("tableInitializer.txt"));
+        RunScript.execute(conn,reader);
     }
 
     public Todo_list getAllTasks() throws SQLException {
@@ -136,7 +115,7 @@ public class dataBaseCommands {
     }
 
     void markAsDone(int row) throws SQLException {
-        try(PreparedStatement statement = conn.prepareStatement("UPDATE `todo_s` SET done = 'TRUE' WHERE id = ?")) {
+        try (PreparedStatement statement = conn.prepareStatement("UPDATE `todo_s` SET done = 'TRUE' WHERE id = ?")) {
 
 
             statement.setString(1, Integer.toString(row));
@@ -151,7 +130,7 @@ public class dataBaseCommands {
 
 
     void markAsUnDone(int row) throws SQLException {
-        try(PreparedStatement statement = conn.prepareStatement("UPDATE `todo_s` SET done = 'FALSE' WHERE id = ?")) {
+        try (PreparedStatement statement = conn.prepareStatement("UPDATE `todo_s` SET done = 'FALSE' WHERE id = ?")) {
 
 
             statement.setString(1, Integer.toString(row));
@@ -164,7 +143,7 @@ public class dataBaseCommands {
     }
 
     void changeText(int row, String newMessage) throws SQLException {
-        try(PreparedStatement statement = conn.prepareStatement("UPDATE `todo_s` SET text = ? WHERE id = ?")) {
+        try (PreparedStatement statement = conn.prepareStatement("UPDATE `todo_s` SET text = ? WHERE id = ?")) {
             statement.setString(1, newMessage);
             statement.setString(2, Integer.toString(row));
 
@@ -176,7 +155,7 @@ public class dataBaseCommands {
     }
 
     void changeHeadline(int row, String newHeadline) throws SQLException {
-        try(PreparedStatement statement = conn.prepareStatement("UPDATE `todo_s` SET headline = ? WHERE id = ?")) {
+        try (PreparedStatement statement = conn.prepareStatement("UPDATE `todo_s` SET headline = ? WHERE id = ?")) {
             statement.setString(1, newHeadline);
             statement.setString(2, Integer.toString(row));
 
@@ -188,7 +167,7 @@ public class dataBaseCommands {
     }
 
     void changeCreationDate(int row, String newCreationDate) throws SQLException {  //not needed?
-        try(PreparedStatement statement = conn.prepareStatement("UPDATE `todo_s` SET creation_date = ? WHERE id = ?")) {
+        try (PreparedStatement statement = conn.prepareStatement("UPDATE `todo_s` SET creation_date = ? WHERE id = ?")) {
             statement.setString(1, newCreationDate);
             statement.setString(2, Integer.toString(row));
 

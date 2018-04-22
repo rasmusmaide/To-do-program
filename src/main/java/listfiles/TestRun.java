@@ -13,12 +13,14 @@ import java.util.Date;
 import java.util.Scanner;
 
 public class TestRun {
-    //private Connection conn;
 
     public static void main(String[] args) throws Exception {
-        Server server= Server.createTcpServer().start();
+        Server server = Server.createTcpServer("-tcpPort","9092","-tcpAllowOthers").start();
+        Class.forName("org.h2.Driver");
+        dataBaseCommands dbc;
+        dbc = new dataBaseCommands("jdbc:h2:tcp://localhost/~/todoBase");
+        System.out.println(server.getURL());
 
-        dataBaseCommands dbc = new dataBaseCommands("jdbc:h2:tcp://localhost/~/todoBase");
 
 
         Scanner scanner = new Scanner(System.in);
