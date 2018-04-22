@@ -54,8 +54,9 @@ public class dataBaseCommands {
 
     public dataBaseCommands(String dataBaseURL) throws Exception {
         conn = DriverManager.getConnection(dataBaseURL);
-        Reader reader = new BufferedReader(new FileReader("tableInitializer.txt"));
-        RunScript.execute(conn,reader);
+        //Reader reader = new BufferedReader(new FileReader("tableInitializer.txt"));
+        //RunScript.execute(conn,reader);
+        //esmakordsel kasutamisel tabeli loomiseks, ma ei tea mis tingimustel selle käivitama peaks
 
     }
 
