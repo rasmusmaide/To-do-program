@@ -1,6 +1,7 @@
 package listfiles;
 
 import org.h2.tools.RunScript;
+import org.h2.tools.Server;
 
 import java.io.File;
 import java.sql.Connection;
@@ -15,7 +16,10 @@ public class TestRun {
     //private Connection conn;
 
     public static void main(String[] args) throws Exception {
-        dataBaseCommands dbc = new dataBaseCommands("jdbc:h2:~/todoBase");
+        Server server= Server.createTcpServer().start();
+
+        dataBaseCommands dbc = new dataBaseCommands("jdbc:h2:tcp://localhost/~/todoBase");
+
 
         Scanner scanner = new Scanner(System.in);
 
@@ -98,6 +102,7 @@ public class TestRun {
             }
         } finally {
             dbc.conn.close();
+            server.stop();
         }
 
 
