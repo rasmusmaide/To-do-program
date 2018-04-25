@@ -78,7 +78,6 @@ public class dataBaseCommands {
             statement.setString(4, task.getDescription());
             statement.setBoolean(5, task.getDone());
             statement.executeUpdate();
-            statement.close();
         }
     }
 
@@ -105,40 +104,21 @@ public class dataBaseCommands {
             statement.executeUpdate();
             statement2.executeUpdate();
             statement3.executeUpdate();
-
-
-            statement.close();
-            statement2.close();
-            statement3.close();
-
-
         }
     }
 
     void markAsDone(int row) throws SQLException {
         try (PreparedStatement statement = conn.prepareStatement("UPDATE `todo_s` SET done = 'TRUE' WHERE id = ?")) {
-
-
             statement.setString(1, Integer.toString(row));
-
-
-            //statement.executeLargeUpdate();
             statement.executeUpdate();
-
-            statement.close();
         }
     }
 
 
     void markAsUnDone(int row) throws SQLException {
         try (PreparedStatement statement = conn.prepareStatement("UPDATE `todo_s` SET done = 'FALSE' WHERE id = ?")) {
-
-
             statement.setString(1, Integer.toString(row));
-
             statement.executeLargeUpdate();
-
-            statement.close();
         }
 
     }
@@ -147,10 +127,7 @@ public class dataBaseCommands {
         try (PreparedStatement statement = conn.prepareStatement("UPDATE `todo_s` SET text = ? WHERE id = ?")) {
             statement.setString(1, newMessage);
             statement.setString(2, Integer.toString(row));
-
             statement.executeUpdate();
-
-            statement.close();
         }
 
     }
@@ -159,10 +136,7 @@ public class dataBaseCommands {
         try (PreparedStatement statement = conn.prepareStatement("UPDATE `todo_s` SET headline = ? WHERE id = ?")) {
             statement.setString(1, newHeadline);
             statement.setString(2, Integer.toString(row));
-
             statement.executeUpdate();
-
-            statement.close();
         }
 
     }
@@ -171,10 +145,7 @@ public class dataBaseCommands {
         try (PreparedStatement statement = conn.prepareStatement("UPDATE `todo_s` SET creation_date = ? WHERE id = ?")) {
             statement.setString(1, newCreationDate);
             statement.setString(2, Integer.toString(row));
-
             statement.executeUpdate();
-
-            statement.close();
         }
 
     }
@@ -184,10 +155,7 @@ public class dataBaseCommands {
         try (PreparedStatement statement = conn.prepareStatement("UPDATE `todo_s` SET due_date = ? WHERE id = ?")) {
             statement.setString(1, newDueDate);
             statement.setString(2, Integer.toString(row));
-
             statement.executeUpdate();
-
-            statement.close();
 
         }
     }
