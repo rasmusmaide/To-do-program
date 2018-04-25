@@ -7,18 +7,22 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.stage.Popup;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.h2.tools.Server;
 
 import java.io.File;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -36,7 +40,7 @@ public class TodoApp extends Application {
     public void start(Stage primaryStage) throws Exception {
         //primaryStage.initStyle(StageStyle.UNDECORATED);
 
-        Server server = Server.createTcpServer("-tcpPort","9092","-tcpAllowOthers").start();
+        Server server = Server.createTcpServer("-tcpPort", "9092", "-tcpAllowOthers").start();
 
         Class.forName("org.h2.Driver");
         dataBaseCommands dbc;
@@ -57,17 +61,63 @@ public class TodoApp extends Application {
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        ImageView addim = new ImageView(new Image(new File("C:\\Users\\Dell\\Desktop\\ \\fileplus.png").toURI().toString()));
-        Button add = new Button();
-        addim.setFitWidth(45);
-        addim.setFitHeight(45);
-        add.setGraphic(addim);
-        add.setStyle("-fx-background-color: transparent");
+        //ImageView addim = new ImageView(new Image(new File("C:\\Users\\Dell\\Desktop\\ \\fileplus.png").toURI().toString()));
+        Button add = new Button("Add task");
+        //addim.setFitWidth(45);
+        //addim.setFitHeight(45);
+        //add.setGraphic(addim);
+        //add.setStyle("-fx-background-color: transparent");
         add.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
             public void handle(ActionEvent event) {
-                // ADDFUNCTION
 
+               // try {
+                    Stage addstage = new Stage();
+                    addstage.setTitle("New task");
+
+                    Label headlabel = new Label("Title");
+                    TextField head = new TextField();
+                    Label desclabel = new Label("Description");
+                    TextField desc = new TextField();
+
+                    DatePicker datePicker = new DatePicker();
+                    DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    //String duedate = df.format();
+                    Date currentdate = new Date();
+                    //String currentDateString =
+                    String entrydate = df.format(currentdate);
+
+
+                    Button addtask = new Button("Add");
+                    addtask.setOnAction(event1 -> {
+
+                        Task ntask = new Task(entrydate, entrydate, head.getText(), desc.getText(), false); // TODO duedatel on vaja kellaaega, hetkel asendatud entrydatega
+
+                        try {
+
+                            dbc.addTask(ntask); // TODO ei tööta, hetkel ei jõudnud vaadata, miks.
+                        } catch (SQLException e) {
+                            System.out.println("Fuck!");
+                        }
+                    }); // ADD
+                    Button canceladd = new Button("Cancel");
+                    canceladd.setOnAction(event1 -> addstage.close()); // CLOSE
+
+                    GridPane addtaskpane = new GridPane();
+                    addtaskpane.add(addtask, 3, 4);
+                    addtaskpane.add(canceladd, 3, 5);
+                    addtaskpane.add(headlabel, 0, 0);
+                    addtaskpane.add(head, 1, 0);
+                    addtaskpane.add(desclabel, 0, 1);
+                    addtaskpane.add(desc, 1, 1);
+                    addtaskpane.add(datePicker, 1, 2);
+
+
+                    addstage.setScene(new Scene(addtaskpane, 300, 160));
+                    addstage.show();
+
+                /*} catch (Exception e) {
+                    System.out.println("Nope");
+                }*/
             }
         }); // TODO ADDFUNCTION
 
@@ -103,10 +153,15 @@ public class TodoApp extends Application {
         ntabbutton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
+
                 while (ntabfield.getText().equals("")) {
                     ntabfield.setText("Insert list name!");
                 }
-                //newTodoList(ntabfield.getText());
+                newTodoList(ntabfield.getText()); // enter list name
+
+            }
+
+            private void newTodoList(String text) {
 
             }
         }); // CREATE NEW TO-DO LIST = TODO new DB
@@ -116,7 +171,6 @@ public class TodoApp extends Application {
         nlisttab.setContent(newtabcontent);
         tabPane.getTabs().add(nlisttab);
         //////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 
 
         borderPane.setPadding(new Insets(5, 5, 5, 5)); // BORDERPANE SETUP
@@ -132,13 +186,6 @@ public class TodoApp extends Application {
         primaryStage.show();
 
 
-
-
-
-
-
-
-
         try {
             System.out.println();
 
@@ -149,7 +196,7 @@ public class TodoApp extends Application {
 
 
     }
-    }
+}
 /*
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 
