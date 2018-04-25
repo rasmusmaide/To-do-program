@@ -29,8 +29,8 @@ public class dataBaseCommands {
 
 
 
-    public dataBaseCommands(String dataBaseURL) throws Exception {
-        conn = DriverManager.getConnection(dataBaseURL);
+    public dataBaseCommands(String dataBaseURL) throws Exception { //, String un, String pw
+        conn = DriverManager.getConnection(dataBaseURL);//, un, pw);
 
     }
 

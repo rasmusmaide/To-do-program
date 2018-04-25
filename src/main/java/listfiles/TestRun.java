@@ -22,15 +22,21 @@ public class TestRun {
         */
         Class.forName("org.h2.Driver");
         dataBaseCommands dbc;
-        dbc = new dataBaseCommands("jdbc:h2:tcp://localhost/~/todoBase");
-        //dbc.initialize(); esmakordsel käivitamisel
+        Scanner scanner = new Scanner(System.in);
+        /*System.out.println("Enter database username: ");
+        String username = scanner.nextLine();
+        System.out.println("Enter database password: ");
+        String password = scanner.nextLine();*/
+
+        dbc = new dataBaseCommands("jdbc:h2:tcp://localhost/~/todoBase");//, username, password);
+        //dbc.initialize(); //esmakordsel käivitamisel
         // TODO: 4/22/2018 välja mõelda, kuidas initialize ainult esimesel korral välja kutsuda, aga muidu mitte 
         System.out.println(server.getURL());
         System.out.println(server.getPort());
 
 
 
-        Scanner scanner = new Scanner(System.in);
+        //Scanner scanner = new Scanner(System.in);
 
         System.out.println(dbc.getAllTasks());
         try {
