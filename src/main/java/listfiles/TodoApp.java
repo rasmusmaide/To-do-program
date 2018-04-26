@@ -61,7 +61,7 @@ public class TodoApp extends Application {
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        //ImageView addim = new ImageView(new Image(new File("C:\\Users\\Dell\\Desktop\\ \\fileplus.png").toURI().toString()));
+        //ImageView addim = new ImageView(new Image(new File("fileplus.png").toURI().toString()));
         Button add = new Button("Add task");
         //addim.setFitWidth(45);
         //addim.setFitHeight(45);
@@ -70,7 +70,7 @@ public class TodoApp extends Application {
         add.setOnAction(new EventHandler<ActionEvent>() {
             public void handle(ActionEvent event) {
 
-               // try {
+                //try {
                     Stage addstage = new Stage();
                     addstage.setTitle("New task");
 
@@ -90,14 +90,15 @@ public class TodoApp extends Application {
                     Button addtask = new Button("Add");
                     addtask.setOnAction(event1 -> {
 
-                        Task ntask = new Task(entrydate, entrydate, head.getText(), desc.getText(), false); // TODO duedatel on vaja kellaaega, hetkel asendatud entrydatega
+                        Task ntask = new Task(entrydate, "2005-01-12 08:02:00", head.getText(), desc.getText(), false); // TODO duedatel on vaja kellaaega, hetkel asendatud entrydatega
 
                         try {
 
                             dbc.addTask(ntask); // TODO ei tööta, hetkel ei jõudnud vaadata, miks.
                         } catch (SQLException e) {
-                            System.out.println("Fuck!");
+                            throw new RuntimeException(e);
                         }
+
                     }); // ADD
                     Button canceladd = new Button("Cancel");
                     canceladd.setOnAction(event1 -> addstage.close()); // CLOSE
@@ -115,8 +116,8 @@ public class TodoApp extends Application {
                     addstage.setScene(new Scene(addtaskpane, 300, 160));
                     addstage.show();
 
-                /*} catch (Exception e) {
-                    System.out.println("Nope");
+                /*} catch (SQLException e) {
+                    throw new RuntimeException(e);
                 }*/
             }
         }); // TODO ADDFUNCTION
@@ -178,6 +179,13 @@ public class TodoApp extends Application {
         //borderPane.setBottom(hBox2);
         borderPane.setCenter(tabPane);
         borderPane.setRight(vBox);
+
+
+        //primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("resources/Drop.png"))); // TODO ükski ei tööta
+        //primaryStage.getIcons().add(new Image(getClass().getResource("resources/Drop.png").toExternalForm()));
+        //primaryStage.getIcons().add(new Image("/resources/Drop.png"));
+        //ImageView programicon = new ImageView(new Image(new File("resources/Drop.png").toURI().toString()));
+        //primaryStage.getIcons().add(new Image(new File("resources/Drop.png").toURI().toString()));
 
 
         Scene scene = new Scene(borderPane, 400, 500, Color.SNOW);
