@@ -71,50 +71,51 @@ public class TodoApp extends Application {
             public void handle(ActionEvent event) {
 
                 //try {
-                    Stage addstage = new Stage();
-                    addstage.setTitle("New task");
+                Stage addstage = new Stage();
+                addstage.setTitle("New task");
 
-                    Label headlabel = new Label("Title");
-                    TextField head = new TextField();
-                    Label desclabel = new Label("Description");
-                    TextField desc = new TextField();
+                Label headlabel = new Label("Title");
+                TextField headlinefield = new TextField();
+                Label desclabel = new Label("Description");
+                TextField descriptionfield = new TextField();
 
-                    DatePicker datePicker = new DatePicker();
-                    DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                    //String duedate = df.format();
-                    Date currentdate = new Date();
-                    //String currentDateString =
-                    String entrydate = df.format(currentdate);
-
-
-                    Button addtask = new Button("Add");
-                    addtask.setOnAction(event1 -> {
-
-                        Task ntask = new Task(entrydate, "2005-01-12 08:02:00", head.getText(), desc.getText(), false); // TODO duedatel on vaja kellaaega, hetkel asendatud entrydatega
-
-                        try {
-
-                            dbc.addTask(ntask); // TODO ei tööta, hetkel ei jõudnud vaadata, miks.
-                        } catch (SQLException e) {
-                            throw new RuntimeException(e);
-                        }
-
-                    }); // ADD
-                    Button canceladd = new Button("Cancel");
-                    canceladd.setOnAction(event1 -> addstage.close()); // CLOSE
-
-                    GridPane addtaskpane = new GridPane();
-                    addtaskpane.add(addtask, 3, 4);
-                    addtaskpane.add(canceladd, 3, 5);
-                    addtaskpane.add(headlabel, 0, 0);
-                    addtaskpane.add(head, 1, 0);
-                    addtaskpane.add(desclabel, 0, 1);
-                    addtaskpane.add(desc, 1, 1);
-                    addtaskpane.add(datePicker, 1, 2);
+                DatePicker datePicker = new DatePicker();
+                DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                //String duedate = df.format();
+                Date currentdate = new Date();
+                //String currentDateString =
+                String creationdate = df.format(currentdate);
 
 
-                    addstage.setScene(new Scene(addtaskpane, 300, 160));
-                    addstage.show();
+                Button addtask = new Button("Add");
+                addtask.setOnAction(event1 -> {
+
+                    Task ntask = new Task(creationdate, "2005-01-12 08:02:00", headlinefield.getText(), descriptionfield.getText(), false); // TODO duedatel on vaja kellaaega, hetkel asendatud entrydatega
+
+                    try {
+
+                        dbc.addTask(ntask); // TODO ei tööta, hetkel ei jõudnud vaadata, miks.
+                        System.out.println("jep");
+                    } catch (SQLException e) {
+                        throw new RuntimeException(e);
+                    }
+
+                }); // ADD
+                Button canceladd = new Button("Cancel");
+                canceladd.setOnAction(event1 -> addstage.close()); // CLOSE
+
+                GridPane addtaskpane = new GridPane();
+                addtaskpane.add(addtask, 3, 4);
+                addtaskpane.add(canceladd, 3, 5);
+                addtaskpane.add(headlabel, 0, 0);
+                addtaskpane.add(headlinefield, 1, 0);
+                addtaskpane.add(desclabel, 0, 1);
+                addtaskpane.add(descriptionfield, 1, 1);
+                addtaskpane.add(datePicker, 1, 2);
+
+
+                addstage.setScene(new Scene(addtaskpane, 300, 160));
+                addstage.show();
 
                 /*} catch (SQLException e) {
                     throw new RuntimeException(e);
@@ -188,19 +189,29 @@ public class TodoApp extends Application {
         //primaryStage.getIcons().add(new Image(new File("resources/Drop.png").toURI().toString()));
 
 
+        primaryStage.setOnCloseRequest(event -> {
+            System.out.println("Bye!");
+            try {
+                dbc.conn.close();
+            } catch (SQLException r) {
+                throw new RuntimeException(r);
+            }
+            server.stop();
+        });
+
         Scene scene = new Scene(borderPane, 400, 500, Color.SNOW);
         primaryStage.setScene(scene);
         primaryStage.setTitle("Drop");
         primaryStage.show();
 
 
-        try {
+        /*try {
             System.out.println();
 
         } finally {
             dbc.conn.close();
             server.stop();
-        }
+        }*/
 
 
     }
