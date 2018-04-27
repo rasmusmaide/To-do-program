@@ -1,17 +1,12 @@
 package listfiles;
 
 import javafx.application.Application;
-import javafx.application.Platform;
-import javafx.beans.Observable;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableArray;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.Event;
 import javafx.event.EventHandler;
-import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
-import javafx.scene.Parent;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -20,13 +15,7 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
-import org.h2.tools.Server;
 
-import javax.swing.*;
-import java.io.File;
-import java.io.IOException;
-import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -84,6 +73,11 @@ public class TodoApp extends Application {
         Tab nlisttab = new Tab(); // TAB FOR NEW TO-DO LIST TODO added task goes to selected tab/todolist
         nlisttab.setText("+");
         nlisttab.setClosable(false);
+        nlisttab.setOnSelectionChanged(t -> {
+            if (nlisttab.isSelected()) {
+                tabPane.getTabs().add(tabAdder(new Todo_list(new ArrayList<>(), "New To-do list")));
+            }
+        }); // TODO
 
 
         TextField ntabfield = new TextField();
@@ -112,13 +106,14 @@ public class TodoApp extends Application {
 
         ///// [SIDEBAR} ////////////////////////////////////////////////////////////////////////////////////////////
 
-        Image image = new Image("fileplus.png");
-        ImageView addim = new ImageView(image);
+        Image imageplus = new Image("fileplus.png");
+        ImageView addim = new ImageView(imageplus);
         Button add = new Button();
         addim.setFitWidth(40);
         addim.setFitHeight(40);
         add.setGraphic(addim);
         add.setStyle("-fx-background-color: transparent");
+
         add.setOnAction(event -> {
 
             Stage addstage = new Stage();
@@ -210,7 +205,14 @@ public class TodoApp extends Application {
         Region region2 = new Region();
         VBox.setVgrow(region2, Priority.ALWAYS);
 
-        Button refreshbutton = new Button("refresh");
+        Image imagerefresh = new Image("filerefresh.png");
+        ImageView refreshimage = new ImageView(imagerefresh);
+        refreshimage.setFitHeight(45);
+        refreshimage.setFitWidth(45);
+        Button refreshbutton = new Button();
+        refreshbutton.setGraphic(refreshimage); // natuke väike, aga töötab ja hetkel rohkema aega ei kulutaks
+        refreshbutton.setStyle("-fx-background-color: transparent");
+
         refreshbutton.setOnAction(event -> {
             for (Todo_list todo_list : testlist) {
                 tabPane.getTabs().add(tabAdder(todo_list));
@@ -257,6 +259,7 @@ public class TodoApp extends Application {
     }
 
     private Tab tabAdder(Todo_list todo_list) {
+        BorderPane todoTabPane = new BorderPane();
         Tab todolistTab = new Tab();
 
         todolistTab.setText(todo_list.getDescription());
@@ -264,13 +267,41 @@ public class TodoApp extends Application {
         List<Task> tasks = todo_list.getTasks();
         ObservableList<Task> observableList = FXCollections.observableArrayList(tasks);
         ListView<Task> taskView = new ListView<>(observableList);
-        todolistTab.setContent(taskView);
 
+        Button renameTodo = new Button(todo_list.getDescription());
+        renameTodo.setOnAction(event -> {
+            TextField renamefield = new TextField("Insert new name");
+            renamefield.setOnAction(event1 -> {
+
+                String fieldtext = renamefield.getText();
+                todolistTab.setText(fieldtext);
+                todo_list.setDescription(fieldtext);
+                renameTodo.setText(fieldtext);
+
+                //renamelistStage.close(); // ei tööta meetodis?
+                ((Node) (event1.getSource())).getScene().getWindow().hide(); // see töötab
+                // TODO saadab serverile selle muutuse
+            });
+
+
+            Scene renamelistScene = new Scene(renamefield);
+            Stage renamelistStage = new Stage();
+            renamelistStage.setTitle("Rename list");
+            renamelistStage.setScene(renamelistScene);
+            renamelistStage.show();
+
+        });
+
+
+        todoTabPane.setTop(new HBox(renameTodo));
+        todoTabPane.setCenter(taskView);
+
+        todolistTab.setContent(todoTabPane);
         todolistTab.setClosable(false);
 
         todolistTab.setOnSelectionChanged(t -> {
             if (todolistTab.isSelected()) {
-                System.out.println("Add nupp kehtib sellele listile");
+                System.out.println("Add nupp kehtib sellele listile"); // TODO add button affects this list
             }
         });
 
