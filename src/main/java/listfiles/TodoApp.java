@@ -4,8 +4,10 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.Observable;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableArray;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
@@ -21,14 +23,13 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.h2.tools.Server;
 
+import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class TodoApp extends Application {
 
@@ -39,112 +40,48 @@ public class TodoApp extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         //primaryStage.initStyle(StageStyle.UNDECORATED);
-
+/*
         Server server = Server.createTcpServer("-tcpPort", "9092", "-tcpAllowOthers").start();
 
         Class.forName("org.h2.Driver");
         dataBaseCommands dbc;
         //Scanner scanner = new Scanner(System.in);
-        //*System.out.println("Enter database username: ");
+        //System.out.println("Enter database username: ");
         //String username = scanner.nextLine();
         //System.out.println("Enter database password: ");
-        //String password = scanner.nextLine();*/
+        //String password = scanner.nextLine();
 
         dbc = new dataBaseCommands("jdbc:h2:tcp://localhost/~/todoBase");//, username, password);
         //dbc.initialize(); //esmakordsel käivitamisel
 
         System.out.println(server.getURL());
-        System.out.println(server.getPort());
+        System.out.println(server.getPort());*/
+
+        // To-do lists for testing:
+
+        List<Task> testtasklist = new ArrayList<>(Arrays.asList(
+                new Task("2005-01-12 08:02:00", "2005-01-12 08:02:00", "head1", "desc1", false),
+                new Task("2005-01-12 08:02:00", "2005-01-12 08:02:00", "head2", "desc2", false)
+        ));
+
+        List<Task> testtasklist2 = new ArrayList<>();
+        testtasklist2.add(new Task("2005-01-12 08:02:00", "2005-01-12 08:02:00", "head2", "desc2", true));
+
+
+        Todo_list testtodo1 = new Todo_list(testtasklist, "testtodo1");
+        Todo_list testtodo2 = new Todo_list(testtasklist2, "testtodo2");
+
+        List<Todo_list> testlist = new ArrayList<>();
+        testlist.add(testtodo1);
+        testlist.add(testtodo2);
 
         BorderPane borderPane = new BorderPane();
 
-
-        //////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-        //ImageView addim = new ImageView(new Image(new File("fileplus.png").toURI().toString()));
-        Button add = new Button("Add task");
-        //addim.setFitWidth(45);
-        //addim.setFitHeight(45);
-        //add.setGraphic(addim);
-        //add.setStyle("-fx-background-color: transparent");
-        add.setOnAction(new EventHandler<ActionEvent>() {
-            public void handle(ActionEvent event) {
-
-                //try {
-                Stage addstage = new Stage();
-                addstage.setTitle("New task");
-
-                Label headlabel = new Label("Title");
-                TextField headlinefield = new TextField();
-                Label desclabel = new Label("Description");
-                TextField descriptionfield = new TextField();
-
-                DatePicker datePicker = new DatePicker();
-                DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                //String duedate = df.format();
-                Date currentdate = new Date();
-                //String currentDateString =
-                String creationdate = df.format(currentdate);
-
-
-                Button addtask = new Button("Add");
-                addtask.setOnAction(event1 -> {
-
-                    Task ntask = new Task(creationdate, "2005-01-12 08:02:00", headlinefield.getText(), descriptionfield.getText(), false); // TODO duedatel on vaja kellaaega, hetkel asendatud entrydatega
-
-                    try {
-
-                        dbc.addTask(ntask); // TODO ei tööta, hetkel ei jõudnud vaadata, miks.
-                        System.out.println("jep");
-                    } catch (SQLException e) {
-                        throw new RuntimeException(e);
-                    }
-
-                }); // ADD
-                Button canceladd = new Button("Cancel");
-                canceladd.setOnAction(event1 -> addstage.close()); // CLOSE
-
-                GridPane addtaskpane = new GridPane();
-                addtaskpane.add(addtask, 3, 4);
-                addtaskpane.add(canceladd, 3, 5);
-                addtaskpane.add(headlabel, 0, 0);
-                addtaskpane.add(headlinefield, 1, 0);
-                addtaskpane.add(desclabel, 0, 1);
-                addtaskpane.add(descriptionfield, 1, 1);
-                addtaskpane.add(datePicker, 1, 2);
-
-
-                addstage.setScene(new Scene(addtaskpane, 300, 160));
-                addstage.show();
-
-                /*} catch (SQLException e) {
-                    throw new RuntimeException(e);
-                }*/
-            }
-        }); // TODO ADDFUNCTION
-
-
-        Region region2 = new Region();
-        VBox.setVgrow(region2, Priority.ALWAYS);
-
-        VBox vBox = new VBox();
-        vBox.getChildren().addAll(region2, add);
-
-        //////////////////////////////////////////////////////////////////////////////////////////////////////////
+        ///// [LISTAREA] /////////////////////////////////////////////////////////////////////////////////////////////////////
 
         TabPane tabPane = new TabPane();
-        Tab tab1 = new Tab(); // TAB FOR MAIN TO-DO LIST
-        tab1.setText(dbc.getAllTasks().getDescription());
 
-        List<Task> tasks = dbc.getAllTasks().getTasks();
-        ObservableList<Task> observableList = FXCollections.observableArrayList(tasks);
-        ListView<Task> taskView = new ListView<>(observableList);
-        tab1.setContent(taskView);
-
-        tab1.setClosable(false);
-        tabPane.getTabs().add(tab1);
-
-        Tab nlisttab = new Tab(); // TAB FOR NEW TO-DO LIST
+        Tab nlisttab = new Tab(); // TAB FOR NEW TO-DO LIST TODO added task goes to selected tab/todolist
         nlisttab.setText("+");
         nlisttab.setClosable(false);
 
@@ -166,12 +103,124 @@ public class TodoApp extends Application {
             private void newTodoList(String text) {
 
             }
-        }); // CREATE NEW TO-DO LIST = TODO new DB
+        }); // CREATE NEW TO-DO LIST
 
         VBox newtabcontent = new VBox();
         newtabcontent.getChildren().addAll(ntabbutton, ntabfield);
         nlisttab.setContent(newtabcontent);
         tabPane.getTabs().add(nlisttab);
+
+        ///// [SIDEBAR} ////////////////////////////////////////////////////////////////////////////////////////////
+
+        Image image = new Image("fileplus.png");
+        ImageView addim = new ImageView(image);
+        Button add = new Button();
+        addim.setFitWidth(40);
+        addim.setFitHeight(40);
+        add.setGraphic(addim);
+        add.setStyle("-fx-background-color: transparent");
+        add.setOnAction(event -> {
+
+            Stage addstage = new Stage();
+            addstage.setTitle("New task");
+
+            Label headlabel = new Label("Title");
+            TextField headlinefield = new TextField();
+            Label desclabel = new Label("Description");
+            TextField descriptionfield = new TextField();
+
+
+            //String duedate = df.format();
+
+            ObservableList<String> hours = FXCollections.observableArrayList(new ArrayList<>());
+            ObservableList<String> minutes = FXCollections.observableArrayList(new ArrayList<>());
+
+            for (int i = 0; i < 60; i++) {
+                String hrs = "";
+                String mins = "";
+                if (i < 10) {
+                    hrs += "0";
+                    mins += "0";
+                }
+                if (i < 24) {
+                    hrs += i;
+                    hours.add(hrs);
+                }
+                mins += i;
+                minutes.add(mins);
+            }
+
+            SpinnerValueFactory<String> duedateHours = new SpinnerValueFactory.ListSpinnerValueFactory(hours);
+            Spinner<String> duedateHoursSpinner = new Spinner<>();
+            duedateHoursSpinner.setValueFactory(duedateHours);
+            SpinnerValueFactory<String> duedateMinutes = new SpinnerValueFactory.ListSpinnerValueFactory(minutes);
+            Spinner<String> duedateMinutesSpinner = new Spinner<>();
+            duedateMinutesSpinner.setValueFactory(duedateMinutes);
+            Label timeSeparator = new Label(":");
+            HBox timePickerBox = new HBox();
+
+            //duedateHoursSpinner.maxWidth(20); // ei tööta TODO uuri miks
+            //duedateHoursSpinner.maxHeight(20);
+            //duedateMinutesSpinner.maxWidth(20);
+
+            timePickerBox.getChildren().addAll(duedateHoursSpinner, timeSeparator, duedateMinutesSpinner);
+
+            DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+            DatePicker datePicker = new DatePicker();
+
+
+            Button addtask = new Button("Add");
+            addtask.setOnAction(event1 -> {
+                Date currentdate = new Date();
+                String creationdate = df.format(currentdate);
+                String duedate = datePicker.getValue() + " " + duedateHoursSpinner.getValue() + ":" + duedateMinutesSpinner.getValue() + ":00";
+
+                Task ntask = new Task(creationdate,
+                        duedate,
+                        headlinefield.getText(),
+                        descriptionfield.getText(),
+                        false); // Nüüd on duedate ka olemas.
+
+                System.out.println(ntask);
+                // saadab Taski serverile.
+                // addstage.close(); // kui additud, siis paneb kinni akna
+
+            }); // ADD
+            Button canceladd = new Button("Cancel");
+            canceladd.setOnAction(event1 -> addstage.close()); // CLOSE
+
+            GridPane addtaskpane = new GridPane();
+            addtaskpane.add(headlabel, 0, 0);
+            addtaskpane.add(headlinefield, 1, 0);
+            addtaskpane.add(desclabel, 0, 1);
+            addtaskpane.add(descriptionfield, 1, 1);
+            addtaskpane.add(datePicker, 1, 2);
+            addtaskpane.add(timePickerBox, 1, 3);
+            addtaskpane.add(addtask, 3, 4);
+            addtaskpane.add(canceladd, 3, 5);
+
+
+            addstage.setScene(new Scene(addtaskpane, 450, 160));
+            addstage.show();
+
+        }); // TODO ADDFUNCTION format done, now implementation
+
+
+        Region region2 = new Region();
+        VBox.setVgrow(region2, Priority.ALWAYS);
+
+        Button refreshbutton = new Button("refresh");
+        refreshbutton.setOnAction(event -> {
+            for (Todo_list todo_list : testlist) {
+                tabPane.getTabs().add(tabAdder(todo_list));
+            }
+        });
+
+        VBox vBox = new VBox();
+        vBox.getChildren().addAll(region2, new Label("[Sidebar]"), refreshbutton, add);
+
+
         //////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -191,12 +240,12 @@ public class TodoApp extends Application {
 
         primaryStage.setOnCloseRequest(event -> {
             System.out.println("Bye!");
-            try {
+           /* try {
                 dbc.conn.close();
             } catch (SQLException r) {
                 throw new RuntimeException(r);
             }
-            server.stop();
+            server.stop();*/
         });
 
         Scene scene = new Scene(borderPane, 400, 500, Color.SNOW);
@@ -205,15 +254,27 @@ public class TodoApp extends Application {
         primaryStage.show();
 
 
-        /*try {
-            System.out.println();
+    }
 
-        } finally {
-            dbc.conn.close();
-            server.stop();
-        }*/
+    private Tab tabAdder(Todo_list todo_list) {
+        Tab todolistTab = new Tab();
 
+        todolistTab.setText(todo_list.getDescription());
 
+        List<Task> tasks = todo_list.getTasks();
+        ObservableList<Task> observableList = FXCollections.observableArrayList(tasks);
+        ListView<Task> taskView = new ListView<>(observableList);
+        todolistTab.setContent(taskView);
+
+        todolistTab.setClosable(false);
+
+        todolistTab.setOnSelectionChanged(t -> {
+            if (todolistTab.isSelected()) {
+                System.out.println("Add nupp kehtib sellele listile");
+            }
+        });
+
+        return todolistTab; // TODO added task goes to selected tab/todolist
     }
 }
 /*
