@@ -70,7 +70,7 @@ public class TodoApp extends Application {
 
         BorderPane borderPane = new BorderPane();
 
-        ///// [LISTAREA] /////////////////////////////////////////////////////////////////////////////////////////////////////
+        ///// [LISTAREA] ///////////////////////////////////////////////////////////////////////////////////////////////
 
         TabPane tabPane = new TabPane();
 
@@ -210,7 +210,7 @@ public class TodoApp extends Application {
             addstage.setScene(new Scene(addtaskpane, 450, 160));
             addstage.show();
 
-        }); // TODO ADDFUNCTION format done, now implementation
+        });
 
 
         Region region2 = new Region();
@@ -265,6 +265,75 @@ public class TodoApp extends Application {
         primaryStage.setScene(scene);
         primaryStage.setTitle("Drop");
         primaryStage.show();
+
+        ///// [LOGIN] //////////////////////////////////////////////////////////////////////////////////////////////////
+
+        BorderPane loginPane = new BorderPane();
+        GridPane loginDataPane = new GridPane();
+
+        Label usernameLabel = new Label("Username: ");
+        TextField usernameField = new TextField();
+        Label passwordLabel = new Label("Password: ");
+        TextField passwordField = new TextField();
+
+        Button loginButton = new Button("Login");
+        loginButton.setOnAction(loginEvent -> {
+            String username = usernameField.getText();
+            String password = passwordField.getText();
+
+            // TODO kontrollib kasutajaandmeid
+            if (true) { // sisesta kontroll, peab serverilt vastust ootama
+                for (Todo_list todo_list : testlist) {
+                    tabPane.getTabs().add(tabAdder(todo_list));
+                }
+                ((Node) (loginEvent.getSource())).getScene().getWindow().hide();
+            } else {
+                Stage loginerror = new Stage();
+
+                loginerror.setScene(new Scene(new Label("Invalid username or password")));
+                loginerror.setAlwaysOnTop(true);
+                loginerror.show();
+            }
+            // TODO kui on korras, siis annab primarysse õiged listid ja sulgeb loginStagei
+        });
+        Button registerButton = new Button("Sign up");
+        registerButton.setOnAction(registerEvent -> {
+            String username = usernameField.getText();
+            String password = passwordField.getText();
+
+            if (false) { // leidub kasutaja sama usernamega
+                Stage registererror = new Stage();
+
+                registererror.setScene(new Scene(new Label("Username already taken")));
+                registererror.setAlwaysOnTop(true);
+                registererror.show();
+            } else {
+                // TODO lisab kasutaja
+
+                ((Node) (registerEvent.getSource())).getScene().getWindow().hide();
+            }
+        });
+
+
+        HBox buttonBox = new HBox();
+        Region region3 = new Region();
+        HBox.setHgrow(region3, Priority.ALWAYS);
+        buttonBox.getChildren().addAll(region3, loginButton, registerButton);
+
+        loginDataPane.add(usernameLabel, 0, 0);
+        loginDataPane.add(usernameField, 1, 0);
+        loginDataPane.add(passwordLabel, 0, 1);
+        loginDataPane.add(passwordField, 1, 1);
+        loginDataPane.add(buttonBox, 1, 4);
+
+        loginPane.setCenter(loginDataPane);
+
+        Scene loginScene = new Scene(loginPane);
+        Stage loginStage = new Stage();
+        loginStage.setScene(loginScene);
+        loginStage.setAlwaysOnTop(true);
+        loginStage.show();
+        // TODO tuleb kontrollida ühendust serveriga, muidu viskab errorisse
 
 
     }
