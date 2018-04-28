@@ -16,11 +16,15 @@ import javafx.scene.paint.Color;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.net.Socket;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class TodoApp extends Application {
+    static int server = 1337;
 
     public static void main(String[] args) {
         launch(args);
@@ -76,11 +80,12 @@ public class TodoApp extends Application {
         nlisttab.setOnSelectionChanged(t -> {
             if (nlisttab.isSelected()) {
                 tabPane.getTabs().add(tabAdder(new Todo_list(new ArrayList<>(), "New To-do list")));
+                tabPane.getSelectionModel().selectLast();
             }
-        }); // TODO
+        }); // TODO saada serverile
 
 
-        TextField ntabfield = new TextField();
+        /*TextField ntabfield = new TextField();
 
         Button ntabbutton = new Button("Create new to-do list");
         ntabbutton.setOnAction(new EventHandler<ActionEvent>() {
@@ -101,7 +106,7 @@ public class TodoApp extends Application {
 
         VBox newtabcontent = new VBox();
         newtabcontent.getChildren().addAll(ntabbutton, ntabfield);
-        nlisttab.setContent(newtabcontent);
+        nlisttab.setContent(newtabcontent);*/
         tabPane.getTabs().add(nlisttab);
 
         ///// [SIDEBAR} ////////////////////////////////////////////////////////////////////////////////////////////
@@ -154,34 +159,40 @@ public class TodoApp extends Application {
             Label timeSeparator = new Label(":");
             HBox timePickerBox = new HBox();
 
-            //duedateHoursSpinner.maxWidth(20); // ei tööta TODO uuri miks
+            //duedateHoursSpinner.maxWidth(20); // ei tööta TODO uuri miks (vähemoluline)
             //duedateHoursSpinner.maxHeight(20);
             //duedateMinutesSpinner.maxWidth(20);
 
             timePickerBox.getChildren().addAll(duedateHoursSpinner, timeSeparator, duedateMinutesSpinner);
 
-            DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            //DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
             DatePicker datePicker = new DatePicker();
 
 
             Button addtask = new Button("Add");
             addtask.setOnAction(event1 -> {
-                Date currentdate = new Date();
-                String creationdate = df.format(currentdate);
+                //Date currentdate = new Date();
+                //String creationdate = df.format(currentdate);
                 String duedate = datePicker.getValue() + " " + duedateHoursSpinner.getValue() + ":" + duedateMinutesSpinner.getValue() + ":00";
 
-                Task ntask = new Task(creationdate,
-                        duedate,
-                        headlinefield.getText(),
-                        descriptionfield.getText(),
-                        false); // Nüüd on duedate ka olemas.
+                //Task ntask = new Task(creationdate, duedate, headlinefield.getText(), descriptionfield.getText(),false);
 
-                System.out.println(ntask);
-                // saadab Taski serverile.
-                // addstage.close(); // kui additud, siis paneb kinni akna
+                String[] command = {"add", duedate, headlinefield.getText(), descriptionfield.getText()};
+
+                try {
+                    commandHandler(command);
+                    System.out.println("läks korda");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                //System.out.println(ntask);
+                addstage.close(); // kui additud, siis paneb kinni akna
 
             }); // ADD
+
+
             Button canceladd = new Button("Cancel");
             canceladd.setOnAction(event1 -> addstage.close()); // CLOSE
 
@@ -306,6 +317,32 @@ public class TodoApp extends Application {
         });
 
         return todolistTab; // TODO added task goes to selected tab/todolist
+    }
+
+    public static void commandHandler(String[] Command) throws Exception {
+
+
+        //formaat: 2005-01-12 08:02:00;juust;kapsas
+        System.out.println("connecting to server: " + server);
+
+        try (
+                Socket socket = new Socket("localhost", server);
+                DataInputStream in = new DataInputStream(socket.getInputStream());
+                DataOutputStream out = new DataOutputStream(socket.getOutputStream())
+        ) {
+            System.out.println("connected; sending data");
+
+
+            out.writeInt(Command.length);
+
+            for (int i = 0; i < Command.length; i++) {
+                out.writeUTF(Command[i]);
+                System.out.println("sent " + Command[i]);
+            }
+
+
+            System.out.println("cleaned up");
+        }
     }
 }
 /*
