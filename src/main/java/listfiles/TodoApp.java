@@ -333,7 +333,6 @@ public class TodoApp extends Application {
         loginStage.setScene(loginScene);
         loginStage.setAlwaysOnTop(true);
         loginStage.show();
-        // TODO tuleb kontrollida ühendust serveriga, muidu viskab errorisse
 
 
     }
@@ -345,8 +344,13 @@ public class TodoApp extends Application {
         todolistTab.setText(todo_list.getDescription());
 
         List<Task> tasks = todo_list.getTasks();
-        ObservableList<Task> observableList = FXCollections.observableArrayList(tasks);
-        ListView<Task> taskView = new ListView<>(observableList);
+        //ObservableList<Task> observableList = FXCollections.observableArrayList(tasks);
+        //ListView<Task> taskView = new ListView<>(observableList);
+        GridPane tasksPane = new GridPane();
+
+        for (int i = 0; i < tasks.size(); i++) {
+            tasksPane.add(taskPaneAdder(tasks.get(i)), 0, i);
+        }
 
         Button renameTodo = new Button(todo_list.getDescription());
         renameTodo.setOnAction(event -> {
@@ -358,8 +362,7 @@ public class TodoApp extends Application {
                 todo_list.setDescription(fieldtext);
                 renameTodo.setText(fieldtext);
 
-                //renamelistStage.close(); // ei tööta meetodis?
-                ((Node) (event1.getSource())).getScene().getWindow().hide(); // see töötab
+                ((Node) (event1.getSource())).getScene().getWindow().hide();
                 // TODO saadab serverile selle muutuse
             });
 
@@ -374,7 +377,7 @@ public class TodoApp extends Application {
 
 
         todoTabPane.setTop(new HBox(renameTodo));
-        todoTabPane.setCenter(taskView);
+        todoTabPane.setCenter(tasksPane);
 
         todolistTab.setContent(todoTabPane);
         todolistTab.setClosable(false);
@@ -386,6 +389,130 @@ public class TodoApp extends Application {
         });
 
         return todolistTab; // TODO added task goes to selected tab/todolist
+    }
+
+    private BorderPane taskPaneAdder(Task task) {
+        BorderPane taskBorderPane = new BorderPane();
+        taskBorderPane.setPrefWidth(500);
+
+        Label headlineLabel = new Label(task.getHeadline());
+        headlineLabel.setOnMouseClicked(headEditEvent -> {
+            TextField headEditField = new TextField("Insert new headline");
+            headEditField.setOnAction(headEditFieldEditEvent -> {
+
+                String fieldtext = headEditField.getText();
+                System.out.println(fieldtext);
+
+                headlineLabel.setText(fieldtext);
+
+                task.setHeadline(fieldtext);
+
+                ((Node) (headEditFieldEditEvent.getSource())).getScene().getWindow().hide();
+                // TODO saadab serverile selle muutuse
+            });
+
+            Scene headScene = new Scene(headEditField);
+            Stage headStage = new Stage();
+            headStage.setScene(headScene);
+            headStage.setAlwaysOnTop(true);
+            headStage.show();
+        });
+        Label duedateLabel = new Label(task.getDeadline());
+        duedateLabel.setOnMouseClicked(dateEditEvent -> {
+
+            ObservableList<String> hours = FXCollections.observableArrayList(new ArrayList<>());
+            ObservableList<String> minutes = FXCollections.observableArrayList(new ArrayList<>());
+
+            for (int i = 0; i < 60; i++) {
+                String hrs = "";
+                String mins = "";
+                if (i < 10) {
+                    hrs += "0";
+                    mins += "0";
+                }
+                if (i < 24) {
+                    hrs += i;
+                    hours.add(hrs);
+                }
+                mins += i;
+                minutes.add(mins);
+            }
+
+            SpinnerValueFactory<String> duedateHours = new SpinnerValueFactory.ListSpinnerValueFactory(hours);
+            Spinner<String> duedateHoursSpinner = new Spinner<>();
+            duedateHoursSpinner.setValueFactory(duedateHours);
+            SpinnerValueFactory<String> duedateMinutes = new SpinnerValueFactory.ListSpinnerValueFactory(minutes);
+            Spinner<String> duedateMinutesSpinner = new Spinner<>();
+            duedateMinutesSpinner.setValueFactory(duedateMinutes);
+            Label timeSeparator = new Label(":");
+            HBox timePickerBox = new HBox();
+
+            timePickerBox.getChildren().addAll(duedateHoursSpinner, timeSeparator, duedateMinutesSpinner);
+
+            DatePicker datePicker = new DatePicker();
+
+            Button dateEditButton = new Button("Edit");
+            dateEditButton.setOnAction(dateEditButtonEvent -> {
+                String duedate = datePicker.getValue() + " " + duedateHoursSpinner.getValue() + ":" + duedateMinutesSpinner.getValue() + ":00";
+                task.setDeadline(duedate);
+                duedateLabel.setText(duedate);
+
+                ((Node) (dateEditButtonEvent.getSource())).getScene().getWindow().hide();
+
+            });
+
+            VBox dateTimeEditBox = new VBox();
+            dateTimeEditBox.getChildren().addAll(datePicker, timePickerBox, dateEditButton);
+
+
+            Scene dateScene = new Scene(dateTimeEditBox);
+            Stage dateStage = new Stage();
+            dateStage.setScene(dateScene);
+            dateStage.setAlwaysOnTop(true);
+
+            dateStage.setTitle("New duedate");
+            dateStage.show();
+        });
+        Label descriptionLabel = new Label(task.getDescription());
+        descriptionLabel.setOnMouseClicked(descEditEvent -> {
+            TextField descEditField = new TextField("Insert new description");
+            descEditField.setOnAction(descEditFieldEditEvent -> {
+
+                String fieldtext = descEditField.getText();
+
+                descriptionLabel.setText(fieldtext);
+
+                task.setDescription(fieldtext);
+
+                ((Node) (descEditFieldEditEvent.getSource())).getScene().getWindow().hide();
+                // TODO saadab serverile selle muutuse
+            });
+
+            Scene descScene = new Scene(descEditField);
+            Stage descStage = new Stage();
+            descStage.setScene(descScene);
+            descStage.setAlwaysOnTop(true);
+            descStage.show();
+        });
+
+
+
+        HBox taskHead = new HBox();
+        Region taskHeadRegion = new Region();
+        HBox.setHgrow(taskHeadRegion, Priority.ALWAYS);
+        taskHead.getChildren().addAll(headlineLabel, taskHeadRegion, duedateLabel);
+
+        Button editButton = new Button("edit");
+        editButton.setOnAction(editEvent -> {
+
+        });
+
+
+        taskBorderPane.setTop(taskHead);
+        taskBorderPane.setLeft(descriptionLabel);
+        taskBorderPane.setRight(editButton);
+
+        return taskBorderPane;
     }
 
     public static void commandHandler(String[] Command) throws Exception {
@@ -413,7 +540,9 @@ public class TodoApp extends Application {
             System.out.println("cleaned up");
         }
     }
-}
+
+}            // TODO tuleb kontrollida ühendust serveriga, muidu viskab errorisse
+
 /*
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 
