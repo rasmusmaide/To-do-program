@@ -33,22 +33,7 @@ public class TodoApp extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         //primaryStage.initStyle(StageStyle.UNDECORATED);
-/*
-        Server server = Server.createTcpServer("-tcpPort", "9092", "-tcpAllowOthers").start();
 
-        Class.forName("org.h2.Driver");
-        dataBaseCommands dbc;
-        //Scanner scanner = new Scanner(System.in);
-        //System.out.println("Enter database username: ");
-        //String username = scanner.nextLine();
-        //System.out.println("Enter database password: ");
-        //String password = scanner.nextLine();
-
-        dbc = new dataBaseCommands("jdbc:h2:tcp://localhost/~/todoBase");//, username, password);
-        //dbc.initialize(); //esmakordsel käivitamisel
-
-        System.out.println(server.getURL());
-        System.out.println(server.getPort());*/
 
         // To-do lists for testing:
 
@@ -74,7 +59,7 @@ public class TodoApp extends Application {
 
         TabPane tabPane = new TabPane();
 
-        Tab nlisttab = new Tab(); // TAB FOR NEW TO-DO LIST TODO added task goes to selected tab/todolist
+        /*Tab nlisttab = new Tab(); // TAB FOR NEW TO-DO LIST
         nlisttab.setText("+");
         nlisttab.setClosable(false);
         nlisttab.setOnSelectionChanged(t -> {
@@ -82,34 +67,25 @@ public class TodoApp extends Application {
                 tabPane.getTabs().add(tabAdder(new Todo_list(new ArrayList<>(), "New To-do list")));
                 tabPane.getSelectionModel().selectLast();
             }
-        }); // TODO saada serverile
-
+        });
+*/
 
         /*TextField ntabfield = new TextField();
-
-        Button ntabbutton = new Button("Create new to-do list");
-        ntabbutton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-
-                while (ntabfield.getText().equals("")) {
-                    ntabfield.setText("Insert list name!");
-                }
-                newTodoList(ntabfield.getText()); // enter list name
-
-            }
-
-            private void newTodoList(String text) {
-
-            }
-        }); // CREATE NEW TO-DO LIST
 
         VBox newtabcontent = new VBox();
         newtabcontent.getChildren().addAll(ntabbutton, ntabfield);
         nlisttab.setContent(newtabcontent);*/
-        tabPane.getTabs().add(nlisttab);
+
+        //tabPane.getTabs().add(nlisttab);
 
         ///// [SIDEBAR} ////////////////////////////////////////////////////////////////////////////////////////////
+
+        Button addListButton = new Button("New to-do");
+        addListButton.setOnAction(event -> {
+            tabPane.getTabs().add(tabAdder(new Todo_list(new ArrayList<>(), "New To-do list")));
+            tabPane.getSelectionModel().selectLast();
+
+        }); // CREATE NEW TO-DO LIST// TODO saada serverile
 
         Image imageplus = new Image("fileplus.png");
         ImageView addim = new ImageView(imageplus);
@@ -228,10 +204,10 @@ public class TodoApp extends Application {
             for (Todo_list todo_list : testlist) {
                 tabPane.getTabs().add(tabAdder(todo_list));
             }
-        });
+        }); // TODO hetkel lisab ainult juurde
 
         VBox vBox = new VBox();
-        vBox.getChildren().addAll(region2, new Label("[Sidebar]"), refreshbutton, add);
+        vBox.getChildren().addAll(addListButton, region2, new Label("[Sidebar]"), refreshbutton, add);
 
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -494,7 +470,6 @@ public class TodoApp extends Application {
             descStage.setAlwaysOnTop(true);
             descStage.show();
         });
-
 
 
         HBox taskHead = new HBox();
