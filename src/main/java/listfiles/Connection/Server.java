@@ -83,7 +83,11 @@ class Server {
 
 
                 dbc = new dataBaseCommands("jdbc:h2:tcp://localhost/~/todoBase");
-                //dbc.initialize(); //esmakordsel käivitamisel --> kuna server ning tavakasutajat ei puuduta ss pmst pole vaja
+
+
+                //dbc.removeTodo_s();//kui on todo_s tabeliga variant veel alles
+                //dbc.newInitialize();//esmakordsel käivitamisel
+
                 List infoIn = Echo.getInfo();
                 try {
                     if (infoIn.get(0).equals("get list")) {

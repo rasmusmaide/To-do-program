@@ -40,11 +40,28 @@ public class dataBaseCommands {
         RunScript.execute(conn,reader);
     }
 
+    public void removeTodo_s() throws Exception {
+        ClassLoader classLoader = dataBaseCommands.class.getClassLoader();
+        Reader reader = (new InputStreamReader(classLoader.getResourceAsStream("dropOld.txt"),"UTF-8"));
+        RunScript.execute(conn,reader);
+    }
+
+    public void newInitialize() throws Exception {
+        ClassLoader classLoader = dataBaseCommands.class.getClassLoader();
+        Reader reader = (new InputStreamReader(classLoader.getResourceAsStream("tasks.txt"),"UTF-8"));
+        RunScript.execute(conn,reader);
+        Reader reader2 = (new InputStreamReader(classLoader.getResourceAsStream("users.txt"),"UTF-8"));
+        RunScript.execute(conn,reader2);
+        Reader reader3 = (new InputStreamReader(classLoader.getResourceAsStream("description.txt"),"UTF-8"));
+        RunScript.execute(conn,reader3);
+    }
+
+
     public Todo_list getAllTasks() throws SQLException {
 
 
         List<Task> allTasks = new ArrayList<>();
-        try (PreparedStatement context = conn.prepareStatement("select * from TODO_S");
+        try (PreparedStatement context = conn.prepareStatement("select * from TASKS");
              ResultSet rs = context.executeQuery()) {
 
 
@@ -71,7 +88,7 @@ public class dataBaseCommands {
     public void addTask(Task task) throws SQLException {
         //takes the valeus from task as strings and add them to the sql execution statement
 
-        try (PreparedStatement statement = conn.prepareStatement("INSERT INTO todo_s(CREATION_DATE, DUE_DATE , HEADLINE, TEXT, DONE) VALUES ( ?, ?, ?, ?, ?)")) {
+        try (PreparedStatement statement = conn.prepareStatement("INSERT INTO TASKS(CREATION_DATE, DUE_DATE , HEADLINE, TEXT, DONE) VALUES ( ?, ?, ?, ?, ?)")) {
             statement.setString(1, task.getCreationDate());
             statement.setString(2, task.getDeadline());
             statement.setString(3, task.getHeadline());
@@ -91,12 +108,12 @@ public class dataBaseCommands {
 
         // VERY MOST IMPORTANT: https://stackoverflow.com/questions/740358/reorder-reset-auto-increment-primary-key
         //(SET @count = 0
-        // UPDATE `todo_s` SET `todo_s`.`id` = @count:= @count + 1;)
+        // UPDATE `TASKS` SET `TASKS`.`id` = @count:= @count + 1;)
 
 
-        try (PreparedStatement statement = conn.prepareStatement("DELETE FROM todo_s WHERE id = ?");
+        try (PreparedStatement statement = conn.prepareStatement("DELETE FROM TASKS WHERE id = ?");
              PreparedStatement statement2 = conn.prepareStatement("SET @count = 0");
-             PreparedStatement statement3 = conn.prepareStatement("UPDATE `todo_s` SET `todo_s`.`id` = @count:= @count + 1")) {
+             PreparedStatement statement3 = conn.prepareStatement("UPDATE `TASKS` SET `TASKS`.`id` = @count:= @count + 1")) {
 
 
             statement.setString(1, Integer.toString(row));
@@ -108,7 +125,7 @@ public class dataBaseCommands {
     }
 
     public void markAsDone(int row) throws SQLException {
-        try (PreparedStatement statement = conn.prepareStatement("UPDATE `todo_s` SET done = 'TRUE' WHERE id = ?")) {
+        try (PreparedStatement statement = conn.prepareStatement("UPDATE `TASKS` SET done = 'TRUE' WHERE id = ?")) {
             statement.setString(1, Integer.toString(row));
             statement.executeUpdate();
         }
@@ -116,7 +133,7 @@ public class dataBaseCommands {
 
 
     void markAsUnDone(int row) throws SQLException {
-        try (PreparedStatement statement = conn.prepareStatement("UPDATE `todo_s` SET done = 'FALSE' WHERE id = ?")) {
+        try (PreparedStatement statement = conn.prepareStatement("UPDATE `TASKS` SET done = 'FALSE' WHERE id = ?")) {
             statement.setString(1, Integer.toString(row));
             statement.executeLargeUpdate();
         }
@@ -124,7 +141,7 @@ public class dataBaseCommands {
     }
 
     void changeText(int row, String newMessage) throws SQLException {
-        try (PreparedStatement statement = conn.prepareStatement("UPDATE `todo_s` SET text = ? WHERE id = ?")) {
+        try (PreparedStatement statement = conn.prepareStatement("UPDATE `TASKS` SET text = ? WHERE id = ?")) {
             statement.setString(1, newMessage);
             statement.setString(2, Integer.toString(row));
             statement.executeUpdate();
@@ -133,7 +150,7 @@ public class dataBaseCommands {
     }
 
     void changeHeadline(int row, String newHeadline) throws SQLException {
-        try (PreparedStatement statement = conn.prepareStatement("UPDATE `todo_s` SET headline = ? WHERE id = ?")) {
+        try (PreparedStatement statement = conn.prepareStatement("UPDATE `TASKS` SET headline = ? WHERE id = ?")) {
             statement.setString(1, newHeadline);
             statement.setString(2, Integer.toString(row));
             statement.executeUpdate();
@@ -142,7 +159,7 @@ public class dataBaseCommands {
     }
 
     void changeCreationDate(int row, String newCreationDate) throws SQLException {  //not needed?
-        try (PreparedStatement statement = conn.prepareStatement("UPDATE `todo_s` SET creation_date = ? WHERE id = ?")) {
+        try (PreparedStatement statement = conn.prepareStatement("UPDATE `TASKS` SET creation_date = ? WHERE id = ?")) {
             statement.setString(1, newCreationDate);
             statement.setString(2, Integer.toString(row));
             statement.executeUpdate();
@@ -152,7 +169,7 @@ public class dataBaseCommands {
 
 
     void changeDueDate(int row, String newDueDate) throws SQLException {
-        try (PreparedStatement statement = conn.prepareStatement("UPDATE `todo_s` SET due_date = ? WHERE id = ?")) {
+        try (PreparedStatement statement = conn.prepareStatement("UPDATE `TASKS` SET due_date = ? WHERE id = ?")) {
             statement.setString(1, newDueDate);
             statement.setString(2, Integer.toString(row));
             statement.executeUpdate();
@@ -166,7 +183,7 @@ public class dataBaseCommands {
 //The code I have used so far...
 //---
 //Creating th table:
-//CREATE TABLE ToDo_s (
+//CREATE TABLE TASKS (
 //        id INT AUTO_INCREMENT PRIMARY KEY,
 //        creation_date TIMESTAMP,
 //        due_date TIMESTAMP,
@@ -176,10 +193,10 @@ public class dataBaseCommands {
 //);
 
 //Inserting values to table:
-//INSERT INTO todo_s VALUES (1,'2005-01-12 08:02:00','2005-01-12 08:02:00','My note','some very random text', FALSE)
+//INSERT INTO TASKS VALUES (1,'2005-01-12 08:02:00','2005-01-12 08:02:00','My note','some very random text', FALSE)
 
 /**
  * IMPORTANT!
  * Advanced insert, where id is automatically placed
- * INSERT INTO todo_s(CREATION_DATE, DUE_DATE , HEADLINE, TEXT, DONE) VALUES ( '2005-01-12 08:02:00', '2005-01-12 08:02:00', 'jkl', 'asd', 'FALSE')
+ * INSERT INTO TASKS(CREATION_DATE, DUE_DATE , HEADLINE, TEXT, DONE) VALUES ( '2005-01-12 08:02:00', '2005-01-12 08:02:00', 'jkl', 'asd', 'FALSE')
  */
