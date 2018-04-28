@@ -25,7 +25,7 @@ import static java.lang.Boolean.FALSE;
 
 public class dataBaseCommands {
 
-    Connection conn;
+    public Connection conn;
 
 
 
@@ -68,7 +68,7 @@ public class dataBaseCommands {
         return todo_list; //allTasks;
     }
 
-    void addTask(Task task) throws SQLException {
+    public void addTask(Task task) throws SQLException {
         //takes the valeus from task as strings and add them to the sql execution statement
 
         try (PreparedStatement statement = conn.prepareStatement("INSERT INTO todo_s(CREATION_DATE, DUE_DATE , HEADLINE, TEXT, DONE) VALUES ( ?, ?, ?, ?, ?)")) {
@@ -81,7 +81,7 @@ public class dataBaseCommands {
         }
     }
 
-    void deleteTask(int row) throws SQLException {
+    public void deleteTask(int row) throws SQLException {
         /*Flask
         *   cur.execute("DELETE FROM users WHERE id = %s", [id])
             # Number reassesment
@@ -107,7 +107,7 @@ public class dataBaseCommands {
         }
     }
 
-    void markAsDone(int row) throws SQLException {
+    public void markAsDone(int row) throws SQLException {
         try (PreparedStatement statement = conn.prepareStatement("UPDATE `todo_s` SET done = 'TRUE' WHERE id = ?")) {
             statement.setString(1, Integer.toString(row));
             statement.executeUpdate();
