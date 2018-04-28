@@ -164,6 +164,13 @@ public class TodoApp extends Application {
                 String duedate = datePicker.getValue() + " " + duedateHoursSpinner.getValue() + ":" + duedateMinutesSpinner.getValue() + ":00";
 
                 //Task ntask = new Task(creationdate, duedate, headlinefield.getText(), descriptionfield.getText(),false);
+                try {
+                    datePicker.getValue().equals(null);
+                }catch (NullPointerException e){
+                    //pmst siia võiks panna ka kurrent date, aga suurt vahet pole
+                    duedate = "2020-01-01";
+                }
+
 
                 String[] command = {"add", duedate, headlinefield.getText(), descriptionfield.getText()};
 
