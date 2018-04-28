@@ -107,10 +107,10 @@ class Server {
                         String entrydate = df.format(currentdate);
                         String date = (String) infoIn.get(1);
                         String head = (String) infoIn.get(2);
-                        String desc = (String) infoIn.get(3);
+                        String text = (String) infoIn.get(3);
 
 
-                        Task ntask = new Task(entrydate, date, head, desc, false);
+                        Task ntask = new Task(entrydate, date, head, text, false);
                         dbc.addTask(ntask);
                         System.out.println("added task: " + ntask.toString());
 
