@@ -82,8 +82,19 @@ public class TodoApp extends Application {
 
         Button addListButton = new Button("New to-do");
         addListButton.setOnAction(event -> {
-            tabPane.getTabs().add(tabAdder(new Todo_list(new ArrayList<>(), "New To-do list")));
+            Todo_list ntodo = new Todo_list(new ArrayList<>(), "New To-do list");
+
+            tabPane.getTabs().add(tabAdder(ntodo));
             tabPane.getSelectionModel().selectLast();
+
+            /*String[] command = {"addlist", ntodo.getDescription()}; // Todo lisab kas siin id või küsib kohe ABlt
+
+            try {
+                commandHandler(command);
+                System.out.println("läks korda");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }*/
 
         }); // CREATE NEW TO-DO LIST// TODO saada serverile
 
@@ -477,20 +488,28 @@ public class TodoApp extends Application {
         HBox.setHgrow(taskHeadRegion, Priority.ALWAYS);
         taskHead.getChildren().addAll(headlineLabel, taskHeadRegion, duedateLabel);
 
-        Button editButton = new Button("edit");
-        editButton.setOnAction(editEvent -> {
+        Button deleteTaskButton = new Button("Delete");
+        deleteTaskButton.setOnAction(editEvent -> {
+            /*String[] command = {"deletetask", taskid}; // Todo
+
+            try {
+                commandHandler(command);
+                System.out.println("läks korda");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }*/
 
         });
 
 
         taskBorderPane.setTop(taskHead);
         taskBorderPane.setLeft(descriptionLabel);
-        taskBorderPane.setRight(editButton);
+        //taskBorderPane.setRight(editButton);
 
         return taskBorderPane;
     }
 
-    public static void commandHandler(String[] Command) throws Exception {
+    public static void commandHandler(String[] command) throws Exception {
 
 
         //formaat: 2005-01-12 08:02:00;juust;kapsas
@@ -504,11 +523,11 @@ public class TodoApp extends Application {
             System.out.println("connected; sending data");
 
 
-            out.writeInt(Command.length);
+            out.writeInt(command.length);
 
-            for (int i = 0; i < Command.length; i++) {
-                out.writeUTF(Command[i]);
-                System.out.println("sent " + Command[i]);
+            for (int i = 0; i < command.length; i++) {
+                out.writeUTF(command[i]);
+                System.out.println("sent " + command[i]);
             }
 
 
