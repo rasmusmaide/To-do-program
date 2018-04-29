@@ -70,7 +70,7 @@ public class TodoApp extends Application {
         addListButton.setOnAction(event -> {
             Todo_list ntodo = new Todo_list(new ArrayList<>(), "New To-do list");
 
-            String[] command = {"addlist", "New To-do list"};
+            String[] command = {"addlist"};
 
             try {
                 commandHandler(command);

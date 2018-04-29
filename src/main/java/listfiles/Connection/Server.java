@@ -9,6 +9,7 @@ import java.net.Socket;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -58,18 +59,23 @@ public class Server {
                             String userIDstring = infoIn.get(1);
                             int userID = Integer.parseInt(userIDstring);
 
-                            /*List<Todo_list> userLists = dbc.getAllUserLists(userID);
+                            /*List<Todo_list> userLists = dbc.getAllUserLists(userID); // TODO sellise funktsiooniga käsku dbcs ei ole
 
                             for (Todo_list todo_list : userLists) {
                                 System.out.println(todo_list.toString());
+                            }
 
-                            }*/
-
-                            // todo saada tagasi
+                            echo.sendInfo(userLists); // saadab tagasi*/
 
                             break;
-                        case "show list":
-                            System.out.println(dbc.getAllTasks().toString());
+                        case "addlist": // {"addlist"}
+                            Todo_list ntodo = new Todo_list(new ArrayList<>(), "New To-do list");
+
+                            //dbc.newTodo(); // TODO sellise funktsiooniga käsku dbcs ei ole
+
+                            System.out.println("Added new todo list");
+
+                            //echo.sendInfo(ntodo); // saadab tagasi koos indexiga // todo saada tagasi
                             break;
                         case "addtask":
                             System.out.println("Add task: ");
@@ -84,9 +90,10 @@ public class Server {
 
 
                             Task ntask = new Task(entrydate, date, head, text, false);
-                            dbc.addTask(ntask);
+                            dbc.addTask(ntask); // see võiks returnida selle lisatud taski indexi
                             System.out.println("added task: " + ntask.toString());
-                            // TODO saada tagasi
+
+                            echo.sendInfo(ntask); // saadab tagasi koos indexiga // TODO saada tagasi
 
                             break;
                         case "deletetask": // {"deletetask", task.getTaskID()}
@@ -191,16 +198,13 @@ public class Server {
                                 System.out.println("Not a valid index!");
                             }
                             break;
-                        case "checkuser":
+                        case "checkuserRegister":
                             try {
                                 String username = infoIn.get(1);
 
-                                String password = infoIn.get(2);
-                                //dbc.checkuser(username, password); // TODO sellise funktsiooniga käsku dbcs ei ole
+                                //dbc.checkuserRegister(username); // TODO sellise funktsiooniga käsku dbcs ei ole
 
-                                System.out.println("User found: " + username + " " + password);
-
-                                //int index = Integer.parseInt(indexstring); TODO saadab userID tagasi
+                                System.out.println("User found: " + username); // kui leiab sellise usernameiga useri, siis ei lase regada
 
                             } catch (NumberFormatException e) {
                                 System.out.println("Not a valid index!");
@@ -210,13 +214,22 @@ public class Server {
                         case "register":
                             try {
                                 String username = infoIn.get(1);
-
                                 String password = infoIn.get(2);
                                 //dbc.register(username, password); // TODO sellise funktsiooniga käsku dbcs ei ole
 
                                 System.out.println("User signed up: " + username + " " + password);
 
-                                //int index = Integer.parseInt(indexstring); TODO saadab userID tagasi
+                            } catch (NumberFormatException e) {
+                                System.out.println("Not a valid index!");
+                            }
+                            break;
+                        case "checkuserLogin": // vist ei ole ikka vaja?
+                            try {
+                                String username = infoIn.get(1);
+                                String password = infoIn.get(2);
+                                //dbc.checkuserLogin(username, password); // TODO sellise funktsiooniga käsku dbcs ei ole
+
+                                System.out.println("User found: " + username + " " + password);
 
                             } catch (NumberFormatException e) {
                                 System.out.println("Not a valid index!");
@@ -225,13 +238,13 @@ public class Server {
                         case "login":
                             try {
                                 String username = infoIn.get(1);
-
                                 String password = infoIn.get(2);
                                 //dbc.login(username, password); // TODO sellise funktsiooniga käsku dbcs ei ole
+                                // võiks returnida userID
 
                                 System.out.println("User logged in: " + username + " " + password);
 
-                                //int index = Integer.parseInt(indexstring); TODO saadab userID tagasi
+                                //echo.sendInfo(userID); // TODO saadab userID tagasi
 
                             } catch (NumberFormatException e) {
                                 System.out.println("Not a valid index!");
