@@ -132,7 +132,7 @@ public class dataBaseCommands {
     }
 
 
-    void markAsUnDone(int row) throws SQLException {
+    public void markAsUnDone(int row) throws SQLException {
         try (PreparedStatement statement = conn.prepareStatement("UPDATE `TASKS` SET done = 'FALSE' WHERE id = ?")) {
             statement.setString(1, Integer.toString(row));
             statement.executeLargeUpdate();
@@ -140,7 +140,7 @@ public class dataBaseCommands {
 
     }
 
-    void changeText(int row, String newMessage) throws SQLException {
+    public void changeText(int row, String newMessage) throws SQLException {
         try (PreparedStatement statement = conn.prepareStatement("UPDATE `TASKS` SET text = ? WHERE id = ?")) {
             statement.setString(1, newMessage);
             statement.setString(2, Integer.toString(row));
@@ -149,7 +149,7 @@ public class dataBaseCommands {
 
     }
 
-    void changeHeadline(int row, String newHeadline) throws SQLException {
+    public void changeHeadline(int row, String newHeadline) throws SQLException {
         try (PreparedStatement statement = conn.prepareStatement("UPDATE `TASKS` SET headline = ? WHERE id = ?")) {
             statement.setString(1, newHeadline);
             statement.setString(2, Integer.toString(row));
@@ -158,7 +158,7 @@ public class dataBaseCommands {
 
     }
 
-    void changeCreationDate(int row, String newCreationDate) throws SQLException {  //not needed?
+    public void changeCreationDate(int row, String newCreationDate) throws SQLException {  //not needed?
         try (PreparedStatement statement = conn.prepareStatement("UPDATE `TASKS` SET creation_date = ? WHERE id = ?")) {
             statement.setString(1, newCreationDate);
             statement.setString(2, Integer.toString(row));
@@ -168,7 +168,7 @@ public class dataBaseCommands {
     }
 
 
-    void changeDueDate(int row, String newDueDate) throws SQLException {
+    public void changeDueDate(int row, String newDueDate) throws SQLException {
         try (PreparedStatement statement = conn.prepareStatement("UPDATE `TASKS` SET due_date = ? WHERE id = ?")) {
             statement.setString(1, newDueDate);
             statement.setString(2, Integer.toString(row));

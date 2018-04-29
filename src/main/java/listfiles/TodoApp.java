@@ -440,14 +440,14 @@ public class TodoApp extends Application {
 
                 task.setHeadline(fieldtext);
 
-                String[] command = {"renametask", task.getTaskID()};
+                String[] command = {"renametask", task.getTaskID(), fieldtext};
 
-                /*try {
+                try {
                     commandHandler(command); // Todo
                     System.out.println("läks korda");
                 } catch (Exception e) {
                     e.printStackTrace();
-                }*/
+                }
 
                 ((Node) (headEditFieldEditEvent.getSource())).getScene().getWindow().hide();
                 // TODO saadab serverile selle muutuse
@@ -499,14 +499,14 @@ public class TodoApp extends Application {
                 task.setDeadline(duedate);
                 duedateLabel.setText(duedate);
 
-                String[] command = {"dateedit", task.getTaskID()};
+                String[] command = {"dateedit", task.getTaskID(), duedate};
 
-                /*try {
+                try {
                     commandHandler(command); // Todo
                     System.out.println("läks korda");
                 } catch (Exception e) {
                     e.printStackTrace();
-                }*/
+                }
 
                 ((Node) (dateEditButtonEvent.getSource())).getScene().getWindow().hide();
 
@@ -535,14 +535,14 @@ public class TodoApp extends Application {
 
                 task.setDescription(fieldtext);
 
-                String[] command = {"descedit", task.getTaskID()};
+                String[] command = {"descedit", task.getTaskID(), fieldtext};
 
-                /*try {
+                try {
                     commandHandler(command); // Todo
                     System.out.println("läks korda");
                 } catch (Exception e) {
                     e.printStackTrace();
-                }*/
+                }
 
                 ((Node) (descEditFieldEditEvent.getSource())).getScene().getWindow().hide();
                 // TODO saadab serverile selle muutuse
@@ -601,7 +601,7 @@ public class TodoApp extends Application {
 
             out.writeInt(command.length);
 
-            for (int i = 0; i < command.length-1; i++) {
+            for (int i = 0; i < command.length-1; i++) { // uuri, miks ma siia -1 pidin panema
                 out.writeUTF(command[i]);
                 System.out.println("sent " + command[i]);
             }
