@@ -6,6 +6,8 @@ public class Task {
     private String headline;
     private String description;
     private boolean done;
+    private String taskID;
+    private String todo_listID;
 
     public Task(String creationDate, String deadline, String headline, String description, boolean done) {
         this.creationDate = creationDate;
@@ -13,6 +15,22 @@ public class Task {
         this.headline = headline;
         this.description = description;
         this.done = done;
+    }
+
+    public String getTaskID() {
+        return taskID;
+    }
+
+    public void setTaskID(String taskID) {
+        this.taskID = taskID;
+    }
+
+    public String getTodo_listID() {
+        return todo_listID;
+    }
+
+    public void setTodo_listID(String todo_listID) {
+        this.todo_listID = todo_listID;
     }
 
     public String getCreationDate() {

@@ -27,6 +27,7 @@ public class TodoApp extends Application {
     static int server = 1337;
     private String selectedTodo = "0";
     private String userid = "999";
+    private String selectedTask = "0";
 
     public static void main(String[] args) {
         launch(args);
@@ -43,10 +44,12 @@ public class TodoApp extends Application {
                 new Task("2005-01-12 08:02:00", "2005-01-12 08:02:00", "head1", "desc1", false),
                 new Task("2005-01-12 08:02:00", "2005-01-12 08:02:00", "head2", "desc2", false)
         ));
+        testtasklist.get(0).setTaskID("111");
+        testtasklist.get(1).setTaskID("222");
 
         List<Task> testtasklist2 = new ArrayList<>();
-        testtasklist2.add(new Task("2005-01-12 08:02:00", "2005-01-12 08:02:00", "head2", "desc2", true));
-
+        testtasklist2.add(new Task("2005-01-12 08:02:00", "2005-01-12 08:02:00", "head3", "desc3", true));
+        testtasklist2.get(0).setTaskID("333");
 
         Todo_list testtodo1 = new Todo_list(testtasklist, "testtodo1");
         Todo_list testtodo2 = new Todo_list(testtasklist2, "testtodo2");
@@ -76,12 +79,12 @@ public class TodoApp extends Application {
                 e.printStackTrace();
             }
 
-            String indexFromDB = "3"; // TODO saab andmebaasist indexi
+            String indexFromDB = "444"; // TODO saab andmebaasist indexi
 
             tabPane.getTabs().add(tabAdder(ntodo, indexFromDB));
             tabPane.getSelectionModel().selectLast();
 
-        }); // CREATE NEW TO-DO LIST// TODO saada serverile
+        }); // CREATE NEW TO-DO LIST
 
         Image imageplus = new Image("fileplus.png");
         ImageView addim = new ImageView(imageplus);
@@ -148,11 +151,7 @@ public class TodoApp extends Application {
                 //String creationdate = df.format(currentdate);
                 String duedate = datePicker.getValue() + " " + duedateHoursSpinner.getValue() + ":" + duedateMinutesSpinner.getValue() + ":00";
 
-                //Task ntask = new Task(creationdate, duedate, headlinefield.getText(), descriptionfield.getText(),false);
-                try {
-                    datePicker.getValue().equals(null);
-                }catch (NullPointerException e){
-                    //pmst siia võiks panna ka kurrent date, aga suurt vahet pole
+                if (datePicker.getValue() == null) {
                     duedate = "2020-01-01";
                 }
 
@@ -165,6 +164,13 @@ public class TodoApp extends Application {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+
+                // TODO saab serverilt Taski (nüüd koos taskIDga)
+                Task ntask = new Task(duedate, duedate, headlinefield.getText(), descriptionfield.getText(), false);
+                ntask.setTaskID("555"); // selle peaks ABlt saama
+                ntask.setTodo_listID(selectedTodo); // selle ka
+
+                //taskPaneAdder(ntask); // TODO paigutab selle õigesse tabi
 
                 //System.out.println(ntask);
                 addstage.close(); // kui additud, siis paneb kinni akna
@@ -388,6 +394,15 @@ public class TodoApp extends Application {
 
                 task.setHeadline(fieldtext);
 
+                String[] command = {"renametask", task.getTaskID()};
+
+                /*try {
+                    commandHandler(command); // Todo
+                    System.out.println("läks korda");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }*/
+
                 ((Node) (headEditFieldEditEvent.getSource())).getScene().getWindow().hide();
                 // TODO saadab serverile selle muutuse
             });
@@ -438,6 +453,15 @@ public class TodoApp extends Application {
                 task.setDeadline(duedate);
                 duedateLabel.setText(duedate);
 
+                String[] command = {"dateedit", task.getTaskID()};
+
+                /*try {
+                    commandHandler(command); // Todo
+                    System.out.println("läks korda");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }*/
+
                 ((Node) (dateEditButtonEvent.getSource())).getScene().getWindow().hide();
 
             });
@@ -465,6 +489,15 @@ public class TodoApp extends Application {
 
                 task.setDescription(fieldtext);
 
+                String[] command = {"descedit", task.getTaskID()};
+
+                /*try {
+                    commandHandler(command); // Todo
+                    System.out.println("läks korda");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }*/
+
                 ((Node) (descEditFieldEditEvent.getSource())).getScene().getWindow().hide();
                 // TODO saadab serverile selle muutuse
             });
@@ -484,14 +517,14 @@ public class TodoApp extends Application {
 
         Button deleteTaskButton = new Button("Delete");
         deleteTaskButton.setOnAction(editEvent -> {
-            /*String[] command = {"deletetask", taskid}; // Todo
+            String[] command = {"deletetask", task.getTaskID()};
 
             try {
-                commandHandler(command);
+                commandHandler(command); // Todo
                 System.out.println("läks korda");
             } catch (Exception e) {
                 e.printStackTrace();
-            }*/
+            }
 
         });
 

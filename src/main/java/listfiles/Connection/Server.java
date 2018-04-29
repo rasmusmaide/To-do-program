@@ -91,8 +91,8 @@ class Server {
 
                 try{
                     dbc.newInitialize();//esmakordsel käivitamisel
-                }catch (Exception e){
-
+                }catch (SQLException e){
+                    throw new RuntimeException(e);
                 }
 
 
