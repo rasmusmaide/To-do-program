@@ -86,116 +86,7 @@ public class TodoApp extends Application {
 
         }); // CREATE NEW TO-DO LIST
 
-        Image imageplus = new Image("fileplus.png");
-        ImageView addim = new ImageView(imageplus);
-        Button add = new Button();
-        addim.setFitWidth(40);
-        addim.setFitHeight(40);
-        add.setGraphic(addim);
-        add.setStyle("-fx-background-color: transparent");
 
-        add.setOnAction(addEvent -> {
-
-            Stage addstage = new Stage();
-            addstage.setTitle("New task");
-
-            Label headlabel = new Label("Title");
-            TextField headlinefield = new TextField();
-            Label desclabel = new Label("Description");
-            TextField descriptionfield = new TextField();
-
-
-            //String duedate = df.format();
-
-            ObservableList<String> hours = FXCollections.observableArrayList(new ArrayList<>());
-            ObservableList<String> minutes = FXCollections.observableArrayList(new ArrayList<>());
-
-            for (int i = 0; i < 60; i++) {
-                String hrs = "";
-                String mins = "";
-                if (i < 10) {
-                    hrs += "0";
-                    mins += "0";
-                }
-                if (i < 24) {
-                    hrs += i;
-                    hours.add(hrs);
-                }
-                mins += i;
-                minutes.add(mins);
-            }
-
-            SpinnerValueFactory<String> duedateHours = new SpinnerValueFactory.ListSpinnerValueFactory(hours);
-            Spinner<String> duedateHoursSpinner = new Spinner<>();
-            duedateHoursSpinner.setValueFactory(duedateHours);
-            SpinnerValueFactory<String> duedateMinutes = new SpinnerValueFactory.ListSpinnerValueFactory(minutes);
-            Spinner<String> duedateMinutesSpinner = new Spinner<>();
-            duedateMinutesSpinner.setValueFactory(duedateMinutes);
-            Label timeSeparator = new Label(":");
-            HBox timePickerBox = new HBox();
-
-            //duedateHoursSpinner.maxWidth(20); // ei tööta TODO uuri miks (vähemoluline)
-            //duedateHoursSpinner.maxHeight(20);
-            //duedateMinutesSpinner.maxWidth(20);
-
-            timePickerBox.getChildren().addAll(duedateHoursSpinner, timeSeparator, duedateMinutesSpinner);
-
-            //DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
-            DatePicker datePicker = new DatePicker();
-
-
-            Button addtask = new Button("Add");
-            addtask.setOnAction(event1 -> {
-                //Date currentdate = new Date();
-                //String creationdate = df.format(currentdate);
-                String duedate = datePicker.getValue() + " " + duedateHoursSpinner.getValue() + ":" + duedateMinutesSpinner.getValue() + ":00";
-
-                if (datePicker.getValue() == null) {
-                    duedate = "2020-01-01";
-                }
-
-
-                String[] command = {"add", duedate, headlinefield.getText(), descriptionfield.getText(), selectedTodo}; // TODO todo_listId = selectedTodo
-
-                try {
-                    commandHandler(command);
-                    System.out.println("läks korda");
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-                // TODO saab serverilt Taski (nüüd koos taskIDga)
-                Task ntask = new Task(duedate, duedate, headlinefield.getText(), descriptionfield.getText(), false);
-                ntask.setTaskID("555"); // selle peaks ABlt saama
-                ntask.setTodo_listID(selectedTodo); // selle ka
-
-                //taskPaneAdder(ntask); // TODO paigutab selle õigesse tabi
-
-                //System.out.println(ntask);
-                addstage.close(); // kui additud, siis paneb kinni akna
-
-            }); // ADD
-
-
-            Button canceladd = new Button("Cancel");
-            canceladd.setOnAction(event1 -> addstage.close()); // CLOSE
-
-            GridPane addtaskpane = new GridPane();
-            addtaskpane.add(headlabel, 0, 0);
-            addtaskpane.add(headlinefield, 1, 0);
-            addtaskpane.add(desclabel, 0, 1);
-            addtaskpane.add(descriptionfield, 1, 1);
-            addtaskpane.add(datePicker, 1, 2);
-            addtaskpane.add(timePickerBox, 1, 3);
-            addtaskpane.add(addtask, 3, 4);
-            addtaskpane.add(canceladd, 3, 5);
-
-
-            addstage.setScene(new Scene(addtaskpane, 450, 160));
-            addstage.show();
-
-        });
 
 
         Region region2 = new Region();
@@ -216,7 +107,7 @@ public class TodoApp extends Application {
         }); // TODO hetkel lisab ainult juurde*/
 
         VBox vBox = new VBox();
-        vBox.getChildren().addAll(addListButton, region2, new Label("[Sidebar]"), refreshbutton, add);
+        vBox.getChildren().addAll(addListButton, region2, new Label("[Sidebar]"), refreshbutton);
 
 
         ///// [primaryStage setup] /////////////////////////////////////////////////////////////////////////////////////
@@ -361,9 +252,120 @@ public class TodoApp extends Application {
 
         });
 
+        Image imageplus = new Image("fileplus.png");
+        ImageView addim = new ImageView(imageplus);
+        Button addTaskButton = new Button();
+        addim.setFitWidth(30);
+        addim.setFitHeight(30);
+        addTaskButton.setGraphic(addim);
+        addTaskButton.setStyle("-fx-background-color: transparent");
+
+        addTaskButton.setOnAction(addEvent -> {
+
+            Stage addstage = new Stage();
+            addstage.setTitle("New task");
+
+            Label headlabel = new Label("Title");
+            TextField headlinefield = new TextField();
+            Label desclabel = new Label("Description");
+            TextField descriptionfield = new TextField();
+
+
+            //String duedate = df.format();
+
+            ObservableList<String> hours = FXCollections.observableArrayList(new ArrayList<>());
+            ObservableList<String> minutes = FXCollections.observableArrayList(new ArrayList<>());
+
+            for (int i = 0; i < 60; i++) {
+                String hrs = "";
+                String mins = "";
+                if (i < 10) {
+                    hrs += "0";
+                    mins += "0";
+                }
+                if (i < 24) {
+                    hrs += i;
+                    hours.add(hrs);
+                }
+                mins += i;
+                minutes.add(mins);
+            }
+
+            SpinnerValueFactory<String> duedateHours = new SpinnerValueFactory.ListSpinnerValueFactory(hours);
+            Spinner<String> duedateHoursSpinner = new Spinner<>();
+            duedateHoursSpinner.setValueFactory(duedateHours);
+            SpinnerValueFactory<String> duedateMinutes = new SpinnerValueFactory.ListSpinnerValueFactory(minutes);
+            Spinner<String> duedateMinutesSpinner = new Spinner<>();
+            duedateMinutesSpinner.setValueFactory(duedateMinutes);
+            Label timeSeparator = new Label(":");
+            HBox timePickerBox = new HBox();
+
+            //duedateHoursSpinner.maxWidth(20); // ei tööta TODO uuri miks (vähemoluline)
+            //duedateHoursSpinner.maxHeight(20);
+            //duedateMinutesSpinner.maxWidth(20);
+
+            timePickerBox.getChildren().addAll(duedateHoursSpinner, timeSeparator, duedateMinutesSpinner);
+
+            //DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+            DatePicker datePicker = new DatePicker();
+
+
+            Button addtask = new Button("Add");
+            addtask.setOnAction(event1 -> {
+                //Date currentdate = new Date();
+                //String creationdate = df.format(currentdate);
+                String duedate = datePicker.getValue() + " " + duedateHoursSpinner.getValue() + ":" + duedateMinutesSpinner.getValue() + ":00";
+
+                if (datePicker.getValue() == null) {
+                    duedate = "2020-01-01";
+                }
+
+
+                String[] command = {"add", duedate, headlinefield.getText(), descriptionfield.getText(), selectedTodo}; // TODO todo_listId = selectedTodo
+
+                try {
+                    commandHandler(command);
+                    System.out.println("läks korda");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                // TODO saab serverilt Taski (nüüd koos taskIDga)
+                Task ntask = new Task(duedate, duedate, headlinefield.getText(), descriptionfield.getText(), false);
+                ntask.setTaskID("555"); // selle peaks ABlt saama
+                ntask.setTodo_listID(selectedTodo); // selle ka
+
+                //taskPaneAdder(ntask); // TODO paigutab selle õigesse tabi
+
+                //System.out.println(ntask);
+                addstage.close(); // kui additud, siis paneb kinni akna
+
+            }); // ADD
+
+
+            Button canceladd = new Button("Cancel");
+            canceladd.setOnAction(event1 -> addstage.close()); // CLOSE
+
+            GridPane addtaskpane = new GridPane();
+            addtaskpane.add(headlabel, 0, 0);
+            addtaskpane.add(headlinefield, 1, 0);
+            addtaskpane.add(desclabel, 0, 1);
+            addtaskpane.add(descriptionfield, 1, 1);
+            addtaskpane.add(datePicker, 1, 2);
+            addtaskpane.add(timePickerBox, 1, 3);
+            addtaskpane.add(addtask, 3, 4);
+            addtaskpane.add(canceladd, 3, 5);
+
+
+            addstage.setScene(new Scene(addtaskpane, 450, 160));
+            addstage.show();
+
+        });
 
         todoTabPane.setTop(new HBox(renameTodo));
         todoTabPane.setCenter(tasksPane);
+        todoTabPane.setBottom(addTaskButton);
 
         todolistTab.setContent(todoTabPane);
         todolistTab.setClosable(false);

@@ -92,7 +92,7 @@ class Server {
                 try{
                     dbc.newInitialize();//esmakordsel käivitamisel
                 }catch (SQLException e){
-                    throw new RuntimeException(e);
+                    e.printStackTrace();
                 }
 
 
