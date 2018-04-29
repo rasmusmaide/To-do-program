@@ -25,6 +25,8 @@ import java.util.*;
 
 public class TodoApp extends Application {
     static int server = 1337;
+    private String selectedTodo = "0";
+    private String userid = "999";
 
     public static void main(String[] args) {
         launch(args);
@@ -59,42 +61,25 @@ public class TodoApp extends Application {
 
         TabPane tabPane = new TabPane();
 
-        /*Tab nlisttab = new Tab(); // TAB FOR NEW TO-DO LIST
-        nlisttab.setText("+");
-        nlisttab.setClosable(false);
-        nlisttab.setOnSelectionChanged(t -> {
-            if (nlisttab.isSelected()) {
-                tabPane.getTabs().add(tabAdder(new Todo_list(new ArrayList<>(), "New To-do list")));
-                tabPane.getSelectionModel().selectLast();
-            }
-        });
-*/
-
-        /*TextField ntabfield = new TextField();
-
-        VBox newtabcontent = new VBox();
-        newtabcontent.getChildren().addAll(ntabbutton, ntabfield);
-        nlisttab.setContent(newtabcontent);*/
-
-        //tabPane.getTabs().add(nlisttab);
-
-        ///// [SIDEBAR} ////////////////////////////////////////////////////////////////////////////////////////////
+        ///// [SIDEBAR} ////////////////////////////////////////////////////////////////////////////////////////////////
 
         Button addListButton = new Button("New to-do");
         addListButton.setOnAction(event -> {
             Todo_list ntodo = new Todo_list(new ArrayList<>(), "New To-do list");
 
-            tabPane.getTabs().add(tabAdder(ntodo));
-            tabPane.getSelectionModel().selectLast();
-
-            /*String[] command = {"addlist", ntodo.getDescription()}; // Todo lisab kas siin id või küsib kohe ABlt
+            String[] command = {"addlist", "New To-do list"};
 
             try {
                 commandHandler(command);
                 System.out.println("läks korda");
             } catch (Exception e) {
                 e.printStackTrace();
-            }*/
+            }
+
+            String indexFromDB = "3"; // TODO saab andmebaasist indexi
+
+            tabPane.getTabs().add(tabAdder(ntodo, indexFromDB));
+            tabPane.getSelectionModel().selectLast();
 
         }); // CREATE NEW TO-DO LIST// TODO saada serverile
 
@@ -106,7 +91,7 @@ public class TodoApp extends Application {
         add.setGraphic(addim);
         add.setStyle("-fx-background-color: transparent");
 
-        add.setOnAction(event -> {
+        add.setOnAction(addEvent -> {
 
             Stage addstage = new Stage();
             addstage.setTitle("New task");
@@ -172,7 +157,7 @@ public class TodoApp extends Application {
                 }
 
 
-                String[] command = {"add", duedate, headlinefield.getText(), descriptionfield.getText()};
+                String[] command = {"add", duedate, headlinefield.getText(), descriptionfield.getText(), selectedTodo}; // TODO todo_listId = selectedTodo
 
                 try {
                     commandHandler(command);
@@ -218,11 +203,11 @@ public class TodoApp extends Application {
         refreshbutton.setGraphic(refreshimage); // natuke väike, aga töötab ja hetkel rohkema aega ei kulutaks
         refreshbutton.setStyle("-fx-background-color: transparent");
 
-        refreshbutton.setOnAction(event -> {
+        /*refreshbutton.setOnAction(event -> {
             for (Todo_list todo_list : testlist) {
                 tabPane.getTabs().add(tabAdder(todo_list));
             }
-        }); // TODO hetkel lisab ainult juurde
+        }); // TODO hetkel lisab ainult juurde*/
 
         VBox vBox = new VBox();
         vBox.getChildren().addAll(addListButton, region2, new Label("[Sidebar]"), refreshbutton, add);
@@ -238,7 +223,7 @@ public class TodoApp extends Application {
         borderPane.setRight(vBox);
 
 
-        //primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("resources/Drop.png"))); // TODO ükski ei tööta
+        //primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("resources/Drop.png"))); // TODO ükski ei tööta, aga pole nii oluline
         //primaryStage.getIcons().add(new Image(getClass().getResource("resources/Drop.png").toExternalForm()));
         //primaryStage.getIcons().add(new Image("/resources/Drop.png"));
         //ImageView programicon = new ImageView(new Image(new File("resources/Drop.png").toURI().toString()));
@@ -277,8 +262,9 @@ public class TodoApp extends Application {
 
             // TODO kontrollib kasutajaandmeid
             if (true) { // sisesta kontroll, peab serverilt vastust ootama
+                // otsib andmebaasist need todo_listid, millele on kasutajal juurdepääs
                 for (Todo_list todo_list : testlist) {
-                    tabPane.getTabs().add(tabAdder(todo_list));
+                    //tabPane.getTabs().add(tabAdder(todo_list));
                 }
                 ((Node) (loginEvent.getSource())).getScene().getWindow().hide();
             } else {
@@ -331,7 +317,7 @@ public class TodoApp extends Application {
 
     }
 
-    private Tab tabAdder(Todo_list todo_list) {
+    private Tab tabAdder(Todo_list todo_list, String indexFromDB) {
         BorderPane todoTabPane = new BorderPane();
         Tab todolistTab = new Tab();
 
@@ -378,6 +364,7 @@ public class TodoApp extends Application {
 
         todolistTab.setOnSelectionChanged(t -> {
             if (todolistTab.isSelected()) {
+                this.selectedTodo = indexFromDB;
                 System.out.println("Add nupp kehtib sellele listile"); // TODO add button affects this list
             }
         });
