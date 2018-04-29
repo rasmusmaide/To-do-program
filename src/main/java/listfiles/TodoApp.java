@@ -79,9 +79,10 @@ public class TodoApp extends Application {
                 e.printStackTrace();
             }
 
-            String indexFromDB = "444"; // TODO saab andmebaasist indexi
+            //String indexFromDB = "444";
+            Todo_list sameTodoWithID = ntodo; // TODO saab andmebaasist indexi
 
-            tabPane.getTabs().add(tabAdder(ntodo, indexFromDB));
+            tabPane.getTabs().add(tabAdder(ntodo));
             tabPane.getSelectionModel().selectLast();
 
         }); // CREATE NEW TO-DO LIST
@@ -157,11 +158,23 @@ public class TodoApp extends Application {
             String username = usernameField.getText();
             String password = passwordField.getText();
 
-            // TODO kontrollib kasutajaandmeid
+            String[] command = {"checkuser", username, password};
+
+            try {
+                commandHandler(command); // Todo
+                System.out.println("läks korda");
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            // TODO saab tagasi booleani, et kas sama un ja pw-ga kedagi ja ka listi Todo_listide ja indexitega
+            // v-o teha kaks eraldi käsku üks kontrolliks, teine listipäringuks useri ID järgi
+
             if (true) { // sisesta kontroll, peab serverilt vastust ootama
                 // otsib andmebaasist need todo_listid, millele on kasutajal juurdepääs
                 for (Todo_list todo_list : testlist) {
-                    //tabPane.getTabs().add(tabAdder(todo_list));
+                    tabPane.getTabs().add(tabAdder(todo_list));
                 }
                 ((Node) (loginEvent.getSource())).getScene().getWindow().hide();
             } else {
@@ -178,6 +191,18 @@ public class TodoApp extends Application {
             String username = usernameField.getText();
             String password = passwordField.getText();
 
+            String[] command = {"checkuser", username, password};
+
+            try {
+                commandHandler(command); // Todo
+                System.out.println("läks korda");
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            // TODO saab tagasi booleani, et kas on juba sama nimega kedagi
+
             if (false) { // leidub kasutaja sama usernamega
                 Stage registererror = new Stage();
 
@@ -186,6 +211,16 @@ public class TodoApp extends Application {
                 registererror.show();
             } else {
                 // TODO lisab kasutaja
+
+                String[] command2 = {"register", username, password};
+
+                try {
+                    commandHandler(command2); // Todo
+                    System.out.println("läks korda");
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
 
                 ((Node) (registerEvent.getSource())).getScene().getWindow().hide();
             }
@@ -214,7 +249,7 @@ public class TodoApp extends Application {
 
     }
 
-    private Tab tabAdder(Todo_list todo_list, String indexFromDB) {
+    private Tab tabAdder(Todo_list todo_list) {
         BorderPane todoTabPane = new BorderPane();
         Tab todolistTab = new Tab();
 
@@ -238,6 +273,15 @@ public class TodoApp extends Application {
                 todolistTab.setText(fieldtext);
                 todo_list.setDescription(fieldtext);
                 renameTodo.setText(fieldtext);
+
+                String[] command = {"renametodo", todo_list.getTodo_listID(), fieldtext};
+                try {
+                    commandHandler(command); // Todo
+                    System.out.println("läks korda");
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
 
                 ((Node) (event1.getSource())).getScene().getWindow().hide();
                 // TODO saadab serverile selle muutuse
@@ -322,7 +366,7 @@ public class TodoApp extends Application {
                 }
 
 
-                String[] command = {"add", duedate, headlinefield.getText(), descriptionfield.getText(), selectedTodo}; // TODO todo_listId = selectedTodo
+                String[] command = {"addtask", duedate, headlinefield.getText(), descriptionfield.getText(), todo_list.getTodo_listID()};
 
                 try {
                     commandHandler(command);
@@ -331,12 +375,14 @@ public class TodoApp extends Application {
                     e.printStackTrace();
                 }
 
-                // TODO saab serverilt Taski (nüüd koos taskIDga)
+                // TODO saab serverilt Taski (nüüd koos autoincrementitud taskIDga)
                 Task ntask = new Task(duedate, duedate, headlinefield.getText(), descriptionfield.getText(), false);
                 ntask.setTaskID("555"); // selle peaks ABlt saama
-                ntask.setTodo_listID(selectedTodo); // selle ka
 
-                //taskPaneAdder(ntask); // TODO paigutab selle õigesse tabi
+                todo_list.getTasks().add(ntask);
+
+                tasksPane.add(taskPaneAdder(ntask), 0, todo_list.getTasks().size()); // TODO kontrolli, kas paigutab viimaseks ikka
+                //taskPaneAdder(ntask);
 
                 //System.out.println(ntask);
                 addstage.close(); // kui additud, siis paneb kinni akna
@@ -372,7 +418,7 @@ public class TodoApp extends Application {
 
         todolistTab.setOnSelectionChanged(t -> {
             if (todolistTab.isSelected()) {
-                this.selectedTodo = indexFromDB;
+                this.selectedTodo = todo_list.getTodo_listID(); // kas nüüd üldse on vaja seda?
                 System.out.println("Add nupp kehtib sellele listile"); // TODO add button affects this list
             }
         });
@@ -524,9 +570,12 @@ public class TodoApp extends Application {
             try {
                 commandHandler(command); // Todo
                 System.out.println("läks korda");
+                taskBorderPane.setManaged(false); // Todo kontrolli, kas töötab
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
+
 
         });
 

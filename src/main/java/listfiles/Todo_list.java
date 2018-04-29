@@ -1,15 +1,23 @@
 package listfiles;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class Todo_list {
     private List<Task> tasks;
     private String description;
+    private String todo_listID;
 
     public Todo_list(List<Task> tasks, String description) {
         this.tasks = tasks;
         this.description = description;
+    }
+
+    public String getTodo_listID() {
+        return todo_listID;
+    }
+
+    public void setTodo_listID(String todo_listID) {
+        this.todo_listID = todo_listID;
     }
 
     public List<Task> getTasks() {

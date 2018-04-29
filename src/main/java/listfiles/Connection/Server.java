@@ -106,7 +106,7 @@ class Server {
 
                     } else if (infoIn.get(0).equals("show list")) {
                         System.out.println(dbc.getAllTasks().toString());
-                    } else if (infoIn.get(0).equals("add")) {   // format: 2005-01-12 08:02:00;juust;kapsas
+                    } else if (infoIn.get(0).equals("addtask")) {   // format: 2005-01-12 08:02:00;juust;kapsas
                         System.out.println("Add task: ");
 
 
@@ -123,7 +123,7 @@ class Server {
                         dbc.addTask(ntask);
                         System.out.println("added task: " + ntask.toString());
 
-                    } else if (infoIn.get(0).equals("delete")) {
+                    } else if (infoIn.get(0).equals("deletetask")) {
                         while (true) {
                             try {
                                 String indexstring = (String) infoIn.get(1);
@@ -151,7 +151,7 @@ class Server {
                         } catch (NumberFormatException e) {
                             System.out.println("Not a valid index!");
                         }
-                    } else {
+                    } else { // TODO commands to be added: renametodo, descedit, dateedit, renametask, checkuser, register, login
                         System.out.println("Not a command!");
 
                     }
