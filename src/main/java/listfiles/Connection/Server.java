@@ -86,7 +86,16 @@ class Server {
 
 
                 //dbc.removeTodo_s();//kui on todo_s tabeliga variant veel alles
-                //dbc.newInitialize();//esmakordsel käivitamisel
+
+
+
+                try{
+                    dbc.newInitialize();//esmakordsel käivitamisel
+                }catch (Exception e){
+
+                }
+
+
 
                 List infoIn = Echo.getInfo();
                 try {
