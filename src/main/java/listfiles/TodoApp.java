@@ -88,8 +88,6 @@ public class TodoApp extends Application {
         }); // CREATE NEW TO-DO LIST
 
 
-
-
         Region region2 = new Region();
         VBox.setVgrow(region2, Priority.ALWAYS);
 
@@ -603,7 +601,7 @@ public class TodoApp extends Application {
 
             out.writeInt(command.length);
 
-            for (int i = 0; i < command.length; i++) {
+            for (int i = 0; i < command.length-1; i++) {
                 out.writeUTF(command[i]);
                 System.out.println("sent " + command[i]);
             }
