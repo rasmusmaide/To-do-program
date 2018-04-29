@@ -566,7 +566,7 @@ public class TodoApp extends Application {
             String[] command = {"deletetask", task.getTaskID()};
 
             try {
-                commandHandler(command); // Todo
+                commandHandler(command);
                 System.out.println("läks korda");
                 taskBorderPane.setManaged(false); // Todo kontrolli, kas töötab
 
@@ -576,11 +576,37 @@ public class TodoApp extends Application {
 
 
         });
+        CheckBox doneCheckBox = new CheckBox("Done");
+        doneCheckBox.setSelected(task.getDone());
+        doneCheckBox.setOnAction(doneActionEvent -> {
+            if (doneCheckBox.isSelected()) {
+                String[] command = {"done", task.getTaskID()};
 
+                try {
+                    commandHandler(command);
+                    System.out.println("läks korda");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            if (!doneCheckBox.isSelected()) {
+                String[] command = {"undone", task.getTaskID()};
+
+                try {
+                    commandHandler(command);
+                    System.out.println("läks korda");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        HBox taskRight = new HBox();
+        taskRight.getChildren().addAll(doneCheckBox, deleteTaskButton);
 
         taskBorderPane.setTop(taskHead);
         taskBorderPane.setLeft(descriptionLabel);
-        //taskBorderPane.setRight(editButton);
+        taskBorderPane.setRight(taskRight);
 
         return taskBorderPane;
     }

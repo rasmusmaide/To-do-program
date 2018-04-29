@@ -167,7 +167,6 @@ public class dataBaseCommands {
 
     }
 
-
     public void changeDueDate(int row, String newDueDate) throws SQLException {
         try (PreparedStatement statement = conn.prepareStatement("UPDATE `TASKS` SET due_date = ? WHERE id = ?")) {
             statement.setString(1, newDueDate);
@@ -177,6 +176,23 @@ public class dataBaseCommands {
         }
     }
 
+    public void newTodo() {
+    }
+
+    public void changeTodoDescription(int index, String todoDescription) {
+    }
+
+    public void checkuserRegister(String username) {
+    }
+
+    public void register(String username, String password) {
+    }
+
+    public void checkuserLogin(String username, String password) {
+    }
+
+    public void login(String username, String password) {
+    }
 }
 
 
