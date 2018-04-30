@@ -84,7 +84,7 @@ public class dataBaseCommands {
         return allTasks;
     }
 
-    public int addTask(Task task) throws SQLException {
+    public String addTask(Task task) throws SQLException {
         //takes the valeus from task as strings and add them to the sql execution statement
 
         try (PreparedStatement statement = conn.prepareStatement(
@@ -99,7 +99,7 @@ public class dataBaseCommands {
             statement.executeUpdate();
         }
 
-        return 0; // TODO tagastab indexi kui on vaja uus päring teha, siis võib võtta näiteks kõige hiljutisema creadionDatega?
+        return "0"; // TODO tagastab indexi kui on vaja uus päring teha, siis võib võtta näiteks kõige hiljutisema creadionDatega?
     }
 
     public void deleteTask(int row) throws SQLException {

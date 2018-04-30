@@ -7,6 +7,7 @@ import listfiles.dataBaseCommands;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.sql.SQLException;
 import java.text.DateFormat;
@@ -32,7 +33,7 @@ public class Echo implements Runnable {
         try {
 
             try (DataInputStream in = new DataInputStream(socket.getInputStream());
-                 DataOutputStream out = new DataOutputStream(socket.getOutputStream())) {
+                 ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream())) {
                 System.out.println("client connected; waiting for a byte");
 
                 //////////////////// command in
@@ -48,21 +49,22 @@ public class Echo implements Runnable {
 
                 try {
                     String command = infoIn.get(0);
+                    System.out.println(command + " " + infoIn);
                     int userID;
                     String userIDstring;
 
                     switch (command) {
-                        case "get lists": // {"get lists", task.getTaskID()}
+                        case "get lists": // {"get lists", userID}
                             userIDstring = infoIn.get(1);
                             userID = Integer.parseInt(userIDstring);
 
-                            List<Todo_list> userLists = dbc.getAllUserLists(userID); // TODO sellise funktsiooniga käsku dbcs ei ole
+                            List<Todo_list> userLists = dbc.getAllUserLists(userID);
 
                             for (Todo_list todo_list : userLists) {
                                 System.out.println(todo_list.toString());
                             }
 
-                            //out.write(); // saadab tagasi*/
+                            out.writeObject(userLists); // saadab tagasi*/ TODO kuidagi peab terve selle listi outputi toppima
 
                             break;
                         case "addlist": // {"addlist", userID}
@@ -70,11 +72,11 @@ public class Echo implements Runnable {
                             userID = Integer.parseInt(userIDstring);
 
 
-                            dbc.newTodo(userID);
+                            String todoID = dbc.newTodo(userID);
 
                             System.out.println("Added new todo list");
 
-                            //out.write(todoID); // saadab tagasi koos indexiga // TODO saada todolist tagasi ainult index?
+                            out.writeUTF(todoID);
                             break;
                         case "addtask":
                             System.out.println("Add task: ");
@@ -90,9 +92,8 @@ public class Echo implements Runnable {
 
                             Task ntask = new Task(entrydate, date, head, text, false);
                             try {
-                                dbc.addTask(ntask); // see võiks returnida selle lisatud taski indexi
-                                // taskID =
-                                //out.write(taskID); // saadab tagasi koos indexiga // TODO saada task tagasi ainult index?
+                                String taskID = dbc.addTask(ntask);
+                                out.writeUTF(taskID);
 
                             } catch (SQLException e) {
                                 e.printStackTrace();
@@ -233,9 +234,11 @@ public class Echo implements Runnable {
                             try {
                                 String username = infoIn.get(1);
                                 String password = infoIn.get(2);
-                                dbc.checkuserLogin(username, password);
+                                boolean userFound = dbc.checkuserLogin(username, password);
 
-                                System.out.println("User found: " + username + " " + password);
+                                System.out.println("User found: " + userFound);
+
+                                out.writeBoolean(userFound);
 
                             } catch (NumberFormatException e) {
                                 System.out.println("Not a valid index!");
@@ -245,9 +248,9 @@ public class Echo implements Runnable {
                             try {
                                 String username = infoIn.get(1);
                                 String password = infoIn.get(2);
-                                dbc.login(username, password);
+                                String userIDString = dbc.login(username, password);
                                 // võiks returnida userID
-                                //out.write(userID); // TODO saadab userID tagasi
+                                out.writeUTF(userIDString); // TODO saadab userID tagasi
 
 
                                 System.out.println("User logged in: " + username + " " + password);

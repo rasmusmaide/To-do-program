@@ -18,6 +18,7 @@ import javafx.stage.Stage;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.ObjectInputStream;
 import java.net.Socket;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -26,7 +27,7 @@ import java.util.*;
 public class TodoApp extends Application {
     static int server = 1337;
     private String selectedTodo = "0";
-    private String userID = "999";
+    private String userID = "0";
     private String selectedTask = "0";
 
     public static void main(String[] args) {
@@ -40,7 +41,7 @@ public class TodoApp extends Application {
 
         // To-do lists for testing:
 
-        List<Task> testtasklist = new ArrayList<>(Arrays.asList(
+        /*List<Task> testtasklist = new ArrayList<>(Arrays.asList(
                 new Task("2005-01-12 08:02:00", "2005-01-12 08:02:00", "head1", "desc1", false),
                 new Task("2005-01-12 08:02:00", "2005-01-12 08:02:00", "head2", "desc2", false)
         ));
@@ -56,7 +57,7 @@ public class TodoApp extends Application {
 
         List<Todo_list> testlist = new ArrayList<>();
         testlist.add(testtodo1);
-        testlist.add(testtodo2);
+        testlist.add(testtodo2);*/
 
         BorderPane borderPane = new BorderPane();
 
@@ -73,14 +74,12 @@ public class TodoApp extends Application {
             String[] command = {"addlist", userID};
 
             try {
-                commandHandler(command);
+                ntodo.setTodo_listID((String) commandHandler(command));
                 System.out.println("läks korda");
             } catch (Exception e) {
                 e.printStackTrace();
             }
 
-            //String indexFromDB = "444";
-            Todo_list sameTodoWithID = ntodo; // TODO saab andmebaasist indexi
 
             tabPane.getTabs().add(tabAdder(ntodo));
             tabPane.getSelectionModel().selectLast();
@@ -99,11 +98,12 @@ public class TodoApp extends Application {
         refreshbutton.setGraphic(refreshimage); // natuke väike, aga töötab ja hetkel rohkema aega ei kulutaks
         refreshbutton.setStyle("-fx-background-color: transparent");
 
-        /*refreshbutton.setOnAction(event -> {
-            for (Todo_list todo_list : testlist) {
+        refreshbutton.setOnAction(event -> {
+            System.out.println("haha, no refresh for u");
+            /*for (Todo_list todo_list : testlist) {
                 tabPane.getTabs().add(tabAdder(todo_list));
-            }
-        }); // TODO hetkel lisab ainult juurde*/
+            }*/
+        }); // TODO hetkel lisab ainult juurde
 
         VBox vBox = new VBox();
         vBox.getChildren().addAll(addListButton, region2, new Label("[Sidebar]"), refreshbutton);
@@ -128,12 +128,7 @@ public class TodoApp extends Application {
 
         primaryStage.setOnCloseRequest(event -> {
             System.out.println("Bye!");
-           /* try {
-                dbc.conn.close();
-            } catch (SQLException r) {
-                throw new RuntimeException(r);
-            }
-            server.stop();*/
+
         });
 
         Scene scene = new Scene(borderPane, 400, 500, Color.SNOW);
@@ -156,22 +151,30 @@ public class TodoApp extends Application {
             String username = usernameField.getText();
             String password = passwordField.getText();
 
-            String[] command = {"checkuser", username, password};
-
+            String[] command = {"checkuserLogin", username, password};
+            boolean userexists = true;
             try {
-                commandHandler(command);
+                //userexists = (boolean) commandHandler(command); // TODO
                 System.out.println("läks korda");
 
             } catch (Exception e) {
                 e.printStackTrace();
             }
 
-            // TODO saab tagasi booleani, et kas sama un ja pw-ga kedagi ja ka listi Todo_listide ja indexitega
-            // v-o teha kaks eraldi käsku üks kontrolliks, teine listipäringuks useri ID järgi
-
-            if (true) { // sisesta kontroll, peab serverilt vastust ootama
+            if (userexists) {
                 // otsib andmebaasist need todo_listid, millele on kasutajal juurdepääs
-                for (Todo_list todo_list : testlist) {
+                List<Todo_list> allUserTodoLists = new ArrayList<>();
+                String[] command2 = {"login", username, password};
+
+                try {
+                    userID = (String) commandHandler(command2);
+                    String[] command3 = {"get lists", userID};
+                    allUserTodoLists = (List<Todo_list>) commandHandler(command3);
+                    System.out.println("läks korda");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                for (Todo_list todo_list : allUserTodoLists) {
                     tabPane.getTabs().add(tabAdder(todo_list));
                 }
                 ((Node) (loginEvent.getSource())).getScene().getWindow().hide();
@@ -182,26 +185,26 @@ public class TodoApp extends Application {
                 loginerror.setAlwaysOnTop(true);
                 loginerror.show();
             }
-            // TODO kui on korras, siis annab primarysse õiged listid ja sulgeb loginStagei
         });
         Button registerButton = new Button("Sign up");
         registerButton.setOnAction(registerEvent -> {
             String username = usernameField.getText();
             String password = passwordField.getText();
 
-            String[] command = {"checkuser", username, password};
+            String[] command = {"checkuserRegister", username};
+            boolean userexists = false;
 
             try {
-                commandHandler(command);
-                System.out.println("läks korda");
+                //userexists = (boolean) commandHandler(command); // TODO
 
+                System.out.println("läks korda");
             } catch (Exception e) {
                 e.printStackTrace();
             }
 
             // TODO saab tagasi booleani, et kas on juba sama nimega kedagi
 
-            if (false) { // leidub kasutaja sama usernamega
+            if (userexists) { // leidub kasutaja sama usernamega
                 Stage registererror = new Stage();
 
                 registererror.setScene(new Scene(new Label("Username already taken")));
@@ -213,12 +216,16 @@ public class TodoApp extends Application {
                 try {
                     commandHandler(command2);
                     System.out.println("läks korda");
+                    Stage registersuccess = new Stage();
 
+                    registersuccess.setScene(new Scene(new Label("User registered")));
+                    registersuccess.setAlwaysOnTop(true);
+                    registersuccess.show();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
 
-                ((Node) (registerEvent.getSource())).getScene().getWindow().hide();
+
             }
         });
 
@@ -362,17 +369,17 @@ public class TodoApp extends Application {
 
 
                 String[] command = {"addtask", duedate, headlinefield.getText(), descriptionfield.getText(), todo_list.getTodo_listID()};
+                String taskID = "0";
 
                 try {
-                    commandHandler(command);
                     System.out.println("läks korda");
+                    taskID = (String) commandHandler(command);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
 
-                // TODO saab serverilt Taski indexi
                 Task ntask = new Task(duedate, duedate, headlinefield.getText(), descriptionfield.getText(), false);
-                ntask.setTaskID("555"); // selle peaks ABlt saama
+                ntask.setTaskID(taskID);
 
                 todo_list.getTasks().add(ntask);
 
@@ -563,7 +570,7 @@ public class TodoApp extends Application {
             try {
                 commandHandler(command);
                 System.out.println("läks korda");
-                taskBorderPane.setManaged(false); // Todo ei puhasta, jääb taustale
+                taskBorderPane.setManaged(false);
                 taskBorderPane.setVisible(false);
 
             } catch (Exception e) {
@@ -607,95 +614,91 @@ public class TodoApp extends Application {
         return taskBorderPane;
     }
 
-    public static void commandHandler(String[] command) throws Exception {
-
+    public static Object commandHandler(String[] command) throws Exception {
+        // midagi paremat kui Object paluks
 
         //formaat: 2005-01-12 08:02:00;juust;kapsas
         System.out.println("connecting to server: " + server);
 
         try (
                 Socket socket = new Socket("localhost", server);
-                DataInputStream in = new DataInputStream(socket.getInputStream());
-                DataOutputStream out = new DataOutputStream(socket.getOutputStream())
+                DataOutputStream out = new DataOutputStream(socket.getOutputStream());
+                ObjectInputStream in = new ObjectInputStream(socket.getInputStream())
+
         ) {
             System.out.println("connected; sending data");
 
 
             out.writeInt(command.length);
+            System.out.println(command.length);
 
-            for (int i = 0; i < command.length-1; i++) {
+            for (int i = 0; i < command.length; i++) {
                 out.writeUTF(command[i]);
                 System.out.println("sent " + command[i]);
             }
-
-            int elementID = in.readInt(); // TODO kuidas ma selle sinna saan
-
+            Object o = new Object();
+            String commandtype = command[0];
+            System.out.println(commandtype);
+            switch (commandtype) {
+                case "checkuserRegister":
+                    o = in.readBoolean();
+                    break;
+                case "checkuserLogin":
+                    o = in.readBoolean();
+                    break;
+                case "login":
+                    o = in.readUTF();
+                    break;
+                case "addlist":
+                    o = in.readUTF();
+                    break;
+                case "addtask":
+                    o = in.readUTF();
+                    break;
+                case "get lists":
+                    o = in.readObject();
+                    break;
+                default:
+                    System.out.println("ei tule siit midagi");
+            }
 
             System.out.println("cleaned up");
+            return o;
         }
     }
-
 }            // TODO tuleb kontrollida ühendust serveriga, muidu viskab errorisse
 
-/*
-//////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    Label title = new Label("To-do list");
-        title.setPadding(new Insets(10,10,10,10));
-
-
-                ImageView im = new ImageView(new Image(new File("C:\\Users\\Dell\\Desktop\\ \\fileclose.png").toURI().toString()));
-                Button exit = new Button(); // EXIT
-                im.setFitWidth(25);
-                im.setFitHeight(25);
-                exit.setGraphic(im);
-                exit.setStyle("-fx-background-color: transparent");
-                exit.setOnAction(new EventHandler<ActionEvent>() {
-@Override
-public void handle(ActionEvent event) {
-        Platform.exit();
-        }
-        });
-
-        ImageView im2 = new ImageView(new Image(new File("C:\\Users\\Dell\\Desktop\\ \\fileminimize.png").toURI().toString()));
-        Button minimize = new Button(); // MINIMIZE
-        im2.setFitWidth(20);
-        im2.setFitHeight(20);
-        minimize.setGraphic(im2);
-        minimize.setStyle("-fx-background-color: transparent");
-        minimize.setOnAction(new EventHandler<ActionEvent>() {
-@Override
-public void handle(ActionEvent event) {
-        primaryStage.setIconified(true);
-
-        }
-        });
-
-        Region region1 = new Region();
-        HBox.setHgrow(region1, Priority.ALWAYS);
-
-
-        HBox hBox = new HBox();
-        hBox.setStyle("-fx-background-color: gray;");
-        hBox.getChildren().addAll(title, region1, minimize, exit);
-
-                ImageView saveim = new ImageView(new Image(new File("C:\\Users\\Dell\\Desktop\\ \\filesave.png").toURI().toString()));
-        Button save = new Button(); // SAVE
-        saveim.setFitWidth(20);
-        saveim.setFitHeight(20);
-        save.setGraphic(saveim);
-        save.setStyle("-fx-background-color: transparent");
-        save.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                // SAVETEXT
-
+/*    public static Object commandReceiver(String commandtype) throws Exception {
+            Object o = new Object();
+        try (
+                Socket socket = new Socket("localhost", server);
+                ObjectInputStream in = new ObjectInputStream(socket.getInputStream())
+        ) {
+            switch (commandtype) {
+                case "checkuserRegister":
+                    o = in.readBoolean();
+                    break;
+                case "checkuserLogin":
+                    o = in.readBoolean();
+                    break;
+                case "login":
+                    o = in.readUTF();
+                    break;
+                case "addlist":
+                    o = in.readUTF();
+                    break;
+                case "addtask":
+                    o = in.readUTF();
+                    break;
+                case "get lists":
+                    o = in.readObject();
+                    break;
+                default:
+                    System.out.println("ei tule siit midagi");
             }
-        }); ////////////SAVEFUNCTION
 
+        }
+        return o;
+    }*/
 
-
-        HBox hBox2 = new HBox();
-        hBox2.getChildren().addAll(save);
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////*/
