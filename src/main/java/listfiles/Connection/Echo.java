@@ -297,10 +297,4 @@ public class Echo implements Runnable {
         return infoIn;
     }*/
 
-    /*public Object sendInfo(Object info) { // Todo mõtle välja midagi paremat kui Object
-            // ok ma hetkel ei tea, kuidas see tagasisaatmine käima peaks
-
-        return info;
-    }*/
-
 }

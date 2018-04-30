@@ -23,37 +23,45 @@ public class Server {
             System.out.println("now listening on: " + portNumber);
             Socket socket;
 
-            while (true) {
-
-
-                org.h2.tools.Server h2Server = org.h2.tools.Server.createTcpServer("-tcpPort", "9092", "-tcpAllowOthers").start();
-                Class.forName("org.h2.Driver");
-                dataBaseCommands dbc;
-                dbc = new dataBaseCommands("jdbc:h2:tcp://localhost/~/todoBase");
-                try {
-                    try {
-                        dbc.newInitialize();//esmakordsel käivitamisel
-                    } catch (SQLException e) {
-                        e.printStackTrace();
-                    }
-                    ////////////////////////////////
-
-                    socket = serverSocket.accept();
-
-                    Echo echo = new Echo(socket, dbc);
-                    Thread thread = new Thread(echo);
-                    thread.start();
-
-
-                    //dbc.removeTodo_s();//kui on todo_s tabeliga variant veel alles
-                    //List<String> infoIn = echo.getInfo();
-
-                } finally {
-                    dbc.conn.close();
-                    h2Server.stop();
-                }
-                //////////////////////////////////
+            org.h2.tools.Server h2Server = org.h2.tools.Server.createTcpServer("-tcpPort", "9092", "-tcpAllowOthers").start();
+            Class.forName("org.h2.Driver");
+            dataBaseCommands dbc;
+            dbc = new dataBaseCommands("jdbc:h2:tcp://localhost/~/todoBase");
+            try {
+                dbc.newInitialize();//esmakordsel käivitamisel
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
+            try {
+                while (true) {
+
+
+                    try { // on vaja?
+
+                        ////////////////////////////////
+
+                        socket = serverSocket.accept();
+
+                        Echo echo = new Echo(socket, dbc);
+                        Thread thread = new Thread(echo);
+                        thread.start();
+
+
+                        //dbc.removeTodo_s();//kui on todo_s tabeliga variant veel alles
+                        //List<String> infoIn = echo.getInfo();
+
+                    } finally {
+
+                    }
+                    //////////////////////////////////
+                }
+            } finally {
+                dbc.conn.close(); // TODO ilmselt siin probleem
+                h2Server.stop();
+            }
+
+
+
         }
 
     }

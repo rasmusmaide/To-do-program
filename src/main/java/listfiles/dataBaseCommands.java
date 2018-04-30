@@ -238,7 +238,7 @@ public class dataBaseCommands { // TODO rename this shit
         return false; // sellist userit ei ole
     }
 
-    public boolean register(String username, String password) throws SQLException {
+    public void register(String username, String password) throws SQLException {
         try (PreparedStatement statement = conn.prepareStatement(
                 "INSERT INTO USERS(USERNAME, PASSWORD) VALUES (?, ?)")) {
             statement.setString(1, username);
@@ -246,7 +246,7 @@ public class dataBaseCommands { // TODO rename this shit
             statement.executeUpdate();
         }
 
-        return true; // uus user lisatud
+        //return true; // uus user lisatud
     }
 
     public boolean checkuserLogin(String username, String password) throws SQLException {
@@ -280,6 +280,7 @@ public class dataBaseCommands { // TODO rename this shit
 
             ResultSet resultSet = statement.executeQuery();
             userID = resultSet.getString("id");
+            System.out.println(userID);
 
         }
 
