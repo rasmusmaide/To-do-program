@@ -1,5 +1,6 @@
 package listfiles;
 
+import com.google.gson.Gson;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -170,7 +171,7 @@ public class TodoApp extends Application {
                     userID = (String) commandHandler(command2);
                     String[] command3 = {"get lists", userID};
                     allUserTodoLists = (List<Todo_list>) commandHandler(command3);
-                    System.out.println("läks korda");
+                    System.out.println("läks korda" + userID);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -623,7 +624,7 @@ public class TodoApp extends Application {
         try (
                 Socket socket = new Socket("localhost", server);
                 DataOutputStream out = new DataOutputStream(socket.getOutputStream());
-                ObjectInputStream in = new ObjectInputStream(socket.getInputStream())
+                DataInputStream in = new DataInputStream(socket.getInputStream())
 
         ) {
             System.out.println("connected; sending data");
@@ -632,32 +633,31 @@ public class TodoApp extends Application {
             out.writeInt(command.length);
             System.out.println(command.length);
 
-            for (int i = 0; i < command.length; i++) {
+            for (int i = 0; i < command.length; i++) { // TODO siin tekib mingi nullpointer
                 out.writeUTF(command[i]);
                 System.out.println("sent " + command[i]);
             }
-            Object o = new Object();
+            Object o = null;
             String commandtype = command[0];
             System.out.println(commandtype);
-            switch (commandtype) {
-                case "checkuserRegister":
-                    o = in.readBoolean();
+            int returntype = in.readInt(); // tuleb tagastustyyp
+
+            switch (returntype) {
+                case 1:
+                    boolean receivedBoolean = in.readBoolean();
+                    o = receivedBoolean;
                     break;
-                case "checkuserLogin":
-                    o = in.readBoolean();
+                case 2:
+                    String receivedString = in.readUTF();
+                    o = receivedString;
                     break;
-                case "login":
-                    o = in.readUTF();
+                case 3:
+                    String userListsString = in.readUTF();
+                    List<Todo_list> userLists = new Gson().fromJson(userListsString, ArrayList.class);
+                    o = userLists;
                     break;
-                case "addlist":
-                    o = in.readUTF();
-                    break;
-                case "addtask":
-                    o = in.readUTF();
-                    break;
-                case "get lists":
-                    o = in.readObject();
-                    break;
+                case 9:
+                    System.out.println("ei tule siit midagi, meelega");
                 default:
                     System.out.println("ei tule siit midagi");
             }
@@ -666,7 +666,12 @@ public class TodoApp extends Application {
             return o;
         }
     }
+
+    public void addTaskButtonEventMethod(ActionEvent addTaskButtonEvent) {
+        // Todo
+    }
 }            // TODO tuleb kontrollida ühendust serveriga, muidu viskab errorisse
+
 
 
 /*    public static Object commandReceiver(String commandtype) throws Exception {

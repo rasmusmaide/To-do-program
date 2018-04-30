@@ -24,7 +24,7 @@ import java.util.List;
 
 import static java.lang.Boolean.FALSE;
 
-public class dataBaseCommands {
+public class dataBaseCommands { // TODO rename this shit
 
     public Connection conn;
 
@@ -59,9 +59,8 @@ public class dataBaseCommands {
 
     public List<Task> getAllTasks(String todoID) throws SQLException {
 
-
         List<Task> allTasks = new ArrayList<>();
-        try (PreparedStatement statement = conn.prepareStatement("SELECT * FROM tasks WHEERE task_group = ?");
+        try (PreparedStatement statement = conn.prepareStatement("SELECT * FROM tasks WHERE task_group = ?");
              ResultSet resultSet = statement.executeQuery()) {
 
             statement.setString(1, todoID);
@@ -86,9 +85,11 @@ public class dataBaseCommands {
 
     public String addTask(Task task) throws SQLException {
         //takes the valeus from task as strings and add them to the sql execution statement
+        String taskID = null;
 
         try (PreparedStatement statement = conn.prepareStatement(
-                "INSERT INTO TASKS(CREATION_DATE, DUE_DATE, HEADLINE, TEXT, DONE, task_group) VALUES ( ?, ?, ?, ?, ?, ?)"))
+                "INSERT INTO TASKS(CREATION_DATE, DUE_DATE, HEADLINE, TEXT, DONE, task_group) VALUES ( ?, ?, ?, ?, ?, ?);",
+                Statement.RETURN_GENERATED_KEYS))
         {
             statement.setString(1, task.getCreationDate());
             statement.setString(2, task.getDeadline());
@@ -97,9 +98,17 @@ public class dataBaseCommands {
             statement.setBoolean(5, task.getDone());
             statement.setString(6, task.getTodo_listID());
             statement.executeUpdate();
+
+            try (ResultSet insertedKey = statement.getGeneratedKeys()) {
+                while (insertedKey.next()) { // kas siin tsüklit üldse on mul vaja?
+                    int idString = insertedKey.getInt("id"); // long vist mõistlikum, aga ABs on hetkel int, hiljem muudab kui vaja
+                    System.out.println("Inserted and returned task: " + taskID);
+                    taskID = Integer.toString(idString); // todo eh...
+                }
+            }
         }
 
-        return "0"; // TODO tagastab indexi kui on vaja uus päring teha, siis võib võtta näiteks kõige hiljutisema creadionDatega?
+        return taskID;
     }
 
     public void deleteTask(int row) throws SQLException {
@@ -180,14 +189,25 @@ public class dataBaseCommands {
     }
 
     public String newTodo(int userID) throws SQLException {
+        String todoID = null;
+
         try (PreparedStatement statement = conn.prepareStatement(
-                "INSERT INTO DESCRIPTION(GROUP_NAME, OWNER_ID) VALUES (?, ?)")) {
+                "INSERT INTO DESCRIPTION(GROUP_NAME, OWNER_ID) VALUES (?, ?);",
+                Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, "New To-do list");
             statement.setString(2, Integer.toString(userID));
             statement.executeUpdate();
+
+            try (ResultSet insertedKey = statement.getGeneratedKeys()) {
+                while (insertedKey.next()) { // kas siin tsüklit üldse on mul vaja?
+                    int idString = insertedKey.getInt("id"); // long vist mõistlikum, aga ABs on hetkel int, hiljem muudab kui vaja
+                    System.out.println("Inserted and returned: " + todoID);
+                    todoID = Integer.toString(idString); // todo eh...
+                }
+            }
         }
 
-        return "0"; // todo tagastab indexi
+        return todoID;
     }
 
     public void changeTodoDescription(int index, String todoDescription) throws SQLException {

@@ -1,5 +1,6 @@
 package listfiles.Connection;
 
+import com.google.gson.Gson;
 import listfiles.Task;
 import listfiles.Todo_list;
 import listfiles.dataBaseCommands;
@@ -33,7 +34,7 @@ public class Echo implements Runnable {
         try {
 
             try (DataInputStream in = new DataInputStream(socket.getInputStream());
-                 ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream())) {
+                 DataOutputStream out = new DataOutputStream(socket.getOutputStream())) {
                 System.out.println("client connected; waiting for a byte");
 
                 //////////////////// command in
@@ -64,18 +65,19 @@ public class Echo implements Runnable {
                                 System.out.println(todo_list.toString());
                             }
 
-                            out.writeObject(userLists); // saadab tagasi*/ TODO kuidagi peab terve selle listi outputi toppima
+                            out.writeInt(3);
+                            String userListsString = new Gson().toJson(userLists);
+                            out.writeUTF(userListsString); // saadab tagasi
 
                             break;
                         case "addlist": // {"addlist", userID}
                             userIDstring = infoIn.get(1);
                             userID = Integer.parseInt(userIDstring);
 
-
                             String todoID = dbc.newTodo(userID);
 
                             System.out.println("Added new todo list");
-
+                            out.writeInt(2);
                             out.writeUTF(todoID);
                             break;
                         case "addtask":
@@ -93,6 +95,7 @@ public class Echo implements Runnable {
                             Task ntask = new Task(entrydate, date, head, text, false);
                             try {
                                 String taskID = dbc.addTask(ntask);
+                                out.writeInt(2);
                                 out.writeUTF(taskID);
 
                             } catch (SQLException e) {
@@ -112,6 +115,8 @@ public class Echo implements Runnable {
                                 dbc.deleteTask(index);
 
                                 System.out.println("Task deleted successfully.");
+                                out.writeInt(9); // saadab kinnituse, et midagi ei ole vaja tagastada pmst
+
                                 break;
                             } catch (NumberFormatException e) {
                                 System.out.println("Not a valid index!");
@@ -126,6 +131,7 @@ public class Echo implements Runnable {
                                 dbc.markAsDone(index);
 
                                 System.out.println("Task marked as done.");
+                                out.writeInt(9); // saadab kinnituse, et midagi ei ole vaja tagastada pmst
 
                             } catch (NumberFormatException e) {
                                 System.out.println("Not a valid index!");
@@ -135,10 +141,11 @@ public class Echo implements Runnable {
                             try {
                                 String indexstring = infoIn.get(1);
 
-                                int index = Integer.parseInt(indexstring);
+                                int index = Integer.parseInt(indexstring); // TODO try ainult parse ümber
                                 dbc.markAsUnDone(index);
 
                                 System.out.println("Task marked as undone.");
+                                out.writeInt(9); // saadab kinnituse, et midagi ei ole vaja tagastada pmst
 
                             } catch (NumberFormatException e) {
                                 System.out.println("Not a valid index!");
@@ -154,6 +161,7 @@ public class Echo implements Runnable {
                                 dbc.changeText(index, taskDescription);
 
                                 System.out.println("Task description changed to: " + taskDescription);
+                                out.writeInt(9); // saadab kinnituse, et midagi ei ole vaja tagastada pmst
 
                             } catch (NumberFormatException e) {
                                 System.out.println("Not a valid index!");
@@ -170,6 +178,7 @@ public class Echo implements Runnable {
                                 dbc.changeDueDate(index, taskDuedate);
 
                                 System.out.println("Task duedate changed to: " + taskDuedate);
+                                out.writeInt(9); // saadab kinnituse, et midagi ei ole vaja tagastada pmst
 
                             } catch (NumberFormatException e) {
                                 System.out.println("Not a valid index!");
@@ -185,6 +194,7 @@ public class Echo implements Runnable {
                                 dbc.changeHeadline(index, taskHeadline);
 
                                 System.out.println("Task headline changed to: " + taskHeadline);
+                                out.writeInt(9); // saadab kinnituse, et midagi ei ole vaja tagastada pmst
 
                             } catch (NumberFormatException e) {
                                 System.out.println("Not a valid index!");
@@ -200,6 +210,7 @@ public class Echo implements Runnable {
                                 dbc.changeTodoDescription(index, todoDescription);
 
                                 System.out.println("Todolist name changed to: " + todoDescription);
+                                out.writeInt(9); // saadab kinnituse, et midagi ei ole vaja tagastada pmst
 
                             } catch (NumberFormatException e) {
                                 System.out.println("Not a valid index!");
@@ -212,6 +223,8 @@ public class Echo implements Runnable {
                                 dbc.checkuserRegister(username);
 
                                 System.out.println("User found: " + username); // kui leiab sellise usernameiga useri, siis ei lase regada
+                                out.writeInt(9); // saadab kinnituse, et midagi ei ole vaja tagastada pmst
+
 
                             } catch (NumberFormatException e) {
                                 System.out.println("Not a valid index!");
@@ -225,6 +238,7 @@ public class Echo implements Runnable {
                                 dbc.register(username, password);
 
                                 System.out.println("User signed up: " + username + " " + password);
+                                out.writeInt(9); // saadab kinnituse, et midagi ei ole vaja tagastada pmst
 
                             } catch (NumberFormatException e) {
                                 System.out.println("Not a valid index!");
@@ -238,6 +252,7 @@ public class Echo implements Runnable {
 
                                 System.out.println("User found: " + userFound);
 
+                                out.writeInt(1);
                                 out.writeBoolean(userFound);
 
                             } catch (NumberFormatException e) {
@@ -250,8 +265,9 @@ public class Echo implements Runnable {
                                 String password = infoIn.get(2);
                                 String userIDString = dbc.login(username, password);
                                 // võiks returnida userID
-                                out.writeUTF(userIDString); // TODO saadab userID tagasi
 
+                                out.writeInt(2);
+                                out.writeUTF(userIDString);
 
                                 System.out.println("User logged in: " + username + " " + password);
 
