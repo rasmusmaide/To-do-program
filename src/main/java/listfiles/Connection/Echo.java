@@ -48,23 +48,29 @@ public class Echo implements Runnable {
 
                 try {
                     String command = infoIn.get(0);
+                    int userID;
+                    String userIDstring;
 
                     switch (command) {
                         case "get lists": // {"get lists", task.getTaskID()}
-                            String userIDstring = infoIn.get(1);
-                            int userID = Integer.parseInt(userIDstring);
+                            userIDstring = infoIn.get(1);
+                            userID = Integer.parseInt(userIDstring);
 
-                            /*List<Todo_list> userLists = dbc.getAllUserLists(userID); // TODO sellise funktsiooniga käsku dbcs ei ole
+                            List<Todo_list> userLists = dbc.getAllUserLists(userID); // TODO sellise funktsiooniga käsku dbcs ei ole
 
                             for (Todo_list todo_list : userLists) {
                                 System.out.println(todo_list.toString());
                             }
 
-                            echo.sendInfo(userLists); // saadab tagasi*/
+                            //out.write(); // saadab tagasi*/
 
                             break;
-                        case "addlist": // {"addlist"}
-                            dbc.newTodo();
+                        case "addlist": // {"addlist", userID}
+                            userIDstring = infoIn.get(1);
+                            userID = Integer.parseInt(userIDstring);
+
+
+                            dbc.newTodo(userID);
 
                             System.out.println("Added new todo list");
 

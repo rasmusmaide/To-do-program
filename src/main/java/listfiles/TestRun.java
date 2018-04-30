@@ -1,3 +1,4 @@
+/*
 package listfiles;
 
 import org.h2.tools.RunScript;
@@ -16,17 +17,21 @@ public class TestRun {
 
     public static void main(String[] args) throws Exception {
         Server server = Server.createTcpServer("-tcpPort","9092","-tcpAllowOthers").start();
-        /*
+        */
+/*
         korra tekkis probleem, kus port 9092 oli juba kinni, tuli välja et kuskil sügavustes jooksis
         veel java peal mingi h2 asjandus, nii et selle vea puhul tasub seda otsida
-        */
+        *//*
+
         Class.forName("org.h2.Driver");
         dataBaseCommands dbc;
         Scanner scanner = new Scanner(System.in);
-        /*System.out.println("Enter database username: ");
+        */
+/*System.out.println("Enter database username: ");
         String username = scanner.nextLine();
         System.out.println("Enter database password: ");
-        String password = scanner.nextLine();*/
+        String password = scanner.nextLine();*//*
+
 
         dbc = new dataBaseCommands("jdbc:h2:tcp://localhost/~/todoBase");//, username, password);
         //dbc.initialize(); //esmakordsel käivitamisel
@@ -38,7 +43,7 @@ public class TestRun {
 
         //Scanner scanner = new Scanner(System.in);
 
-        System.out.println(dbc.getAllTasks());
+        //System.out.println(dbc.getAllTasks());
         try {
             label:
             while (true) {
@@ -124,11 +129,14 @@ public class TestRun {
     }
 
 
-    /*public TestRun(String dataBaseURL) throws SQLException {
+    */
+/*public TestRun(String dataBaseURL) throws SQLException {
         this.conn = DriverManager.getConnection(dataBaseURL);
 
-    }*/
+    }*//*
+
 
 
 }
 
+*/

@@ -16,6 +16,7 @@ package listfiles;
 
 import org.h2.tools.RunScript;
 
+import javax.swing.text.html.ListView;
 import java.io.*;
 import java.sql.*;
 import java.util.ArrayList;
@@ -28,7 +29,6 @@ public class dataBaseCommands {
     public Connection conn;
 
 
-
     public dataBaseCommands(String dataBaseURL) throws Exception { //, String un, String pw
         conn = DriverManager.getConnection(dataBaseURL);//, un, pw);
 
@@ -36,66 +36,70 @@ public class dataBaseCommands {
 
     public void initialize() throws Exception {
         ClassLoader classLoader = dataBaseCommands.class.getClassLoader();
-        Reader reader = (new InputStreamReader(classLoader.getResourceAsStream("tableInitializer.txt"),"UTF-8"));
-        RunScript.execute(conn,reader);
+        Reader reader = (new InputStreamReader(classLoader.getResourceAsStream("tableInitializer.txt"), "UTF-8"));
+        RunScript.execute(conn, reader);
     }
 
     public void removeTodo_s() throws Exception {
         ClassLoader classLoader = dataBaseCommands.class.getClassLoader();
-        Reader reader = (new InputStreamReader(classLoader.getResourceAsStream("dropOld.txt"),"UTF-8"));
-        RunScript.execute(conn,reader);
+        Reader reader = (new InputStreamReader(classLoader.getResourceAsStream("dropOld.txt"), "UTF-8"));
+        RunScript.execute(conn, reader);
     }
 
     public void newInitialize() throws Exception {
         ClassLoader classLoader = dataBaseCommands.class.getClassLoader();
-        Reader reader = (new InputStreamReader(classLoader.getResourceAsStream("tasks.txt"),"UTF-8"));
-        RunScript.execute(conn,reader);
-        Reader reader2 = (new InputStreamReader(classLoader.getResourceAsStream("users.txt"),"UTF-8"));
-        RunScript.execute(conn,reader2);
-        Reader reader3 = (new InputStreamReader(classLoader.getResourceAsStream("description.txt"),"UTF-8"));
-        RunScript.execute(conn,reader3);
+        Reader reader = (new InputStreamReader(classLoader.getResourceAsStream("tasks.txt"), "UTF-8"));
+        RunScript.execute(conn, reader);
+        Reader reader2 = (new InputStreamReader(classLoader.getResourceAsStream("users.txt"), "UTF-8"));
+        RunScript.execute(conn, reader2);
+        Reader reader3 = (new InputStreamReader(classLoader.getResourceAsStream("description.txt"), "UTF-8"));
+        RunScript.execute(conn, reader3);
     }
 
 
-    public Todo_list getAllTasks() throws SQLException {
+    public List<Task> getAllTasks(String todoID) throws SQLException {
 
 
         List<Task> allTasks = new ArrayList<>();
-        try (PreparedStatement context = conn.prepareStatement("select * from TASKS");
-             ResultSet rs = context.executeQuery()) {
+        try (PreparedStatement statement = conn.prepareStatement("SELECT * FROM tasks WHEERE task_group = ?");
+             ResultSet resultSet = statement.executeQuery()) {
 
+            statement.setString(1, todoID);
 
-            while (rs.next()) {
+            while (resultSet.next()) {
 
-                Task oneTask = new Task(rs.getTimestamp("creation_date").toString(),
-                        rs.getTimestamp("due_date").toString(),
-                        rs.getString("headline"),
-                        rs.getString("text"),
-                        Boolean.parseBoolean(rs.getString("done")));
+                Task oneTask = new Task(resultSet.getTimestamp("creation_date").toString(),
+                        resultSet.getTimestamp("due_date").toString(),
+                        resultSet.getString("headline"),
+                        resultSet.getString("text"),
+                        Boolean.parseBoolean(resultSet.getString("done")));
+                oneTask.setTodo_listID(todoID);
+                oneTask.setTaskID(resultSet.getString("id"));
 
                 allTasks.add(oneTask);
 
             }
         }
 
-
-        String desc = "Listname placeholder";
-        Todo_list todo_list = new Todo_list(allTasks, desc); // juhuks kui tahaks returnida Todo_list isendit
-
-        return todo_list; //allTasks;
+        return allTasks;
     }
 
-    public void addTask(Task task) throws SQLException {
+    public int addTask(Task task) throws SQLException {
         //takes the valeus from task as strings and add them to the sql execution statement
 
-        try (PreparedStatement statement = conn.prepareStatement("INSERT INTO TASKS(CREATION_DATE, DUE_DATE , HEADLINE, TEXT, DONE) VALUES ( ?, ?, ?, ?, ?)")) {
+        try (PreparedStatement statement = conn.prepareStatement(
+                "INSERT INTO TASKS(CREATION_DATE, DUE_DATE, HEADLINE, TEXT, DONE, task_group) VALUES ( ?, ?, ?, ?, ?, ?)"))
+        {
             statement.setString(1, task.getCreationDate());
             statement.setString(2, task.getDeadline());
             statement.setString(3, task.getHeadline());
             statement.setString(4, task.getDescription());
             statement.setBoolean(5, task.getDone());
+            statement.setString(6, task.getTodo_listID());
             statement.executeUpdate();
         }
+
+        return 0; // TODO tagastab indexi kui on vaja uus päring teha, siis võib võtta näiteks kõige hiljutisema creadionDatega?
     }
 
     public void deleteTask(int row) throws SQLException {
@@ -130,7 +134,6 @@ public class dataBaseCommands {
             statement.executeUpdate();
         }
     }
-
 
     public void markAsUnDone(int row) throws SQLException {
         try (PreparedStatement statement = conn.prepareStatement("UPDATE `TASKS` SET done = 'FALSE' WHERE id = ?")) {
@@ -176,22 +179,118 @@ public class dataBaseCommands {
         }
     }
 
-    public void newTodo() {
+    public String newTodo(int userID) throws SQLException {
+        try (PreparedStatement statement = conn.prepareStatement(
+                "INSERT INTO DESCRIPTION(GROUP_NAME, OWNER_ID) VALUES (?, ?)")) {
+            statement.setString(1, "New To-do list");
+            statement.setString(2, Integer.toString(userID));
+            statement.executeUpdate();
+        }
+
+        return "0"; // todo tagastab indexi
     }
 
-    public void changeTodoDescription(int index, String todoDescription) {
+    public void changeTodoDescription(int index, String todoDescription) throws SQLException {
+        try (PreparedStatement statement = conn.prepareStatement("UPDATE `DESCRIPTION` SET description = ? WHERE id = ?")) {
+            statement.setString(1, todoDescription);
+            statement.setString(2, Integer.toString(index));
+            statement.executeUpdate();
+        }
     }
 
-    public void checkuserRegister(String username) {
+    public boolean checkuserRegister(String username) throws SQLException {
+        try (PreparedStatement statement = conn.prepareStatement(
+                "SELECT * FROM users WHERE username = ?")) {
+            statement.setString(1, username);
+
+            ResultSet resultSet = statement.executeQuery();
+
+            int counter = 0;
+            while (resultSet.next()) {
+                String userID = resultSet.getString("id");
+                counter += 1;
+            }
+            if (counter > 0) {
+                return true;
+            }
+        }
+
+        return false; // sellist userit ei ole
     }
 
-    public void register(String username, String password) {
+    public boolean register(String username, String password) throws SQLException {
+        try (PreparedStatement statement = conn.prepareStatement(
+                "INSERT INTO USERS(USERNAME, PASSWORD) VALUES (?, ?)")) {
+            statement.setString(1, username);
+            statement.setString(2, password);
+            statement.executeUpdate();
+        }
+
+        return true; // uus user lisatud
     }
 
-    public void checkuserLogin(String username, String password) {
+    public boolean checkuserLogin(String username, String password) throws SQLException {
+        try (PreparedStatement statement = conn.prepareStatement(
+                "SELECT * FROM users WHERE username = ? AND password = ?")) {
+            statement.setString(1, username);
+            statement.setString(2, password);
+
+            ResultSet resultSet = statement.executeQuery();
+
+            int counter = 0;
+            while (resultSet.next()) {
+                String userID = resultSet.getString("id");
+                counter += 1;
+            }
+            if (counter > 0) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
-    public void login(String username, String password) {
+    public String login(String username, String password) throws SQLException {
+        String userID = "0";
+
+        try (PreparedStatement statement = conn.prepareStatement(
+                "SELECT id FROM users WHERE username = ? AND password = ?")) {
+            statement.setString(1, username);
+            statement.setString(2, password);
+
+            ResultSet resultSet = statement.executeQuery();
+            userID = resultSet.getString("id");
+
+        }
+
+        return userID; // tagastab indexi
+    }
+
+    public List<Todo_list> getAllUserLists(int userID) throws SQLException {
+        List<Todo_list> allUserLists = new ArrayList<>();
+
+        try (PreparedStatement statement = conn.prepareStatement(
+                "SELECT * FROM description WHERE owner = ?")) {
+            statement.setString(1, Integer.toString(userID));
+
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+                String todoDescription = resultSet.getString("description");
+                String todoID = resultSet.getString("id");
+
+                Todo_list todoFromDB = new Todo_list(new ArrayList<>(), todoDescription);
+                todoFromDB.setTodo_listID(todoID);
+                allUserLists.add(todoFromDB);
+            }
+
+        }
+
+        for (Todo_list todo_list : allUserLists) {
+            String todoID = todo_list.getTodo_listID();
+            todo_list.setTasks(getAllTasks(todoID));
+        }
+        return allUserLists;
     }
 }
 

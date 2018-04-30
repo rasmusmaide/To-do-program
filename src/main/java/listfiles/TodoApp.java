@@ -26,7 +26,7 @@ import java.util.*;
 public class TodoApp extends Application {
     static int server = 1337;
     private String selectedTodo = "0";
-    private String userid = "999";
+    private String userID = "999";
     private String selectedTask = "0";
 
     public static void main(String[] args) {
@@ -70,7 +70,7 @@ public class TodoApp extends Application {
         addListButton.setOnAction(event -> {
             Todo_list ntodo = new Todo_list(new ArrayList<>(), "New To-do list");
 
-            String[] command = {"addlist"};
+            String[] command = {"addlist", userID};
 
             try {
                 commandHandler(command);
@@ -159,7 +159,7 @@ public class TodoApp extends Application {
             String[] command = {"checkuser", username, password};
 
             try {
-                commandHandler(command); // Todo
+                commandHandler(command);
                 System.out.println("läks korda");
 
             } catch (Exception e) {
@@ -192,7 +192,7 @@ public class TodoApp extends Application {
             String[] command = {"checkuser", username, password};
 
             try {
-                commandHandler(command); // Todo
+                commandHandler(command);
                 System.out.println("läks korda");
 
             } catch (Exception e) {
@@ -208,12 +208,10 @@ public class TodoApp extends Application {
                 registererror.setAlwaysOnTop(true);
                 registererror.show();
             } else {
-                // TODO lisab kasutaja
-
                 String[] command2 = {"register", username, password};
 
                 try {
-                    commandHandler(command2); // Todo
+                    commandHandler(command2);
                     System.out.println("läks korda");
 
                 } catch (Exception e) {
@@ -274,7 +272,7 @@ public class TodoApp extends Application {
 
                 String[] command = {"renametodo", todo_list.getTodo_listID(), fieldtext};
                 try {
-                    commandHandler(command); // Todo
+                    commandHandler(command);
                     System.out.println("läks korda");
 
                 } catch (Exception e) {
@@ -282,7 +280,6 @@ public class TodoApp extends Application {
                 }
 
                 ((Node) (event1.getSource())).getScene().getWindow().hide();
-                // TODO saadab serverile selle muutuse
             });
 
 
@@ -373,13 +370,13 @@ public class TodoApp extends Application {
                     e.printStackTrace();
                 }
 
-                // TODO saab serverilt Taski (nüüd koos autoincrementitud taskIDga)
+                // TODO saab serverilt Taski indexi
                 Task ntask = new Task(duedate, duedate, headlinefield.getText(), descriptionfield.getText(), false);
                 ntask.setTaskID("555"); // selle peaks ABlt saama
 
                 todo_list.getTasks().add(ntask);
 
-                tasksPane.add(taskPaneAdder(ntask), 0, todo_list.getTasks().size()); // TODO kontrolli, kas paigutab viimaseks ikka
+                tasksPane.add(taskPaneAdder(ntask), 0, todo_list.getTasks().size());
                 //taskPaneAdder(ntask);
 
                 //System.out.println(ntask);
@@ -417,11 +414,11 @@ public class TodoApp extends Application {
         todolistTab.setOnSelectionChanged(t -> {
             if (todolistTab.isSelected()) {
                 this.selectedTodo = todo_list.getTodo_listID(); // kas nüüd üldse on vaja seda?
-                System.out.println("Add nupp kehtib sellele listile"); // TODO add button affects this list
+                System.out.println("Add nupp kehtib sellele listile");
             }
         });
 
-        return todolistTab; // TODO added task goes to selected tab/todolist
+        return todolistTab;
     }
 
     private BorderPane taskPaneAdder(Task task) {
@@ -443,14 +440,13 @@ public class TodoApp extends Application {
                 String[] command = {"renametask", task.getTaskID(), fieldtext};
 
                 try {
-                    commandHandler(command); // Todo
+                    commandHandler(command);
                     System.out.println("läks korda");
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
 
                 ((Node) (headEditFieldEditEvent.getSource())).getScene().getWindow().hide();
-                // TODO saadab serverile selle muutuse
             });
 
             Scene headScene = new Scene(headEditField);
@@ -502,7 +498,7 @@ public class TodoApp extends Application {
                 String[] command = {"dateedit", task.getTaskID(), duedate};
 
                 try {
-                    commandHandler(command); // Todo
+                    commandHandler(command);
                     System.out.println("läks korda");
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -538,14 +534,13 @@ public class TodoApp extends Application {
                 String[] command = {"descedit", task.getTaskID(), fieldtext};
 
                 try {
-                    commandHandler(command); // Todo
+                    commandHandler(command);
                     System.out.println("läks korda");
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
 
                 ((Node) (descEditFieldEditEvent.getSource())).getScene().getWindow().hide();
-                // TODO saadab serverile selle muutuse
             });
 
             Scene descScene = new Scene(descEditField);
@@ -568,7 +563,8 @@ public class TodoApp extends Application {
             try {
                 commandHandler(command);
                 System.out.println("läks korda");
-                taskBorderPane.setManaged(false); // Todo kontrolli, kas töötab
+                taskBorderPane.setManaged(false); // Todo ei puhasta, jääb taustale
+                taskBorderPane.setVisible(false);
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -627,10 +623,12 @@ public class TodoApp extends Application {
 
             out.writeInt(command.length);
 
-            for (int i = 0; i < command.length-1; i++) { // uuri, miks ma siia -1 pidin panema
+            for (int i = 0; i < command.length-1; i++) {
                 out.writeUTF(command[i]);
                 System.out.println("sent " + command[i]);
             }
+
+            int elementID = in.readInt(); // TODO kuidas ma selle sinna saan
 
 
             System.out.println("cleaned up");
