@@ -56,10 +56,9 @@ public class Server {
                     //////////////////////////////////
                 }
             } finally {
-                dbc.conn.close(); // TODO ilmselt siin probleem
+                dbc.conn.close();
                 h2Server.stop();
             }
-
 
 
         }

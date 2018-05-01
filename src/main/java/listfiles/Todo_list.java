@@ -40,8 +40,8 @@ public class Todo_list {
     public String toString() {
         String taskstr = "";
         for (int i = 0; i < tasks.size(); i++) {
-            int index = i+1;
-            taskstr +=  '\n' + "- " + index + ". " + tasks.get(i).toString();
+            int index = i + 1;
+            taskstr += '\n' + "- " + index + ". " + tasks.get(i).toString();
             /*taskstr += '\n' + i + ". Task: " + tasks.get(i).getHeadline()
                     + "Description: " + tasks.get(i).getDescription()
                     + "Deadline: " + tasks.get(i).getDeadline();*/

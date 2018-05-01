@@ -616,7 +616,6 @@ public class TodoApp extends Application {
     }
 
     public static Object commandHandler(String[] command) throws Exception {
-        // midagi paremat kui Object paluks
 
         //formaat: 2005-01-12 08:02:00;juust;kapsas
         System.out.println("connecting to server: " + server);
@@ -640,23 +639,23 @@ public class TodoApp extends Application {
             Object o = null;
             String commandtype = command[0];
             System.out.println(commandtype);
-            int returntype = in.readInt(); // tuleb tagastustyyp
+            int returnType = in.readInt(); // tuleb tagastustyyp
 
-            switch (returntype) {
-                case 1:
+            switch (returnType) {
+                case TypeId.BOOLEAN:
                     boolean receivedBoolean = in.readBoolean();
                     o = receivedBoolean;
                     break;
-                case 2:
+                case TypeId.STRING:
                     String receivedString = in.readUTF();
                     o = receivedString;
                     break;
-                case 3:
+                case TypeId.LISTS:
                     String userListsString = in.readUTF();
                     List<Todo_list> userLists = new Gson().fromJson(userListsString, ArrayList.class);
                     o = userLists;
                     break;
-                case 9:
+                case TypeId.EMPTY:
                     System.out.println("ei tule siit midagi, meelega");
                 default:
                     System.out.println("ei tule siit midagi");

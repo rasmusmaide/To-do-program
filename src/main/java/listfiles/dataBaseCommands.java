@@ -89,8 +89,7 @@ public class dataBaseCommands { // TODO rename this shit
 
         try (PreparedStatement statement = conn.prepareStatement(
                 "INSERT INTO TASKS(CREATION_DATE, DUE_DATE, HEADLINE, TEXT, DONE, task_group) VALUES ( ?, ?, ?, ?, ?, ?);",
-                Statement.RETURN_GENERATED_KEYS))
-        {
+                Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, task.getCreationDate());
             statement.setString(2, task.getDeadline());
             statement.setString(3, task.getHeadline());
@@ -240,7 +239,7 @@ public class dataBaseCommands { // TODO rename this shit
 
     public void register(String username, String password) throws SQLException {
         try (PreparedStatement statement = conn.prepareStatement(
-                "INSERT INTO USERS(USERNAME, PASSWORD) VALUES (?, ?)")) {
+                "INSERT INTO USERS(username, password) VALUES (?, ?)")) {
             statement.setString(1, username);
             statement.setString(2, password);
             statement.executeUpdate();
@@ -274,12 +273,13 @@ public class dataBaseCommands { // TODO rename this shit
         String userID = "0";
 
         try (PreparedStatement statement = conn.prepareStatement(
-                "SELECT id FROM users WHERE username = ? AND password = ?")) {
+                "SELECT * FROM users WHERE username = ? AND password = ?")) {
             statement.setString(1, username);
             statement.setString(2, password);
 
             ResultSet resultSet = statement.executeQuery();
-            userID = resultSet.getString("id");
+            int userIDInt = resultSet.getInt(1);
+            userID = Integer.toString(userIDInt);
             System.out.println(userID);
 
         }
