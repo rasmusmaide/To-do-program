@@ -47,7 +47,7 @@ public class Echo implements Runnable {
 
                 try {
                     String command = infoIn.get(0);
-                    System.out.println(command + " " + infoIn);
+                    System.out.println(command + " " + infoIn + " @echocommand");
                     int userID;
                     String userIDstring;
 
@@ -59,7 +59,7 @@ public class Echo implements Runnable {
                             List<Todo_list> userLists = dbc.getAllUserLists(userID);
 
                             for (Todo_list todo_list : userLists) {
-                                System.out.println(todo_list.toString()+ " " + todo_list.getTasks());
+                                System.out.println(todo_list.toString() + " " + todo_list.getTasks());
                             }
                             UserTodoLists userTodoLists = new UserTodoLists();
                             userTodoLists.setUserTodoLists(userLists);
@@ -80,8 +80,6 @@ public class Echo implements Runnable {
                             out.writeUTF(todoID);
                             break;
                         case "addtask":
-                            System.out.println("Add task: ");
-
                             DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                             Date currentdate = new Date();
 
@@ -92,6 +90,7 @@ public class Echo implements Runnable {
 
 
                             Task ntask = new Task(entrydate, date, head, text, false);
+                            System.out.println("Add task: " + ntask);
                             try {
                                 String taskID = dbc.addTask(ntask);
                                 out.writeInt(TypeId.STRING);

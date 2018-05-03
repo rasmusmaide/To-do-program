@@ -2,6 +2,7 @@ package listfiles;
 
 import com.google.gson.Gson;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -223,6 +224,9 @@ public class TodoApp extends Application {
         Stage loginStage = new Stage();
         loginStage.setScene(loginScene);
         loginStage.setAlwaysOnTop(true);
+        loginStage.setOnCloseRequest(loginStageCloseEvent -> {
+            Platform.exit();
+        });
         loginStage.show();
 
 
@@ -581,7 +585,7 @@ public class TodoApp extends Application {
         return taskBorderPane;
     }
 
-    public static Object commandHandler(String[] command) throws Exception {
+    private static Object commandHandler(String[] command) throws Exception {
 
         System.out.println("connecting to server: " + server);
 
@@ -593,9 +597,7 @@ public class TodoApp extends Application {
         ) {
             System.out.println("connected; sending data");
 
-
             out.writeInt(command.length);
-            System.out.println(command.length);
 
             for (int i = 0; i < command.length; i++) {
                 out.writeUTF(command[i]);
@@ -603,7 +605,7 @@ public class TodoApp extends Application {
             }
             Object o = null;
             String commandtype = command[0];
-            System.out.println(commandtype);
+            //System.out.println(commandtype);
             int returnType = in.readInt(); // tuleb tagastustyyp
 
             switch (returnType) {
@@ -619,8 +621,6 @@ public class TodoApp extends Application {
                     String userListsString = in.readUTF();
                     UserTodoLists userTodoLists = new Gson().fromJson(userListsString, UserTodoLists.class);
                     List<Todo_list> userLists = userTodoLists.getUserTodoLists();
-                    //System.out.println(userListsString);
-                    //System.out.println(userLists);
                     o = userLists;
                     break;
                 case TypeId.EMPTY:

@@ -1,5 +1,5 @@
 CREATE TABLE tasks (
-    id INT AUTO_INCREMENT,
+    id INT AUTO_INCREMENT PRIMARY KEY ,
     creation_date TIMESTAMP,
     due_date TIMESTAMP,
     headline VARCHAR(100),
