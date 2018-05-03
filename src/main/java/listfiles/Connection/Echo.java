@@ -62,7 +62,7 @@ public class Echo implements Runnable {
                             List<Todo_list> userLists = dbc.getAllUserLists(userID);
 
                             for (Todo_list todo_list : userLists) {
-                                System.out.println(todo_list.toString());
+                                System.out.println(todo_list.toString()+ " " + todo_list.getTasks());
                             }
 
                             out.writeInt(TypeId.LISTS);

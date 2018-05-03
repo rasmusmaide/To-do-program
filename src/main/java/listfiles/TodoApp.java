@@ -149,8 +149,9 @@ public class TodoApp extends Application {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+                System.out.println(allUserTodoLists);
                 for (Todo_list todo_list : allUserTodoLists) {
-                    tabPane.getTabs().add(tabAdder(todo_list));
+                    tabPane.getTabs().add(tabAdder(todo_list)); // TODO
                 }
                 ((Node) (loginEvent.getSource())).getScene().getWindow().hide();
             } else {
@@ -596,7 +597,7 @@ public class TodoApp extends Application {
             out.writeInt(command.length);
             System.out.println(command.length);
 
-            for (int i = 0; i < command.length; i++) { // TODO siin tekib mingi nullpointer
+            for (int i = 0; i < command.length; i++) {
                 out.writeUTF(command[i]);
                 System.out.println("sent " + command[i]);
             }
@@ -617,6 +618,8 @@ public class TodoApp extends Application {
                 case TypeId.LISTS:
                     String userListsString = in.readUTF();
                     List<Todo_list> userLists = new Gson().fromJson(userListsString, ArrayList.class);
+                    System.out.println(userListsString);
+                    System.out.println(userLists);
                     o = userLists;
                     break;
                 case TypeId.EMPTY:

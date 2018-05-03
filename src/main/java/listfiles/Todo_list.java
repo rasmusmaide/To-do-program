@@ -46,6 +46,6 @@ public class Todo_list {
                     + "Description: " + tasks.get(i).getDescription()
                     + "Deadline: " + tasks.get(i).getDeadline();*/
         }
-        return description + taskstr;
+        return description + tasks;
     }
 }

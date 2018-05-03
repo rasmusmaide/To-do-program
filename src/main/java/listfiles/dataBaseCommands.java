@@ -259,12 +259,16 @@ public class DataBaseCommands {
                 todoFromDB.setTodo_listID(todoID);
                 allUserLists.add(todoFromDB);
             }
+            resultSet.close();
 
         }
 
+        System.out.println("jep");
         for (Todo_list todo_list : allUserLists) {
             String todoID = todo_list.getTodo_listID();
-            todo_list.setTasks(getAllTasks(todoID));
+            List<Task> taskList = getAllTasks(todoID);
+            todo_list.setTasks(taskList);
+            System.out.println(taskList + " dbc alluserlists");
         }
         return allUserLists;
     }
