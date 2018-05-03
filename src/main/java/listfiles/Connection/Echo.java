@@ -1,15 +1,14 @@
 package listfiles.Connection;
 
 import com.google.gson.Gson;
+import listfiles.DataBaseCommands;
 import listfiles.Task;
 import listfiles.Todo_list;
 import listfiles.TypeId;
-import listfiles.dataBaseCommands;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.sql.SQLException;
 import java.text.DateFormat;
@@ -20,9 +19,9 @@ import java.util.List;
 
 public class Echo implements Runnable {
     private Socket socket;
-    private dataBaseCommands dbc;
+    private DataBaseCommands dbc;
 
-    public Echo(Socket socket, dataBaseCommands dbc) {
+    public Echo(Socket socket, DataBaseCommands dbc) {
         this.socket = socket;
         this.dbc = dbc;
     }

@@ -5,7 +5,6 @@ import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -14,16 +13,13 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.stage.Popup;
 import javafx.stage.Stage;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.io.ObjectInputStream;
 import java.net.Socket;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class TodoApp extends Application {
     static int server = 1337;
@@ -37,28 +33,6 @@ public class TodoApp extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        //primaryStage.initStyle(StageStyle.UNDECORATED);
-
-
-        // To-do lists for testing:
-
-        /*List<Task> testtasklist = new ArrayList<>(Arrays.asList(
-                new Task("2005-01-12 08:02:00", "2005-01-12 08:02:00", "head1", "desc1", false),
-                new Task("2005-01-12 08:02:00", "2005-01-12 08:02:00", "head2", "desc2", false)
-        ));
-        testtasklist.get(0).setTaskID("111");
-        testtasklist.get(1).setTaskID("222");
-
-        List<Task> testtasklist2 = new ArrayList<>();
-        testtasklist2.add(new Task("2005-01-12 08:02:00", "2005-01-12 08:02:00", "head3", "desc3", true));
-        testtasklist2.get(0).setTaskID("333");
-
-        Todo_list testtodo1 = new Todo_list(testtasklist, "testtodo1");
-        Todo_list testtodo2 = new Todo_list(testtasklist2, "testtodo2");
-
-        List<Todo_list> testlist = new ArrayList<>();
-        testlist.add(testtodo1);
-        testlist.add(testtodo2);*/
 
         BorderPane borderPane = new BorderPane();
 
@@ -260,8 +234,7 @@ public class TodoApp extends Application {
         todolistTab.setText(todo_list.getDescription());
 
         List<Task> tasks = todo_list.getTasks();
-        //ObservableList<Task> observableList = FXCollections.observableArrayList(tasks);
-        //ListView<Task> taskView = new ListView<>(observableList);
+
         GridPane tasksPane = new GridPane();
 
         for (int i = 0; i < tasks.size(); i++) {
@@ -317,9 +290,6 @@ public class TodoApp extends Application {
             Label desclabel = new Label("Description");
             TextField descriptionfield = new TextField();
 
-
-            //String duedate = df.format();
-
             ObservableList<String> hours = FXCollections.observableArrayList(new ArrayList<>());
             ObservableList<String> minutes = FXCollections.observableArrayList(new ArrayList<>());
 
@@ -353,15 +323,10 @@ public class TodoApp extends Application {
 
             timePickerBox.getChildren().addAll(duedateHoursSpinner, timeSeparator, duedateMinutesSpinner);
 
-            //DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
             DatePicker datePicker = new DatePicker();
-
 
             Button addtask = new Button("Add");
             addtask.setOnAction(event1 -> {
-                //Date currentdate = new Date();
-                //String creationdate = df.format(currentdate);
                 String duedate = datePicker.getValue() + " " + duedateHoursSpinner.getValue() + ":" + duedateMinutesSpinner.getValue() + ":00";
 
                 if (datePicker.getValue() == null) {
@@ -617,7 +582,6 @@ public class TodoApp extends Application {
 
     public static Object commandHandler(String[] command) throws Exception {
 
-        //formaat: 2005-01-12 08:02:00;juust;kapsas
         System.out.println("connecting to server: " + server);
 
         try (
@@ -670,39 +634,4 @@ public class TodoApp extends Application {
         // Todo
     }
 }            // TODO tuleb kontrollida ühendust serveriga, muidu viskab errorisse
-
-
-
-/*    public static Object commandReceiver(String commandtype) throws Exception {
-            Object o = new Object();
-        try (
-                Socket socket = new Socket("localhost", server);
-                ObjectInputStream in = new ObjectInputStream(socket.getInputStream())
-        ) {
-            switch (commandtype) {
-                case "checkuserRegister":
-                    o = in.readBoolean();
-                    break;
-                case "checkuserLogin":
-                    o = in.readBoolean();
-                    break;
-                case "login":
-                    o = in.readUTF();
-                    break;
-                case "addlist":
-                    o = in.readUTF();
-                    break;
-                case "addtask":
-                    o = in.readUTF();
-                    break;
-                case "get lists":
-                    o = in.readObject();
-                    break;
-                default:
-                    System.out.println("ei tule siit midagi");
-            }
-
-        }
-        return o;
-    }*/
 

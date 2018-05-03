@@ -1,17 +1,10 @@
 package listfiles.Connection;
 
-import listfiles.Task;
-import listfiles.Todo_list;
-import listfiles.dataBaseCommands;
+import listfiles.DataBaseCommands;
 
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.sql.SQLException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 
 public class Server {
@@ -25,10 +18,11 @@ public class Server {
 
             org.h2.tools.Server h2Server = org.h2.tools.Server.createTcpServer("-tcpPort", "9092", "-tcpAllowOthers").start();
             Class.forName("org.h2.Driver");
-            dataBaseCommands dbc;
-            dbc = new dataBaseCommands("jdbc:h2:tcp://localhost/~/todoBase");
+            DataBaseCommands dbc;
+            dbc = new DataBaseCommands("jdbc:h2:tcp://localhost/~/todoBase");
             try {
-                dbc.newInitialize();//esmakordsel käivitamisel
+                //dbc.removeTodo_s();
+                dbc.initialize();//esmakordsel käivitamisel
             } catch (SQLException e) {
                 e.printStackTrace();
             }

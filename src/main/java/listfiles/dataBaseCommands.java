@@ -16,44 +16,30 @@ package listfiles;
 
 import org.h2.tools.RunScript;
 
-import javax.swing.text.html.ListView;
 import java.io.*;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static java.lang.Boolean.FALSE;
-
-public class dataBaseCommands { // TODO rename this shit
+public class DataBaseCommands {
 
     public Connection conn;
 
-
-    public dataBaseCommands(String dataBaseURL) throws Exception { //, String un, String pw
+    public DataBaseCommands(String dataBaseURL) throws Exception { //, String un, String pw
         conn = DriverManager.getConnection(dataBaseURL);//, un, pw);
 
     }
 
     public void initialize() throws Exception {
-        ClassLoader classLoader = dataBaseCommands.class.getClassLoader();
-        Reader reader = (new InputStreamReader(classLoader.getResourceAsStream("tableInitializer.txt"), "UTF-8"));
+        ClassLoader classLoader = DataBaseCommands.class.getClassLoader();
+        Reader reader = (new InputStreamReader(classLoader.getResourceAsStream("tableInitializer.sql"), "UTF-8"));
         RunScript.execute(conn, reader);
     }
 
     public void removeTodo_s() throws Exception {
-        ClassLoader classLoader = dataBaseCommands.class.getClassLoader();
+        ClassLoader classLoader = DataBaseCommands.class.getClassLoader();
         Reader reader = (new InputStreamReader(classLoader.getResourceAsStream("dropOld.txt"), "UTF-8"));
         RunScript.execute(conn, reader);
-    }
-
-    public void newInitialize() throws Exception {
-        ClassLoader classLoader = dataBaseCommands.class.getClassLoader();
-        Reader reader = (new InputStreamReader(classLoader.getResourceAsStream("tasks.txt"), "UTF-8"));
-        RunScript.execute(conn, reader);
-        Reader reader2 = (new InputStreamReader(classLoader.getResourceAsStream("users.txt"), "UTF-8"));
-        RunScript.execute(conn, reader2);
-        Reader reader3 = (new InputStreamReader(classLoader.getResourceAsStream("description.txt"), "UTF-8"));
-        RunScript.execute(conn, reader3);
     }
 
 
@@ -278,6 +264,7 @@ public class dataBaseCommands { // TODO rename this shit
             statement.setString(2, password);
 
             ResultSet resultSet = statement.executeQuery();
+            resultSet.next();
             int userIDInt = resultSet.getInt(1);
             userID = Integer.toString(userIDInt);
             System.out.println(userID);
@@ -314,25 +301,3 @@ public class dataBaseCommands { // TODO rename this shit
         return allUserLists;
     }
 }
-
-
-//The code I have used so far...
-//---
-//Creating th table:
-//CREATE TABLE TASKS (
-//        id INT AUTO_INCREMENT PRIMARY KEY,
-//        creation_date TIMESTAMP,
-//        due_date TIMESTAMP,
-//        headline VARCHAR(100),
-//    text VARCHAR,
-//    done VARCHAR(10),
-//);
-
-//Inserting values to table:
-//INSERT INTO TASKS VALUES (1,'2005-01-12 08:02:00','2005-01-12 08:02:00','My note','some very random text', FALSE)
-
-/**
- * IMPORTANT!
- * Advanced insert, where id is automatically placed
- * INSERT INTO TASKS(CREATION_DATE, DUE_DATE , HEADLINE, TEXT, DONE) VALUES ( '2005-01-12 08:02:00', '2005-01-12 08:02:00', 'jkl', 'asd', 'FALSE')
- */
