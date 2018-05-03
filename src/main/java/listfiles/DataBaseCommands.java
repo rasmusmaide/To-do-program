@@ -11,6 +11,28 @@ public class DataBaseCommands {
 
     public Connection conn;
 
+    public void showAbsolutelyAllTasks() throws SQLException {
+        try (PreparedStatement statement = conn.prepareStatement("SELECT * FROM tasks")) {
+            statement.executeQuery();
+
+
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+                Task oneTask = new Task(resultSet.getTimestamp("creation_date").toString(),
+                        resultSet.getTimestamp("due_date").toString(),
+                        resultSet.getString("headline"),
+                        resultSet.getString("description"),
+                        Boolean.parseBoolean(resultSet.getString("done")));
+                oneTask.setTodo_listID(resultSet.getString("todo_id"));
+                oneTask.setTaskID(resultSet.getString("id"));
+
+                System.out.println(oneTask + " task @test1");
+            }
+            System.out.println("FUCK YEAH");
+        }
+    }
+
     public DataBaseCommands(String dataBaseURL) throws Exception { //, String un, String pw
         conn = DriverManager.getConnection(dataBaseURL);//, un, pw);
 
@@ -42,7 +64,7 @@ public class DataBaseCommands {
                 Task oneTask = new Task(resultSet.getTimestamp("creation_date").toString(),
                         resultSet.getTimestamp("due_date").toString(),
                         resultSet.getString("headline"),
-                        resultSet.getString("text"),
+                        resultSet.getString("description"),
                         Boolean.parseBoolean(resultSet.getString("done")));
                 oneTask.setTodo_listID(todoID);
                 oneTask.setTaskID(resultSet.getString("id"));
@@ -59,7 +81,7 @@ public class DataBaseCommands {
     public String addTask(Task task) throws SQLException {
         //takes the valeus from task as strings and add them to the sql execution statement
         String taskID = null;
-        System.out.println(task);
+        System.out.println(task.getTodo_listID() + " todoID @addtask");
 
         try (PreparedStatement statement = conn.prepareStatement(
                 "INSERT INTO tasks(creation_date, due_date, headline, description, done, todo_id) VALUES ( ?, ?, ?, ?, ?, ?);",
@@ -87,15 +109,16 @@ public class DataBaseCommands {
     public void deleteTask(int row) throws SQLException {
 
         try (PreparedStatement statement = conn.prepareStatement("DELETE FROM TASKS WHERE id = ?");
-             PreparedStatement statement2 = conn.prepareStatement("SET @count = 0");
-             PreparedStatement statement3 = conn.prepareStatement("UPDATE `TASKS` SET `TASKS`.`id` = @count:= @count + 1")) {
+             //PreparedStatement statement2 = conn.prepareStatement("SET @count = 0");
+             //PreparedStatement statement3 = conn.prepareStatement("UPDATE `TASKS` SET `TASKS`.`id` = @count:= @count + 1") // TODO miks seda vaja üldse on?
+        ) {
 
 
             statement.setString(1, Integer.toString(row));
 
             statement.executeUpdate();
-            statement2.executeUpdate();
-            statement3.executeUpdate();
+            //statement2.executeUpdate();
+            //statement3.executeUpdate();
         }
     } // TODO transaction
 
@@ -154,8 +177,9 @@ public class DataBaseCommands {
             try (ResultSet insertedKey = statement.getGeneratedKeys()) {
                 while (insertedKey.next()) { // kas siin tsüklit üldse on mul vaja?
                     int idString = insertedKey.getInt("id"); // long vist mõistlikum, aga ABs on hetkel int, hiljem muudab kui vaja
-                    System.out.println("Inserted and returned: " + todoID);
+
                     todoID = Integer.toString(idString); // todo eh...
+                    System.out.println("Inserted and returned: " + todoID);
                 }
             }
         }
@@ -235,7 +259,7 @@ public class DataBaseCommands {
             resultSet.next();
             int userIDInt = resultSet.getInt(1);
             userID = Integer.toString(userIDInt);
-            System.out.println(userID);
+            System.out.println(userID + " userID @login");
             resultSet.close();
 
         }
@@ -264,9 +288,9 @@ public class DataBaseCommands {
 
         }
 
-        System.out.println("jep");
         for (Todo_list todo_list : allUserLists) {
             String todoID = todo_list.getTodo_listID();
+            System.out.println(todoID + " todoID @ alluserlists");
             List<Task> taskList = getAllTasks(todoID);
             todo_list.setTasks(taskList);
             System.out.println(taskList + " dbc alluserlists");

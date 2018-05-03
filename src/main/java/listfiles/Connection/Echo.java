@@ -75,7 +75,7 @@ public class Echo implements Runnable {
 
                             String todoID = dbc.newTodo(userID);
 
-                            System.out.println("Added new todo list");
+                            System.out.println("Added new todo list for user " + userID);
                             out.writeInt(TypeId.STRING);
                             out.writeUTF(todoID);
                             break;
@@ -86,10 +86,12 @@ public class Echo implements Runnable {
                             String entrydate = df.format(currentdate);
                             String date = infoIn.get(1);
                             String head = infoIn.get(2);
-                            String text = infoIn.get(3);
+                            String description = infoIn.get(3);
+                            String todoIdForTask = infoIn.get(4);
 
 
-                            Task ntask = new Task(entrydate, date, head, text, false);
+                            Task ntask = new Task(entrydate, date, head, description, false);
+                            ntask.setTodo_listID(todoIdForTask);
                             System.out.println("Add task: " + ntask);
                             try {
                                 String taskID = dbc.addTask(ntask);

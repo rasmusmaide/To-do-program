@@ -80,7 +80,7 @@ public class Task {
                 ", deadline='" + deadline + '\'' +
                 ", headline='" + headline + '\'' +
                 ", description='" + description + '\'' +
-                ", done=" + done +
+                ", done=" + done + "todoid=" + todo_listID +
                 '}';
     }
 }

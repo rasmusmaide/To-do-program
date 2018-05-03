@@ -26,12 +26,9 @@ public class Server {
             } catch (SQLException e) {
                 e.printStackTrace();
             }
+            dbc.showAbsolutelyAllTasks(); // testimiseks
             try {
                 while (true) {
-
-
-                    try { // on vaja?
-
                         ////////////////////////////////
 
                         socket = serverSocket.accept();
@@ -40,14 +37,7 @@ public class Server {
                         Thread thread = new Thread(echo);
                         thread.start();
 
-
-                        //dbc.removeTodo_s();//kui on todo_s tabeliga variant veel alles
-                        //List<String> infoIn = echo.getInfo();
-
-                    } finally {
-
-                    }
-                    //////////////////////////////////
+                        //////////////////////////////////
                 }
             } finally {
                 dbc.conn.close();
