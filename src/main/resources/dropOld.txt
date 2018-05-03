@@ -1,3 +1,3 @@
-//DROP TABLE tasks;
-//DROP TABLE users;
-DROP TABLE description;
+DROP TABLE tasks;
+DROP TABLE users;
+DROP TABLE todos;

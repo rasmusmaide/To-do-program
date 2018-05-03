@@ -1,19 +1,5 @@
 package listfiles;
 
-// #goodreads --> https://www.tutorialspoint.com/h2_database/h2_database_create.htm
-
-//Some code reminders, mainly for me
-//---
-//DROP TABLE TUTORIALS_TBL
-//***
-//CREATE TABLE tutorials_tbl (
-//id INT NOT NULL,
-//title VARCHAR(50) NOT NULL,
-//author VARCHAR(20) NOT NULL,
-//submission_date DATE,
-//);
-//***
-
 import org.h2.tools.RunScript;
 
 import java.io.*;
@@ -42,14 +28,14 @@ public class DataBaseCommands {
         RunScript.execute(conn, reader);
     }
 
-
     public List<Task> getAllTasks(String todoID) throws SQLException {
 
         List<Task> allTasks = new ArrayList<>();
-        try (PreparedStatement statement = conn.prepareStatement("SELECT * FROM tasks WHERE task_group = ?");
-             ResultSet resultSet = statement.executeQuery()) {
-
+        try (PreparedStatement statement = conn.prepareStatement("SELECT * FROM tasks WHERE todo_id = ?")) {
             statement.setString(1, todoID);
+
+            ResultSet resultSet = statement.executeQuery();
+
 
             while (resultSet.next()) {
 
@@ -64,6 +50,7 @@ public class DataBaseCommands {
                 allTasks.add(oneTask);
 
             }
+            resultSet.close();
         }
 
         return allTasks;
@@ -74,7 +61,7 @@ public class DataBaseCommands {
         String taskID = null;
 
         try (PreparedStatement statement = conn.prepareStatement(
-                "INSERT INTO TASKS(CREATION_DATE, DUE_DATE, HEADLINE, TEXT, DONE, task_group) VALUES ( ?, ?, ?, ?, ?, ?);",
+                "INSERT INTO tasks(creation_date, due_date, headline, description, done, todo_id) VALUES ( ?, ?, ?, ?, ?, ?);",
                 Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, task.getCreationDate());
             statement.setString(2, task.getDeadline());
@@ -97,17 +84,6 @@ public class DataBaseCommands {
     }
 
     public void deleteTask(int row) throws SQLException {
-        /*Flask
-        *   cur.execute("DELETE FROM users WHERE id = %s", [id])
-            # Number reassesment
-            cur.execute("SET @num := 0")
-            cur.execute("UPDATE users SET id = @num := (@num+1)")
-            cur.execute("ALTER TABLE users AUTO_INCREMENT = 1")*/
-
-        // VERY MOST IMPORTANT: https://stackoverflow.com/questions/740358/reorder-reset-auto-increment-primary-key
-        //(SET @count = 0
-        // UPDATE `TASKS` SET `TASKS`.`id` = @count:= @count + 1;)
-
 
         try (PreparedStatement statement = conn.prepareStatement("DELETE FROM TASKS WHERE id = ?");
              PreparedStatement statement2 = conn.prepareStatement("SET @count = 0");
@@ -120,26 +96,26 @@ public class DataBaseCommands {
             statement2.executeUpdate();
             statement3.executeUpdate();
         }
-    }
+    } // TODO transaction
 
     public void markAsDone(int row) throws SQLException {
-        try (PreparedStatement statement = conn.prepareStatement("UPDATE `TASKS` SET done = 'TRUE' WHERE id = ?")) {
+        try (PreparedStatement statement = conn.prepareStatement("UPDATE tasks SET done = 'TRUE' WHERE id = ?")) {
             statement.setString(1, Integer.toString(row));
             statement.executeUpdate();
         }
     }
 
     public void markAsUnDone(int row) throws SQLException {
-        try (PreparedStatement statement = conn.prepareStatement("UPDATE `TASKS` SET done = 'FALSE' WHERE id = ?")) {
+        try (PreparedStatement statement = conn.prepareStatement("UPDATE tasks SET done = 'FALSE' WHERE id = ?")) {
             statement.setString(1, Integer.toString(row));
             statement.executeLargeUpdate();
         }
 
     }
 
-    public void changeText(int row, String newMessage) throws SQLException {
-        try (PreparedStatement statement = conn.prepareStatement("UPDATE `TASKS` SET text = ? WHERE id = ?")) {
-            statement.setString(1, newMessage);
+    public void changeText(int row, String newDescription) throws SQLException {
+        try (PreparedStatement statement = conn.prepareStatement("UPDATE tasks SET description = ? WHERE id = ?")) {
+            statement.setString(1, newDescription);
             statement.setString(2, Integer.toString(row));
             statement.executeUpdate();
         }
@@ -147,7 +123,7 @@ public class DataBaseCommands {
     }
 
     public void changeHeadline(int row, String newHeadline) throws SQLException {
-        try (PreparedStatement statement = conn.prepareStatement("UPDATE `TASKS` SET headline = ? WHERE id = ?")) {
+        try (PreparedStatement statement = conn.prepareStatement("UPDATE tasks SET headline = ? WHERE id = ?")) {
             statement.setString(1, newHeadline);
             statement.setString(2, Integer.toString(row));
             statement.executeUpdate();
@@ -155,17 +131,8 @@ public class DataBaseCommands {
 
     }
 
-    public void changeCreationDate(int row, String newCreationDate) throws SQLException {  //not needed?
-        try (PreparedStatement statement = conn.prepareStatement("UPDATE `TASKS` SET creation_date = ? WHERE id = ?")) {
-            statement.setString(1, newCreationDate);
-            statement.setString(2, Integer.toString(row));
-            statement.executeUpdate();
-        }
-
-    }
-
     public void changeDueDate(int row, String newDueDate) throws SQLException {
-        try (PreparedStatement statement = conn.prepareStatement("UPDATE `TASKS` SET due_date = ? WHERE id = ?")) {
+        try (PreparedStatement statement = conn.prepareStatement("UPDATE tasks SET due_date = ? WHERE id = ?")) {
             statement.setString(1, newDueDate);
             statement.setString(2, Integer.toString(row));
             statement.executeUpdate();
@@ -177,7 +144,7 @@ public class DataBaseCommands {
         String todoID = null;
 
         try (PreparedStatement statement = conn.prepareStatement(
-                "INSERT INTO DESCRIPTION(GROUP_NAME, OWNER_ID) VALUES (?, ?);",
+                "INSERT INTO todos(description, user_id) VALUES (?, ?);",
                 Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, "New To-do list");
             statement.setString(2, Integer.toString(userID));
@@ -196,7 +163,7 @@ public class DataBaseCommands {
     }
 
     public void changeTodoDescription(int index, String todoDescription) throws SQLException {
-        try (PreparedStatement statement = conn.prepareStatement("UPDATE `DESCRIPTION` SET description = ? WHERE id = ?")) {
+        try (PreparedStatement statement = conn.prepareStatement("UPDATE todos SET description = ? WHERE id = ?")) {
             statement.setString(1, todoDescription);
             statement.setString(2, Integer.toString(index));
             statement.executeUpdate();
@@ -221,7 +188,7 @@ public class DataBaseCommands {
         }
 
         return false; // sellist userit ei ole
-    }
+    } // TODO kontroll enne regamist
 
     public void register(String username, String password) throws SQLException {
         try (PreparedStatement statement = conn.prepareStatement(
@@ -253,7 +220,7 @@ public class DataBaseCommands {
         }
 
         return false;
-    }
+    } // TODO kontroll enne sisse logimist
 
     public String login(String username, String password) throws SQLException {
         String userID = "0";
@@ -268,6 +235,7 @@ public class DataBaseCommands {
             int userIDInt = resultSet.getInt(1);
             userID = Integer.toString(userIDInt);
             System.out.println(userID);
+            resultSet.close();
 
         }
 
@@ -278,7 +246,7 @@ public class DataBaseCommands {
         List<Todo_list> allUserLists = new ArrayList<>();
 
         try (PreparedStatement statement = conn.prepareStatement(
-                "SELECT * FROM description WHERE owner = ?")) {
+                "SELECT * FROM todos WHERE user_id = ?")) {
             statement.setString(1, Integer.toString(userID));
 
             ResultSet resultSet = statement.executeQuery();
