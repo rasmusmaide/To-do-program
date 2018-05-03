@@ -24,7 +24,7 @@ public class DataBaseCommands {
 
     public void removeTodo_s() throws Exception {
         ClassLoader classLoader = DataBaseCommands.class.getClassLoader();
-        Reader reader = (new InputStreamReader(classLoader.getResourceAsStream("dropOld.txt"), "UTF-8"));
+        Reader reader = (new InputStreamReader(classLoader.getResourceAsStream("dropOld.sql"), "UTF-8"));
         RunScript.execute(conn, reader);
     }
 
@@ -59,6 +59,7 @@ public class DataBaseCommands {
     public String addTask(Task task) throws SQLException {
         //takes the valeus from task as strings and add them to the sql execution statement
         String taskID = null;
+        System.out.println(task);
 
         try (PreparedStatement statement = conn.prepareStatement(
                 "INSERT INTO tasks(creation_date, due_date, headline, description, done, todo_id) VALUES ( ?, ?, ?, ?, ?, ?);",
@@ -74,8 +75,8 @@ public class DataBaseCommands {
             try (ResultSet insertedKey = statement.getGeneratedKeys()) {
                 while (insertedKey.next()) { // kas siin tsüklit üldse on mul vaja?
                     int idString = insertedKey.getInt("id"); // long vist mõistlikum, aga ABs on hetkel int, hiljem muudab kui vaja
-                    System.out.println("Inserted and returned task: " + taskID);
                     taskID = Integer.toString(idString); // todo eh...
+                    System.out.println("        Inserted and returned task: " + idString);
                 }
             }
         }
