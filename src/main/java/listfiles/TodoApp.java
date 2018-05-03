@@ -617,9 +617,10 @@ public class TodoApp extends Application {
                     break;
                 case TypeId.LISTS:
                     String userListsString = in.readUTF();
-                    List<Todo_list> userLists = new Gson().fromJson(userListsString, ArrayList.class);
-                    System.out.println(userListsString);
-                    System.out.println(userLists);
+                    UserTodoLists userTodoLists = new Gson().fromJson(userListsString, UserTodoLists.class);
+                    List<Todo_list> userLists = userTodoLists.getUserTodoLists();
+                    //System.out.println(userListsString);
+                    //System.out.println(userLists);
                     o = userLists;
                     break;
                 case TypeId.EMPTY:

@@ -1,10 +1,7 @@
 package listfiles.Connection;
 
 import com.google.gson.Gson;
-import listfiles.DataBaseCommands;
-import listfiles.Task;
-import listfiles.Todo_list;
-import listfiles.TypeId;
+import listfiles.*;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -64,9 +61,11 @@ public class Echo implements Runnable {
                             for (Todo_list todo_list : userLists) {
                                 System.out.println(todo_list.toString()+ " " + todo_list.getTasks());
                             }
+                            UserTodoLists userTodoLists = new UserTodoLists();
+                            userTodoLists.setUserTodoLists(userLists);
 
                             out.writeInt(TypeId.LISTS);
-                            String userListsString = new Gson().toJson(userLists);
+                            String userListsString = new Gson().toJson(userTodoLists);
                             out.writeUTF(userListsString); // saadab tagasi
 
                             break;
