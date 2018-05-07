@@ -50,7 +50,7 @@ public class TodoApp extends Application {
             String[] command = {"addlist", userID};
 
             try {
-                ntodo.setTodo_listID((String) commandHandler(command));
+                ntodo.setTodoListID((String) commandHandler(command));
                 System.out.println("läks korda");
             } catch (Exception e) {
                 e.printStackTrace();
@@ -232,13 +232,13 @@ public class TodoApp extends Application {
 
     }
 
-    private Tab tabAdder(TodoList todo_list) {
+    private Tab tabAdder(TodoList todoList) {
         BorderPane todoTabPane = new BorderPane();
         Tab todolistTab = new Tab();
 
-        todolistTab.setText(todo_list.getDescription());
+        todolistTab.setText(todoList.getDescription());
 
-        List<Task> tasks = todo_list.getTasks();
+        List<Task> tasks = todoList.getTasks();
 
         GridPane tasksPane = new GridPane();
 
@@ -246,17 +246,17 @@ public class TodoApp extends Application {
             tasksPane.add(taskPaneAdder(tasks.get(i)), 0, i);
         }
 
-        Button renameTodo = new Button(todo_list.getDescription());
+        Button renameTodo = new Button(todoList.getDescription());
         renameTodo.setOnAction(event -> {
             TextField renamefield = new TextField("Insert new name");
             renamefield.setOnAction(event1 -> {
 
                 String fieldtext = renamefield.getText();
                 todolistTab.setText(fieldtext);
-                todo_list.setDescription(fieldtext);
+                todoList.setDescription(fieldtext);
                 renameTodo.setText(fieldtext);
 
-                String[] command = {"renametodo", todo_list.getTodo_listID(), fieldtext};
+                String[] command = {"renametodo", todoList.getTodoListID(), fieldtext};
                 try {
                     commandHandler(command);
                     System.out.println("läks korda");
@@ -339,7 +339,7 @@ public class TodoApp extends Application {
                 }
 
 
-                String[] command = {"addtask", duedate, headlinefield.getText(), descriptionfield.getText(), todo_list.getTodo_listID()};
+                String[] command = {"addtask", duedate, headlinefield.getText(), descriptionfield.getText(), todoList.getTodoListID()};
                 String taskID = "0";
 
                 try {
@@ -352,9 +352,9 @@ public class TodoApp extends Application {
                 Task ntask = new Task(duedate, duedate, headlinefield.getText(), descriptionfield.getText(), false);
                 ntask.setTaskID(taskID);
 
-                todo_list.getTasks().add(ntask);
+                todoList.getTasks().add(ntask);
 
-                tasksPane.add(taskPaneAdder(ntask), 0, todo_list.getTasks().size());
+                tasksPane.add(taskPaneAdder(ntask), 0, todoList.getTasks().size());
                 //taskPaneAdder(ntask);
 
                 //System.out.println(ntask);
@@ -391,7 +391,7 @@ public class TodoApp extends Application {
 
         todolistTab.setOnSelectionChanged(t -> {
             if (todolistTab.isSelected()) {
-                this.selectedTodo = todo_list.getTodo_listID(); // kas nüüd üldse on vaja seda?
+                this.selectedTodo = todoList.getTodoListID(); // kas nüüd üldse on vaja seda?
                 System.out.println("Add nupp kehtib sellele listile");
             }
         });

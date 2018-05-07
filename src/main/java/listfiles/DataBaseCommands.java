@@ -22,7 +22,7 @@ public class DataBaseCommands {
                         resultSet.getString("headline"),
                         resultSet.getString("description"),
                         Boolean.parseBoolean(resultSet.getString("done")));
-                oneTask.setTodo_listID(resultSet.getString("todo_id"));
+                oneTask.setTodoListID(resultSet.getString("todo_id"));
                 oneTask.setTaskID(resultSet.getString("id"));
 
                 System.out.println(oneTask + " task @show all");
@@ -54,23 +54,22 @@ public class DataBaseCommands {
         try (PreparedStatement statement = conn.prepareStatement("SELECT * FROM tasks WHERE todo_id = ?")) {
             statement.setString(1, todoID);
 
-            ResultSet resultSet = statement.executeQuery();
+            try (ResultSet resultSet = statement.executeQuery()) {
 
+                while (resultSet.next()) {
 
-            while (resultSet.next()) {
+                    Task oneTask = new Task(resultSet.getTimestamp("creation_date").toString(),
+                            resultSet.getTimestamp("due_date").toString(),
+                            resultSet.getString("headline"),
+                            resultSet.getString("description"),
+                            Boolean.parseBoolean(resultSet.getString("done")));
+                    oneTask.setTodoListID(todoID);
+                    oneTask.setTaskID(resultSet.getString("id"));
 
-                Task oneTask = new Task(resultSet.getTimestamp("creation_date").toString(),
-                        resultSet.getTimestamp("due_date").toString(),
-                        resultSet.getString("headline"),
-                        resultSet.getString("description"),
-                        Boolean.parseBoolean(resultSet.getString("done")));
-                oneTask.setTodo_listID(todoID);
-                oneTask.setTaskID(resultSet.getString("id"));
+                    allTasks.add(oneTask);
 
-                allTasks.add(oneTask);
-
+                }
             }
-            resultSet.close();
         }
 
         return allTasks;
@@ -79,7 +78,7 @@ public class DataBaseCommands {
     public String addTask(Task task) throws SQLException {
         //takes the valeus from task as strings and add them to the sql execution statement
         String taskID = null;
-        System.out.println(task.getTodo_listID() + " todoID @addtask");
+        System.out.println(task.getTodoListID() + " todoID @addtask");
 
         try (PreparedStatement statement = conn.prepareStatement(
                 "INSERT INTO tasks(creation_date, due_date, headline, description, done, todo_id) VALUES ( ?, ?, ?, ?, ?, ?);",
@@ -89,7 +88,7 @@ public class DataBaseCommands {
             statement.setString(3, task.getHeadline());
             statement.setString(4, task.getDescription());
             statement.setBoolean(5, task.getDone());
-            statement.setString(6, task.getTodo_listID());
+            statement.setString(6, task.getTodoListID());
             statement.executeUpdate();
 
             try (ResultSet insertedKey = statement.getGeneratedKeys()) {
@@ -198,7 +197,14 @@ public class DataBaseCommands {
                 "SELECT * FROM users WHERE username = ?")) {
             statement.setString(1, username);
 
-            ResultSet resultSet = statement.executeQuery();
+            if (checkIfUser(statement)) return true;
+        }
+
+        return false; // sellist userit ei ole
+    } // TODO kontroll enne regamist
+
+    private boolean checkIfUser(PreparedStatement statement) throws SQLException {
+        try (ResultSet resultSet = statement.executeQuery()) {
 
             int counter = 0;
             while (resultSet.next()) {
@@ -209,9 +215,8 @@ public class DataBaseCommands {
                 return true;
             }
         }
-
-        return false; // sellist userit ei ole
-    } // TODO kontroll enne regamist
+        return false;
+    } // TODO checkimisega seotud, kas saab midagi siit ära jätta
 
     public void register(String username, String password) throws SQLException {
         try (PreparedStatement statement = conn.prepareStatement(
@@ -230,16 +235,7 @@ public class DataBaseCommands {
             statement.setString(1, username);
             statement.setString(2, password);
 
-            ResultSet resultSet = statement.executeQuery();
-
-            int counter = 0;
-            while (resultSet.next()) {
-                String userID = resultSet.getString("id");
-                counter += 1;
-            }
-            if (counter > 0) {
-                return true;
-            }
+            if (checkIfUser(statement)) return true;
         }
 
         return false;
@@ -253,13 +249,16 @@ public class DataBaseCommands {
             statement.setString(1, username);
             statement.setString(2, password);
 
-            ResultSet resultSet = statement.executeQuery();
-            resultSet.next();
-            int userIDInt = resultSet.getInt(1);
-            userID = Integer.toString(userIDInt);
-            System.out.println(userID + " userID @login");
-            resultSet.close();
+            try (ResultSet resultSet = statement.executeQuery()) {
+                //resultSet.next();
 
+                if (!resultSet.next())
+                    throw new RuntimeException("no such user: " + username);
+
+                int userIDInt = resultSet.getInt(1);
+                userID = Integer.toString(userIDInt);
+                System.out.println(userID + " userID @login");
+            }
         }
 
         return userID; // tagastab indexi
@@ -272,22 +271,22 @@ public class DataBaseCommands {
                 "SELECT * FROM todos WHERE user_id = ?")) {
             statement.setString(1, Integer.toString(userID));
 
-            ResultSet resultSet = statement.executeQuery();
+            try (ResultSet resultSet = statement.executeQuery()) {
 
-            while (resultSet.next()) {
-                String todoDescription = resultSet.getString("description");
-                String todoID = resultSet.getString("id");
+                while (resultSet.next()) {
+                    String todoDescription = resultSet.getString("description");
+                    String todoID = resultSet.getString("id");
 
-                TodoList todoFromDB = new TodoList(new ArrayList<>(), todoDescription);
-                todoFromDB.setTodo_listID(todoID);
-                allUserLists.add(todoFromDB);
+                    TodoList todoFromDB = new TodoList(new ArrayList<>(), todoDescription);
+                    todoFromDB.setTodoListID(todoID);
+                    allUserLists.add(todoFromDB);
+                }
             }
-            resultSet.close();
 
         }
 
         for (TodoList todo_list : allUserLists) {
-            String todoID = todo_list.getTodo_listID();
+            String todoID = todo_list.getTodoListID();
             System.out.println(todoID + " todoID @ alluserlists");
             List<Task> taskList = getAllTasks(todoID);
             todo_list.setTasks(taskList);

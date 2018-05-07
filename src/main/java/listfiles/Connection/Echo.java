@@ -61,8 +61,8 @@ public class Echo implements Runnable {
                             for (TodoList todo_list : userLists) {
                                 System.out.println(todo_list.toString() + " " + todo_list.getTasks());
                             }
-                            UserTodoLists userTodoLists = new UserTodoLists();
-                            userTodoLists.setUserTodoLists(userLists);
+                            UserTodoLists userTodoLists = new UserTodoLists(userLists);
+                            //userTodoLists.setUserTodoLists(userLists);
 
                             out.writeInt(TypeId.LISTS);
                             String userListsString = new Gson().toJson(userTodoLists);
@@ -91,7 +91,7 @@ public class Echo implements Runnable {
 
 
                             Task ntask = new Task(entrydate, date, head, description, false);
-                            ntask.setTodo_listID(todoIdForTask);
+                            ntask.setTodoListID(todoIdForTask);
                             System.out.println("Add task: " + ntask);
                             try {
                                 String taskID = dbc.addTask(ntask);
@@ -200,7 +200,7 @@ public class Echo implements Runnable {
                                 System.out.println("Not a valid index!");
                             }
                             break;
-                        case "renametodo": // {"renametodo", todo_list.getTodo_listID(), fieldtext};
+                        case "renametodo": // {"renametodo", todo_list.getTodoListID(), fieldtext};
                             try {
                                 String indexstring = infoIn.get(1);
 
