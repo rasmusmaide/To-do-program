@@ -45,7 +45,7 @@ public class TodoApp extends Application {
 
         Button addListButton = new Button("New to-do");
         addListButton.setOnAction(event -> {
-            Todo_list ntodo = new Todo_list(new ArrayList<>(), "New To-do list");
+            TodoList ntodo = new TodoList(new ArrayList<>(), "New To-do list");
 
             String[] command = {"addlist", userID};
 
@@ -139,19 +139,19 @@ public class TodoApp extends Application {
 
             if (userexists) {
                 // otsib andmebaasist need todo_listid, millele on kasutajal juurdepääs
-                List<Todo_list> allUserTodoLists = new ArrayList<>();
+                List<TodoList> allUserTodoLists = new ArrayList<>();
                 String[] command2 = {"login", username, password};
 
                 try {
                     userID = (String) commandHandler(command2);
                     String[] command3 = {"get lists", userID};
-                    allUserTodoLists = (List<Todo_list>) commandHandler(command3);
+                    allUserTodoLists = (List<TodoList>) commandHandler(command3);
                     System.out.println("läks korda" + userID);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
                 System.out.println(allUserTodoLists);
-                for (Todo_list todo_list : allUserTodoLists) {
+                for (TodoList todo_list : allUserTodoLists) {
                     tabPane.getTabs().add(tabAdder(todo_list)); // TODO
                 }
                 ((Node) (loginEvent.getSource())).getScene().getWindow().hide();
@@ -232,7 +232,7 @@ public class TodoApp extends Application {
 
     }
 
-    private Tab tabAdder(Todo_list todo_list) {
+    private Tab tabAdder(TodoList todo_list) {
         BorderPane todoTabPane = new BorderPane();
         Tab todolistTab = new Tab();
 
@@ -620,7 +620,7 @@ public class TodoApp extends Application {
                 case TypeId.LISTS:
                     String userListsString = in.readUTF();
                     UserTodoLists userTodoLists = new Gson().fromJson(userListsString, UserTodoLists.class);
-                    List<Todo_list> userLists = userTodoLists.getUserTodoLists();
+                    List<TodoList> userLists = userTodoLists.getUserTodoLists();
                     o = userLists;
                     break;
                 case TypeId.EMPTY:

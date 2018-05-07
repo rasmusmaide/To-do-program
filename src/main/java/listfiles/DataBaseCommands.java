@@ -13,8 +13,6 @@ public class DataBaseCommands {
 
     public void showAbsolutelyAllTasks() throws SQLException {
         try (PreparedStatement statement = conn.prepareStatement("SELECT * FROM tasks")) {
-            statement.executeQuery();
-
 
             ResultSet resultSet = statement.executeQuery();
 
@@ -27,7 +25,7 @@ public class DataBaseCommands {
                 oneTask.setTodo_listID(resultSet.getString("todo_id"));
                 oneTask.setTaskID(resultSet.getString("id"));
 
-                System.out.println(oneTask + " task @test1");
+                System.out.println(oneTask + " task @show all");
             }
             System.out.println("FUCK YEAH");
         }
@@ -44,7 +42,7 @@ public class DataBaseCommands {
         RunScript.execute(conn, reader);
     }
 
-    public void removeTodo_s() throws Exception {
+    public void removeTodos() throws Exception {
         ClassLoader classLoader = DataBaseCommands.class.getClassLoader();
         Reader reader = (new InputStreamReader(classLoader.getResourceAsStream("dropOld.sql"), "UTF-8"));
         RunScript.execute(conn, reader);
@@ -137,7 +135,7 @@ public class DataBaseCommands {
 
     }
 
-    public void changeText(int row, String newDescription) throws SQLException {
+    public void changeDescription(int row, String newDescription) throws SQLException {
         try (PreparedStatement statement = conn.prepareStatement("UPDATE tasks SET description = ? WHERE id = ?")) {
             statement.setString(1, newDescription);
             statement.setString(2, Integer.toString(row));
@@ -267,8 +265,8 @@ public class DataBaseCommands {
         return userID; // tagastab indexi
     }
 
-    public List<Todo_list> getAllUserLists(int userID) throws SQLException {
-        List<Todo_list> allUserLists = new ArrayList<>();
+    public List<TodoList> getAllUserLists(int userID) throws SQLException {
+        List<TodoList> allUserLists = new ArrayList<>();
 
         try (PreparedStatement statement = conn.prepareStatement(
                 "SELECT * FROM todos WHERE user_id = ?")) {
@@ -280,7 +278,7 @@ public class DataBaseCommands {
                 String todoDescription = resultSet.getString("description");
                 String todoID = resultSet.getString("id");
 
-                Todo_list todoFromDB = new Todo_list(new ArrayList<>(), todoDescription);
+                TodoList todoFromDB = new TodoList(new ArrayList<>(), todoDescription);
                 todoFromDB.setTodo_listID(todoID);
                 allUserLists.add(todoFromDB);
             }
@@ -288,7 +286,7 @@ public class DataBaseCommands {
 
         }
 
-        for (Todo_list todo_list : allUserLists) {
+        for (TodoList todo_list : allUserLists) {
             String todoID = todo_list.getTodo_listID();
             System.out.println(todoID + " todoID @ alluserlists");
             List<Task> taskList = getAllTasks(todoID);

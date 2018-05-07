@@ -56,9 +56,9 @@ public class Echo implements Runnable {
                             userIDstring = infoIn.get(1);
                             userID = Integer.parseInt(userIDstring);
 
-                            List<Todo_list> userLists = dbc.getAllUserLists(userID);
+                            List<TodoList> userLists = dbc.getAllUserLists(userID);
 
-                            for (Todo_list todo_list : userLists) {
+                            for (TodoList todo_list : userLists) {
                                 System.out.println(todo_list.toString() + " " + todo_list.getTasks());
                             }
                             UserTodoLists userTodoLists = new UserTodoLists();
@@ -158,7 +158,7 @@ public class Echo implements Runnable {
                                 int index = Integer.parseInt(indexstring);
 
                                 String taskDescription = infoIn.get(2);
-                                dbc.changeText(index, taskDescription);
+                                dbc.changeDescription(index, taskDescription);
 
                                 System.out.println("Task description changed to: " + taskDescription);
                                 out.writeInt(TypeId.EMPTY); // saadab kinnituse, et midagi ei ole vaja tagastada pmst

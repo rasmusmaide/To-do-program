@@ -2,12 +2,12 @@ package listfiles;
 
 import java.util.List;
 
-public class Todo_list {
+public class TodoList {
     private List<Task> tasks;
     private String description;
     private String todo_listID;
 
-    public Todo_list(List<Task> tasks, String description) {
+    public TodoList(List<Task> tasks, String description) {
         this.tasks = tasks;
         this.description = description;
     }

@@ -3,13 +3,13 @@ package listfiles;
 import java.util.List;
 
 public class UserTodoLists {
-    private List<Todo_list> userTodoLists;
+    private List<TodoList> userTodoLists;
 
-    public List<Todo_list> getUserTodoLists() {
+    public List<TodoList> getUserTodoLists() {
         return userTodoLists;
     }
 
-    public void setUserTodoLists(List<Todo_list> userTodoLists) {
+    public void setUserTodoLists(List<TodoList> userTodoLists) {
         this.userTodoLists = userTodoLists;
     }
 }
