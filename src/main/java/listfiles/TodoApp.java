@@ -26,7 +26,7 @@ public class TodoApp extends Application {
     static int server = 1337;
     private String selectedTodo = "0";
     private String userID = "0";
-    private String selectedTask = "0";
+    private String selectedTask = "0"; // hetkel pole neid selectedT-sid vaja, aga addTaskButtonMethodiga on vist
 
     public static void main(String[] args) {
         launch(args);
@@ -604,7 +604,7 @@ public class TodoApp extends Application {
                 System.out.println("sent " + command[i]);
             }
             Object o = null;
-            String commandtype = command[0];
+            //String commandtype = command[0];
             //System.out.println(commandtype);
             int returnType = in.readInt(); // tuleb tagastustyyp
 
@@ -625,6 +625,12 @@ public class TodoApp extends Application {
                     break;
                 case TypeId.EMPTY:
                     System.out.println("ei tule siit midagi, meelega");
+                    break;
+                case TypeId.ERROR:
+                    System.out.println("Midagi läks valesti");
+                    // siin võiks vist mingi exceptioni visata või öelda kasutajale, et midagi läks valesti
+                    // errorStage(String errorMessage)?
+                    break;
                 default:
                     System.out.println("ei tule siit midagi");
             }
@@ -635,7 +641,8 @@ public class TodoApp extends Application {
     }
 
     public void addTaskButtonEventMethod(ActionEvent addTaskButtonEvent) {
-        // Todo
+        // Todo, pole prioriteet, aga kunagi võib teha uue classi, mille objektid on tabid, millel on omad tunnused(todoID) ja värki
+        // siis saab selle eraldi meetodiks tõsta
     }
 }            // TODO tuleb kontrollida ühendust serveriga, muidu viskab errorisse
 

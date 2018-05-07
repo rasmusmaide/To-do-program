@@ -48,13 +48,22 @@ public class Echo implements Runnable {
                 try {
                     String command = infoIn.get(0);
                     System.out.println(command + " " + infoIn + " @echocommand");
-                    int userID;
+                    int userID = 0;
                     String userIDstring;
+                    int index;
+                    String indexString;
+                    String username;
+                    String password;
 
                     switch (command) {
                         case "get lists": // {"get lists", userID}
                             userIDstring = infoIn.get(1);
-                            userID = Integer.parseInt(userIDstring);
+
+                            try {
+                                userID = Integer.parseInt(userIDstring);
+                            } catch (NumberFormatException e) {
+                                throw new RuntimeException(e);
+                            }
 
                             List<TodoList> userLists = dbc.getAllUserLists(userID);
 
@@ -71,7 +80,12 @@ public class Echo implements Runnable {
                             break;
                         case "addlist": // {"addlist", userID}
                             userIDstring = infoIn.get(1);
-                            userID = Integer.parseInt(userIDstring);
+
+                            try {
+                                userID = Integer.parseInt(userIDstring);
+                            } catch (NumberFormatException e) {
+                                throw new RuntimeException(e);
+                            }
 
                             String todoID = dbc.newTodo(userID);
 
@@ -104,175 +118,161 @@ public class Echo implements Runnable {
 
                             System.out.println("added task: " + ntask.toString());
 
-
                             break;
                         case "deletetask": // {"deletetask", task.getTaskID()}
-                            //while (true) { // TODO miks while tsykkel?
+                            indexString = infoIn.get(1);
+
                             try {
-                                String indexstring = infoIn.get(1);
-
-                                int index = Integer.parseInt(indexstring);
-                                dbc.deleteTask(index);
-
-                                System.out.println("Task deleted successfully.");
-                                out.writeInt(TypeId.EMPTY); // saadab kinnituse, et midagi ei ole vaja tagastada pmst
-
-                                break;
+                                index = Integer.parseInt(indexString);
                             } catch (NumberFormatException e) {
-                                System.out.println("Not a valid index!");
+                                throw new RuntimeException(e);
                             }
-                            //}
+                            dbc.deleteTask(index);
+
+                            System.out.println("Task deleted successfully.");
+                            out.writeInt(TypeId.EMPTY); // saadab kinnituse, et midagi ei ole vaja tagastada pmst
+
                             break;
+
                         case "done":
+
+                            indexString = infoIn.get(1);
                             try {
-                                String indexstring = infoIn.get(1);
-
-                                int index = Integer.parseInt(indexstring);
-                                dbc.markAsDone(index);
-
-                                System.out.println("Task marked as done.");
-                                out.writeInt(TypeId.EMPTY); // saadab kinnituse, et midagi ei ole vaja tagastada pmst
-
+                                index = Integer.parseInt(indexString);
                             } catch (NumberFormatException e) {
-                                System.out.println("Not a valid index!");
+                                throw new RuntimeException(e);
                             }
+                            dbc.markAsDone(index);
+
+                            System.out.println("Task marked as done.");
+                            out.writeInt(TypeId.EMPTY); // saadab kinnituse, et midagi ei ole vaja tagastada pmst
+
+
                             break;
                         case "undone":
+
+                            indexString = infoIn.get(1);
                             try {
-                                String indexstring = infoIn.get(1);
-
-                                int index = Integer.parseInt(indexstring); // TODO try ainult parse ümber
-                                dbc.markAsUnDone(index);
-
-                                System.out.println("Task marked as undone.");
-                                out.writeInt(TypeId.EMPTY); // saadab kinnituse, et midagi ei ole vaja tagastada pmst
-
+                                index = Integer.parseInt(indexString);
                             } catch (NumberFormatException e) {
-                                System.out.println("Not a valid index!");
+                                throw new RuntimeException(e);
                             }
+
+                            dbc.markAsUnDone(index);
+
+                            System.out.println("Task marked as undone.");
+                            out.writeInt(TypeId.EMPTY); // saadab kinnituse, et midagi ei ole vaja tagastada pmst
+
+
                             break;
                         case "descedit": // {"descedit", task.getTaskID(), fieldtext};
+
+                            indexString = infoIn.get(1);
                             try {
-                                String indexstring = infoIn.get(1);
-
-                                int index = Integer.parseInt(indexstring);
-
-                                String taskDescription = infoIn.get(2);
-                                dbc.changeDescription(index, taskDescription);
-
-                                System.out.println("Task description changed to: " + taskDescription);
-                                out.writeInt(TypeId.EMPTY); // saadab kinnituse, et midagi ei ole vaja tagastada pmst
-
+                                index = Integer.parseInt(indexString);
                             } catch (NumberFormatException e) {
-                                System.out.println("Not a valid index!");
+                                throw new RuntimeException(e);
                             }
+                            String taskDescription = infoIn.get(2);
+                            dbc.changeDescription(index, taskDescription);
+
+                            System.out.println("Task description changed to: " + taskDescription);
+                            out.writeInt(TypeId.EMPTY); // saadab kinnituse, et midagi ei ole vaja tagastada pmst
+
+
                             break;
 
                         case "dateedit": // {"dateedit", task.getTaskID(), duedate};
+
+                            indexString = infoIn.get(1);
                             try {
-                                String indexstring = infoIn.get(1);
-
-                                int index = Integer.parseInt(indexstring);
-
-                                String taskDuedate = infoIn.get(2);
-                                dbc.changeDueDate(index, taskDuedate);
-
-                                System.out.println("Task duedate changed to: " + taskDuedate);
-                                out.writeInt(TypeId.EMPTY); // saadab kinnituse, et midagi ei ole vaja tagastada pmst
-
+                                index = Integer.parseInt(indexString);
                             } catch (NumberFormatException e) {
-                                System.out.println("Not a valid index!");
+                                throw new RuntimeException(e);
                             }
+
+                            String taskDuedate = infoIn.get(2);
+                            dbc.changeDueDate(index, taskDuedate);
+
+                            System.out.println("Task duedate changed to: " + taskDuedate);
+                            out.writeInt(TypeId.EMPTY); // saadab kinnituse, et midagi ei ole vaja tagastada pmst
+
+
                             break;
                         case "renametask": // {"renametask", task.getTaskID(), fieldtext};
+
+                            indexString = infoIn.get(1);
                             try {
-                                String indexstring = infoIn.get(1);
-
-                                int index = Integer.parseInt(indexstring);
-
-                                String taskHeadline = infoIn.get(2);
-                                dbc.changeHeadline(index, taskHeadline);
-
-                                System.out.println("Task headline changed to: " + taskHeadline);
-                                out.writeInt(TypeId.EMPTY); // saadab kinnituse, et midagi ei ole vaja tagastada pmst
-
+                                index = Integer.parseInt(indexString);
                             } catch (NumberFormatException e) {
-                                System.out.println("Not a valid index!");
+                                throw new RuntimeException(e);
                             }
+                            String taskHeadline = infoIn.get(2);
+                            dbc.changeHeadline(index, taskHeadline);
+
+                            System.out.println("Task headline changed to: " + taskHeadline);
+                            out.writeInt(TypeId.EMPTY); // saadab kinnituse, et midagi ei ole vaja tagastada pmst
+
                             break;
                         case "renametodo": // {"renametodo", todo_list.getTodoListID(), fieldtext};
+
+                            indexString = infoIn.get(1);
                             try {
-                                String indexstring = infoIn.get(1);
-
-                                int index = Integer.parseInt(indexstring);
-
-                                String todoDescription = infoIn.get(2);
-                                dbc.changeTodoDescription(index, todoDescription);
-
-                                System.out.println("Todolist name changed to: " + todoDescription);
-                                out.writeInt(TypeId.EMPTY); // saadab kinnituse, et midagi ei ole vaja tagastada pmst
-
+                                index = Integer.parseInt(indexString);
                             } catch (NumberFormatException e) {
-                                System.out.println("Not a valid index!");
+                                throw new RuntimeException(e);
                             }
+                            String todoDescription = infoIn.get(2);
+                            dbc.changeTodoDescription(index, todoDescription);
+
+                            System.out.println("Todolist name changed to: " + todoDescription);
+                            out.writeInt(TypeId.EMPTY); // saadab kinnituse, et midagi ei ole vaja tagastada pmst
+
+
                             break;
                         case "checkuserRegister":
-                            try {
-                                String username = infoIn.get(1);
 
-                                dbc.checkuserRegister(username);
+                            username = infoIn.get(1);
 
-                                System.out.println("User found: " + username); // kui leiab sellise usernameiga useri, siis ei lase regada
-                                out.writeInt(TypeId.EMPTY); // saadab kinnituse, et midagi ei ole vaja tagastada pmst
+                            dbc.checkuserRegister(username);
 
-
-                            } catch (NumberFormatException e) {
-                                System.out.println("Not a valid index!");
-                            }
+                            System.out.println("User found: " + username); // kui leiab sellise usernameiga useri, siis ei lase regada
+                            out.writeInt(TypeId.EMPTY); // saadab kinnituse, et midagi ei ole vaja tagastada pmst
 
                             break;
                         case "register":
-                            try {
-                                String username = infoIn.get(1);
-                                String password = infoIn.get(2);
-                                dbc.register(username, password);
 
-                                System.out.println("User signed up: " + username + " " + password);
-                                out.writeInt(TypeId.EMPTY); // saadab kinnituse, et midagi ei ole vaja tagastada pmst
+                            username = infoIn.get(1);
+                            password = infoIn.get(2);
+                            dbc.register(username, password);
 
-                            } catch (NumberFormatException e) {
-                                System.out.println("Not a valid index!");
-                            }
+                            System.out.println("User signed up: " + username + " " + password);
+                            out.writeInt(TypeId.EMPTY); // saadab kinnituse, et midagi ei ole vaja tagastada pmst
+
                             break;
                         case "checkuserLogin": // vist ei ole ikka vaja?
-                            try {
-                                String username = infoIn.get(1);
-                                String password = infoIn.get(2);
-                                boolean userFound = dbc.checkuserLogin(username, password);
 
-                                System.out.println("User found: " + userFound);
+                            username = infoIn.get(1);
+                            password = infoIn.get(2);
+                            boolean userFound = dbc.checkuserLogin(username, password);
 
-                                out.writeInt(TypeId.BOOLEAN);
-                                out.writeBoolean(userFound);
+                            System.out.println("User found: " + userFound);
 
-                            } catch (NumberFormatException e) {
-                                System.out.println("Not a valid index!");
-                            }
+                            out.writeInt(TypeId.BOOLEAN);
+                            out.writeBoolean(userFound);
+
                             break;
                         case "login":
-                            try {
-                                String username = infoIn.get(1);
-                                String password = infoIn.get(2);
-                                String userIDString = dbc.login(username, password);
 
-                                out.writeInt(TypeId.STRING);
-                                out.writeUTF(userIDString);
+                            username = infoIn.get(1);
+                            password = infoIn.get(2);
+                            String userIDString = dbc.login(username, password);
 
-                                System.out.println("User logged in: " + username + " " + password);
+                            out.writeInt(TypeId.STRING);
+                            out.writeUTF(userIDString);
 
-                            } catch (NumberFormatException e) {
-                                System.out.println("Not a valid index!");
-                            }
+                            System.out.println("User logged in: " + username + " " + password);
+
                             break;
                         default:
                             System.out.println("Not a command!");
@@ -280,6 +280,10 @@ public class Echo implements Runnable {
                             break;
                     }
                 } catch (SQLException e) {
+                    out.writeInt(TypeId.ERROR);
+                    e.printStackTrace();
+                } catch (RuntimeException e) {
+                    out.writeInt(TypeId.ERROR);
                     e.printStackTrace();
                 }
 
