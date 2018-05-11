@@ -5,7 +5,8 @@ II. etapi lõpuks:
 1. run Server (ideaalis juba jookseb kuskil kaugel)
 2. run TodoApp
 
-#########################
+//////////////////////////////////////////
+
 Not Working:
 
 1) Login without already existing user
