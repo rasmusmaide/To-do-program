@@ -12,3 +12,10 @@ Not Working:
 1. Login without already existing user
 
 2. Follow-up prolly wrong pass will give error
+
+
+/////////////////////////////////////////
+
+Could do:
+
+1. Live notifications, when app running
