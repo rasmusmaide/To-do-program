@@ -13,6 +13,8 @@ Not Working:
 
 2. Follow-up prolly wrong pass will give error
 
+3. Tabel deleting needed
+
 
 /////////////////////////////////////////
 
