@@ -9,6 +9,6 @@ II. etapi lõpuks:
 
 Not Working:
 
-1) Login without already existing user
+1. Login without already existing user
 
-2)Follow-up prolly wrong pass will give error
+2. Follow-up prolly wrong pass will give error
