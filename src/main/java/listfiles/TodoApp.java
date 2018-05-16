@@ -80,7 +80,7 @@ public class TodoApp extends Application {
             /*for (Todo_list todo_list : testlist) {
                 tabPane.getTabs().add(tabAdder(todo_list));
             }*/
-        }); // TODO hetkel lisab ainult juurde
+        }); // TODO hetkel ei tee midagi
 
         VBox vBox = new VBox();
         vBox.getChildren().addAll(addListButton, region2, new Label("[Sidebar]"), refreshbutton);
@@ -121,7 +121,7 @@ public class TodoApp extends Application {
         Label usernameLabel = new Label("Username: ");
         TextField usernameField = new TextField();
         Label passwordLabel = new Label("Password: ");
-        TextField passwordField = new TextField();
+        PasswordField passwordField = new PasswordField();
 
         Button loginButton = new Button("Login");
         loginButton.setOnAction(loginEvent -> {
@@ -247,9 +247,10 @@ public class TodoApp extends Application {
             tasksPane.add(taskPaneAdder(tasks.get(i)), 0, i);
         }
 
-        Button renameTodo = new Button(todoList.getDescription());
+        Button renameTodo = new Button("Rename list"); // TODO v-o see nupp kuskile mujale
         renameTodo.setOnAction(event -> {
-            TextField renamefield = new TextField("Insert new name");
+            TextField renamefield = new TextField();
+            renamefield.setPromptText("Insert new name");
             renamefield.setOnAction(event1 -> {
 
                 String fieldtext = renamefield.getText();
@@ -406,7 +407,8 @@ public class TodoApp extends Application {
 
         Label headlineLabel = new Label(task.getHeadline());
         headlineLabel.setOnMouseClicked(headEditEvent -> {
-            TextField headEditField = new TextField("Insert new headline");
+            TextField headEditField = new TextField();
+            headEditField.setPromptText("Insert new headline");
             headEditField.setOnAction(headEditFieldEditEvent -> {
 
                 String fieldtext = headEditField.getText();
@@ -501,7 +503,8 @@ public class TodoApp extends Application {
         });
         Label descriptionLabel = new Label(task.getDescription());
         descriptionLabel.setOnMouseClicked(descEditEvent -> {
-            TextField descEditField = new TextField("Insert new description");
+            TextField descEditField = new TextField();
+            descEditField.setPromptText("Insert new description");
             descEditField.setOnAction(descEditFieldEditEvent -> {
 
                 String fieldtext = descEditField.getText();
