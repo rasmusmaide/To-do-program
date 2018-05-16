@@ -279,10 +279,7 @@ public class Echo implements Runnable {
 
                             break;
                     }
-                } catch (SQLException e) {
-                    out.writeInt(TypeId.ERROR);
-                    e.printStackTrace();
-                } catch (RuntimeException e) {
+                } catch (SQLException | RuntimeException e) {
                     out.writeInt(TypeId.ERROR);
                     e.printStackTrace();
                 }
@@ -295,9 +292,4 @@ public class Echo implements Runnable {
             throw new RuntimeException(e);
         }
     }
-
-    /*public List<String> getInfo() {
-        return infoIn;
-    }*/
-
 }

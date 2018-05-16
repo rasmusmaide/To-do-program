@@ -1,11 +1,18 @@
 package listfiles;
 
+import org.apache.commons.codec.DecoderException;
 import org.h2.tools.RunScript;
 
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.PBEKeySpec;
 import java.io.*;
+import java.security.SecureRandom;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.commons.codec.binary.Hex;
+
+
 
 public class DataBaseCommands {
 
@@ -31,6 +38,21 @@ public class DataBaseCommands {
         }
     }
 
+    public void showAbsolutelyAllUsers() throws SQLException {
+        try (PreparedStatement statement = conn.prepareStatement("SELECT * FROM users")) {
+
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+                System.out.println(resultSet.getInt(1) + " " + resultSet.getString(2) + " " +
+                        resultSet.getString(3) + " " +  resultSet.getString(4));
+
+                }
+            System.out.println("FUCK USERS");
+        }
+    }
+
+
     public DataBaseCommands(String dataBaseURL) throws Exception { //, String un, String pw
         conn = DriverManager.getConnection(dataBaseURL);//, un, pw);
 
@@ -48,7 +70,7 @@ public class DataBaseCommands {
         RunScript.execute(conn, reader);
     }
 
-    public List<Task> getAllTasks(String todoID) throws SQLException {
+    private List<Task> getAllTasks(String todoID) throws SQLException {
 
         List<Task> allTasks = new ArrayList<>();
         try (PreparedStatement statement = conn.prepareStatement("SELECT * FROM tasks WHERE todo_id = ?")) {
@@ -220,10 +242,22 @@ public class DataBaseCommands {
 
     public void register(String username, String password) throws SQLException {
         try (PreparedStatement statement = conn.prepareStatement(
-                "INSERT INTO USERS(username, password) VALUES (?, ?)")) {
+                "INSERT INTO USERS(username, passwordKey, salt) VALUES (?, ?, ?)")) {
             statement.setString(1, username);
-            statement.setString(2, password);
+            SecureRandom rng = new SecureRandom();
+            byte[] salt = new byte[32];
+            rng.nextBytes(salt);
+
+            String passwordKey = passwordKeyGen(password, salt, 100_000);
+            System.out.println(passwordKey + " @ register passwordkey");
+
+            System.out.println(passwordKey.length() + " @register key length");
+            statement.setString(2, passwordKey);
+            statement.setString(3, Hex.encodeHexString(salt));
+
             statement.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
         //return true; // uus user lisatud
@@ -242,12 +276,11 @@ public class DataBaseCommands {
     } // TODO kontroll enne sisse logimist
 
     public String login(String username, String password) throws SQLException {
-        String userID = "0";
+        String userID = "-1";
 
         try (PreparedStatement statement = conn.prepareStatement(
-                "SELECT * FROM users WHERE username = ? AND password = ?")) {
+                "SELECT * FROM users WHERE username = ?")) {
             statement.setString(1, username);
-            statement.setString(2, password);
 
             try (ResultSet resultSet = statement.executeQuery()) {
                 //resultSet.next();
@@ -255,9 +288,27 @@ public class DataBaseCommands {
                 if (!resultSet.next())
                     throw new RuntimeException("no such user: " + username);
 
-                int userIDInt = resultSet.getInt(1);
-                userID = Integer.toString(userIDInt);
-                System.out.println(userID + " userID @login");
+                String usernameFromDB = resultSet.getString(2);
+                String passwordKeyFromDB = resultSet.getString(3);
+                String saltFromDB = resultSet.getString(4);
+
+                String userGivenPasswordKey = passwordKeyGen(password, Hex.decodeHex(saltFromDB), 100_000);
+
+                System.out.println(userGivenPasswordKey + " = " + passwordKeyFromDB);
+                if (userGivenPasswordKey.equals(passwordKeyFromDB)) {
+                    int userIDInt = resultSet.getInt(1);
+
+                    userID = Integer.toString(userIDInt);
+                    System.out.println(userID + " userID @login");
+                    return userID;
+                } else {
+                    System.out.println("WRONG PASSWORD");
+                    // TODO anna mingi error
+                }
+
+
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
 
@@ -293,5 +344,11 @@ public class DataBaseCommands {
             System.out.println(taskList + " dbc alluserlists");
         }
         return allUserLists;
+    }
+
+    private String passwordKeyGen(String password, byte[] salt, int iterationCount) throws Exception {
+        PBEKeySpec spec = new PBEKeySpec(password.toCharArray(), salt, iterationCount, 256);
+        byte[] key = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256").generateSecret(spec).getEncoded();
+        return Hex.encodeHexString(key);
     }
 }

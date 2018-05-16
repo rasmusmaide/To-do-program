@@ -21,12 +21,13 @@ public class Server {
             DataBaseCommands dbc;
             dbc = new DataBaseCommands("jdbc:h2:tcp://localhost/~/todoBase");
             try {
-                //dbc.removeTodo_s();
+                //dbc.removeTodos();
                 dbc.initialize();//esmakordsel käivitamisel
             } catch (SQLException e) {
                 e.printStackTrace();
             }
             dbc.showAbsolutelyAllTasks(); // testimiseks
+            dbc.showAbsolutelyAllUsers(); // testimiseks
             try {
                 while (true) {
                         ////////////////////////////////

@@ -18,6 +18,7 @@ import javafx.stage.Stage;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.net.ConnectException;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +26,7 @@ import java.util.List;
 public class TodoApp extends Application {
     static int server = 1337;
     private String selectedTodo = "0";
-    private String userID = "0";
+    private String userID;
     private String selectedTask = "0"; // hetkel pole neid selectedT-sid vaja, aga addTaskButtonMethodiga on vist
 
     public static void main(String[] args) {
@@ -33,7 +34,7 @@ public class TodoApp extends Application {
     }
 
     @Override
-    public void start(Stage primaryStage) throws Exception {
+    public void start(Stage primaryStage) {
 
         BorderPane borderPane = new BorderPane();
 
@@ -588,56 +589,70 @@ public class TodoApp extends Application {
     private static Object commandHandler(String[] command) throws Exception {
 
         System.out.println("connecting to server: " + server);
+        Object o = null;
+        //Stage errorStage = new ErrorStage().getError();
 
-        try (
-                Socket socket = new Socket("localhost", server);
-                DataOutputStream out = new DataOutputStream(socket.getOutputStream());
-                DataInputStream in = new DataInputStream(socket.getInputStream())
+        while (true) {
+            try (
+                    Socket socket = new Socket("localhost", server);
+                    DataOutputStream out = new DataOutputStream(socket.getOutputStream());
+                    DataInputStream in = new DataInputStream(socket.getInputStream())
 
-        ) {
-            System.out.println("connected; sending data");
+            ) {
+                System.out.println("connected; sending data");
+                //errorStage.hide();
 
-            out.writeInt(command.length);
+                out.writeInt(command.length);
 
-            for (int i = 0; i < command.length; i++) {
-                out.writeUTF(command[i]);
-                System.out.println("sent " + command[i]);
+                for (int i = 0; i < command.length; i++) {
+                    out.writeUTF(command[i]);
+                    System.out.println("sent " + command[i]);
+                }
+
+                //String commandtype = command[0];
+                //System.out.println(commandtype);
+                int returnType = in.readInt(); // tuleb tagastustyyp
+
+                switch (returnType) {
+                    case TypeId.BOOLEAN:
+                        boolean receivedBoolean = in.readBoolean();
+                        o = receivedBoolean;
+                        break;
+                    case TypeId.STRING:
+                        String receivedString = in.readUTF();
+                        o = receivedString;
+                        break;
+                    case TypeId.LISTS:
+                        String userListsString = in.readUTF();
+                        UserTodoLists userTodoLists = new Gson().fromJson(userListsString, UserTodoLists.class);
+                        List<TodoList> userLists = userTodoLists.getUserTodoLists();
+                        o = userLists;
+                        break;
+                    case TypeId.EMPTY:
+                        System.out.println("ei tule siit midagi, meelega");
+                        break;
+                    case TypeId.ERROR:
+                        System.out.println("Midagi läks valesti");
+                        // siin võiks vist mingi exceptioni visata või öelda kasutajale, et midagi läks valesti
+                        // errorStage(String errorMessage)?
+                        break;
+                    default:
+                        System.out.println("ei tule siit midagi");
+                }
+
+                break;
+            } catch (ConnectException e) {
+
+                System.out.println("Ühendus puudub, proovin uuesti");
+                //errorStage.show();
             }
-            Object o = null;
-            //String commandtype = command[0];
-            //System.out.println(commandtype);
-            int returnType = in.readInt(); // tuleb tagastustyyp
-
-            switch (returnType) {
-                case TypeId.BOOLEAN:
-                    boolean receivedBoolean = in.readBoolean();
-                    o = receivedBoolean;
-                    break;
-                case TypeId.STRING:
-                    String receivedString = in.readUTF();
-                    o = receivedString;
-                    break;
-                case TypeId.LISTS:
-                    String userListsString = in.readUTF();
-                    UserTodoLists userTodoLists = new Gson().fromJson(userListsString, UserTodoLists.class);
-                    List<TodoList> userLists = userTodoLists.getUserTodoLists();
-                    o = userLists;
-                    break;
-                case TypeId.EMPTY:
-                    System.out.println("ei tule siit midagi, meelega");
-                    break;
-                case TypeId.ERROR:
-                    System.out.println("Midagi läks valesti");
-                    // siin võiks vist mingi exceptioni visata või öelda kasutajale, et midagi läks valesti
-                    // errorStage(String errorMessage)?
-                    break;
-                default:
-                    System.out.println("ei tule siit midagi");
-            }
-
-            System.out.println("cleaned up");
-            return o;
         }
+
+
+        System.out.println("cleaned up");
+        return o;
+
+
     }
 
     public void addTaskButtonEventMethod(ActionEvent addTaskButtonEvent) {
