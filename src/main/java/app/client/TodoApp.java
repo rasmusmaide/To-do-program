@@ -1,5 +1,9 @@
-package listfiles;
+package app.client;
 
+import app.Task;
+import app.TodoList;
+import app.TypeId;
+import app.UserTodoLists;
 import com.google.gson.Gson;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -27,7 +31,7 @@ import java.util.List;
 public class TodoApp extends Application {
     static int server = 1337;
     private String selectedTodo = "0";
-    private String userID = "0";
+    private String userID;
     private String selectedTask = "0"; // hetkel pole neid selectedT-sid vaja, aga addTaskButtonMethodiga on vist
 
     public static void main(String[] args) {
@@ -169,10 +173,10 @@ public class TodoApp extends Application {
             String username = usernameField.getText();
             String password = passwordField.getText();
 
-            String[] command2 = {"register", username, password};
+            String[] registerCommand = {"register", username, password};
 
             try {
-                if (commandHandler(command2) == null) {
+                if (commandHandler(registerCommand) == null) {
                     Stage registererror = new Stage();
 
                     registererror.setScene(new Scene(new Label("Username already taken")));
@@ -648,6 +652,7 @@ public class TodoApp extends Application {
                         break;
                     case TypeId.EMPTY:
                         System.out.println("ei tule siit midagi, meelega");
+                        o = 0;
                         break;
                     case TypeId.ERROR:
                         System.out.println("Midagi läks valesti");

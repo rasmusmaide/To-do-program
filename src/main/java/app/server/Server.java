@@ -1,6 +1,4 @@
-package listfiles.Connection;
-
-import listfiles.DataBaseCommands;
+package app.server;
 
 import java.net.ServerSocket;
 import java.net.Socket;

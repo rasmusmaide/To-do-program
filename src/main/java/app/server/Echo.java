@@ -1,14 +1,13 @@
-package listfiles.Connection;
+package app.server;
 
 import com.google.gson.Gson;
-import listfiles.*;
+import app.*;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.sql.SQLException;
-import java.sql.SQLOutput;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -231,16 +230,6 @@ public class Echo implements Runnable {
 
 
                             break;
-                        case "checkuserRegister":
-
-                            username = infoIn.get(1);
-
-                            dbc.checkuserRegister(username);
-
-                            System.out.println("User found: " + username); // kui leiab sellise usernameiga useri, siis ei lase regada
-                            out.writeInt(TypeId.EMPTY); // saadab kinnituse, et midagi ei ole vaja tagastada pmst
-
-                            break;
                         case "register":
 
                             username = infoIn.get(1);
@@ -255,18 +244,6 @@ public class Echo implements Runnable {
                                 out.writeInt(TypeId.ERROR); // TODO siin võiks saata TypeId.ERRORi ja errormessage
                             }
 
-
-                            break;
-                        case "checkuserLogin": // vist ei ole ikka vaja?
-
-                            username = infoIn.get(1);
-                            password = infoIn.get(2);
-                            boolean userFound = dbc.checkuserLogin(username, password);
-
-                            System.out.println("User found: " + userFound);
-
-                            out.writeInt(TypeId.BOOLEAN);
-                            out.writeBoolean(userFound);
 
                             break;
                         case "login":
