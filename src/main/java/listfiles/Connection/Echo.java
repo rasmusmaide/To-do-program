@@ -8,6 +8,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.sql.SQLException;
+import java.sql.SQLOutput;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -244,10 +245,16 @@ public class Echo implements Runnable {
 
                             username = infoIn.get(1);
                             password = infoIn.get(2);
-                            dbc.register(username, password);
+                            boolean isSuccess = dbc.register(username, password);
 
-                            System.out.println("User signed up: " + username + " " + password);
-                            out.writeInt(TypeId.EMPTY); // saadab kinnituse, et midagi ei ole vaja tagastada pmst
+                            if (isSuccess) {
+                                System.out.println("User signed up: " + username + " " + password);
+                                out.writeInt(TypeId.EMPTY); // TODO siin võiks saata TypeId.SUCCESS
+                            } else {
+                                System.out.println("Username already exists! @echo");
+                                out.writeInt(TypeId.ERROR); // TODO siin võiks saata TypeId.ERRORi ja errormessage
+                            }
+
 
                             break;
                         case "checkuserLogin": // vist ei ole ikka vaja?

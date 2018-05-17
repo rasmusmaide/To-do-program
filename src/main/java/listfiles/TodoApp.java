@@ -170,42 +170,27 @@ public class TodoApp extends Application {
             String username = usernameField.getText();
             String password = passwordField.getText();
 
-            String[] command = {"checkuserRegister", username};
-            boolean userexists = false;
+            String[] command2 = {"register", username, password};
 
             try {
-                //userexists = (boolean) commandHandler(command); // TODO
+                if (commandHandler(command2) == null) {
+                    Stage registererror = new Stage();
 
-                System.out.println("läks korda");
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            // TODO saab tagasi booleani, et kas on juba sama nimega kedagi
-
-            if (userexists) { // leidub kasutaja sama usernamega
-                Stage registererror = new Stage();
-
-                registererror.setScene(new Scene(new Label("Username already taken")));
-                registererror.setAlwaysOnTop(true);
-                registererror.show();
-            } else {
-                String[] command2 = {"register", username, password};
-
-                try {
-                    commandHandler(command2);
+                    registererror.setScene(new Scene(new Label("Username already taken")));
+                    registererror.setAlwaysOnTop(true);
+                    registererror.show();
+                } else {
                     System.out.println("läks korda");
                     Stage registersuccess = new Stage();
 
                     registersuccess.setScene(new Scene(new Label("User registered")));
                     registersuccess.setAlwaysOnTop(true);
                     registersuccess.show();
-                } catch (Exception e) {
-                    e.printStackTrace();
                 }
-
-
+            } catch (Exception e) {
+                e.printStackTrace();
             }
+
         });
 
 

@@ -6,7 +6,9 @@ import org.h2.tools.RunScript;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import java.io.*;
+import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.security.spec.InvalidKeySpecException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -240,7 +242,11 @@ public class DataBaseCommands {
         return false;
     } // TODO checkimisega seotud, kas saab midagi siit ära jätta
 
-    public void register(String username, String password) throws SQLException {
+    public boolean register(String username, String password) throws SQLException {
+        if (checkuserRegister(username)) { // username already exists
+            return false;
+        }
+
         try (PreparedStatement statement = conn.prepareStatement(
                 "INSERT INTO USERS(username, passwordKey, salt) VALUES (?, ?, ?)")) {
             statement.setString(1, username);
@@ -248,16 +254,22 @@ public class DataBaseCommands {
             byte[] salt = new byte[32];
             rng.nextBytes(salt);
 
-            String passwordKey = passwordKeyGen(password, salt, 100_000);
-            System.out.println(passwordKey + " @ register passwordkey");
+            String passwordKey = null;
 
-            System.out.println(passwordKey.length() + " @register key length");
+            try {
+                passwordKey = passwordKeyGen(password, salt, 100_000);
+            } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+                e.printStackTrace();
+            }
+
+            //System.out.println(passwordKey + " @ register passwordkey");
+
+            //System.out.println(passwordKey.length() + " @register key length");
             statement.setString(2, passwordKey);
             statement.setString(3, Hex.encodeHexString(salt));
 
             statement.executeUpdate();
-        } catch (Exception e) {
-            e.printStackTrace();
+            return true; // user added
         }
 
         //return true; // uus user lisatud
@@ -288,15 +300,15 @@ public class DataBaseCommands {
                 if (!resultSet.next())
                     throw new RuntimeException("no such user: " + username);
 
-                String usernameFromDB = resultSet.getString(2);
-                String passwordKeyFromDB = resultSet.getString(3);
-                String saltFromDB = resultSet.getString(4);
+                String usernameFromDB = resultSet.getString("username");
+                String passwordKeyFromDB = resultSet.getString("passwordKey");
+                String saltFromDB = resultSet.getString("salt");
 
                 String userGivenPasswordKey = passwordKeyGen(password, Hex.decodeHex(saltFromDB), 100_000);
 
                 System.out.println(userGivenPasswordKey + " = " + passwordKeyFromDB);
                 if (userGivenPasswordKey.equals(passwordKeyFromDB)) {
-                    int userIDInt = resultSet.getInt(1);
+                    int userIDInt = resultSet.getInt("id");
 
                     userID = Integer.toString(userIDInt);
                     System.out.println(userID + " userID @login");
@@ -346,7 +358,7 @@ public class DataBaseCommands {
         return allUserLists;
     }
 
-    private String passwordKeyGen(String password, byte[] salt, int iterationCount) throws Exception {
+    private String passwordKeyGen(String password, byte[] salt, int iterationCount) throws NoSuchAlgorithmException, InvalidKeySpecException {
         PBEKeySpec spec = new PBEKeySpec(password.toCharArray(), salt, iterationCount, 256);
         byte[] key = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256").generateSecret(spec).getEncoded();
         return Hex.encodeHexString(key);
