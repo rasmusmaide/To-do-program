@@ -275,10 +275,15 @@ public class Echo implements Runnable {
                             password = infoIn.get(2);
                             String userIDString = dbc.login(username, password);
 
-                            out.writeInt(TypeId.STRING);
-                            out.writeUTF(userIDString);
+                            if (userIDString.equals("-1")) { // TODO muuda need kõik intiks ja kasuta TypeId
+                                out.writeInt(TypeId.ERROR);
+                                //out.writeUTF(userIDString); TODO errormessage
+                            } else {
+                                System.out.println("User logged in: " + username + " " + password);
 
-                            System.out.println("User logged in: " + username + " " + password);
+                                out.writeInt(TypeId.STRING);
+                                out.writeUTF(userIDString);
+                            }
 
                             break;
                         default:

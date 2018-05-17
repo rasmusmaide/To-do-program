@@ -27,7 +27,7 @@ import java.util.List;
 public class TodoApp extends Application {
     static int server = 1337;
     private String selectedTodo = "0";
-    private String userID;
+    private String userID = "0";
     private String selectedTask = "0"; // hetkel pole neid selectedT-sid vaja, aga addTaskButtonMethodiga on vist
 
     public static void main(String[] args) {
@@ -129,41 +129,40 @@ public class TodoApp extends Application {
             String username = usernameField.getText();
             String password = passwordField.getText();
 
-            String[] command = {"checkuserLogin", username, password};
-            boolean userexists = true;
-            try {
-                //userexists = (boolean) commandHandler(command); // TODO
-                System.out.println("läks korda");
+            List<TodoList> allUserTodoLists = new ArrayList<>();
+            String[] loginCommand = {"login", username, password};
 
+            try {
+                userID = (String) commandHandler(loginCommand); // siit peab tulema kas ID või null kui error
             } catch (Exception e) {
                 e.printStackTrace();
             }
 
-            if (userexists) {
-                // otsib andmebaasist need todo_listid, millele on kasutajal juurdepääs
-                List<TodoList> allUserTodoLists = new ArrayList<>();
-                String[] command2 = {"login", username, password};
+            if (userID == null || userID.equals("0")) {
+                Stage loginerror = new Stage();
 
+                loginerror.setScene(new Scene(new Label("Invalid username or password"))); // TODO errorStage'ide jaoks teha eraldi klass/meetod(errorMessage)
+                loginerror.setAlwaysOnTop(true);
+                loginerror.show();
+            } else {
+                // otsib andmebaasist need todo_listid, millele on kasutajal juurdepääs
+                String[] getListsCommand = {"get lists", userID};
                 try {
-                    userID = (String) commandHandler(command2);
-                    String[] command3 = {"get lists", userID};
-                    allUserTodoLists = (List<TodoList>) commandHandler(command3);
-                    System.out.println("läks korda" + userID);
+                    allUserTodoLists = (List<TodoList>) commandHandler(getListsCommand);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+                System.out.println("läks korda " + userID + " @getListsCommand");
+
                 System.out.println(allUserTodoLists);
                 for (TodoList todo_list : allUserTodoLists) {
-                    tabPane.getTabs().add(tabAdder(todo_list)); // TODO
+                    tabPane.getTabs().add(tabAdder(todo_list));
                 }
                 ((Node) (loginEvent.getSource())).getScene().getWindow().hide();
-            } else {
-                Stage loginerror = new Stage();
-
-                loginerror.setScene(new Scene(new Label("Invalid username or password")));
-                loginerror.setAlwaysOnTop(true);
-                loginerror.show();
             }
+
+
+
         });
         Button registerButton = new Button("Sign up");
         registerButton.setOnAction(registerEvent -> {
@@ -184,7 +183,7 @@ public class TodoApp extends Application {
                     Stage registersuccess = new Stage();
 
                     registersuccess.setScene(new Scene(new Label("User registered")));
-                    registersuccess.setAlwaysOnTop(true);
+                    registersuccess.setAlwaysOnTop(true); // TODO kas setAlwaysOnTop ära võtta igalt poolt, kui see owner ja modality on?
                     registersuccess.show();
                 }
             } catch (Exception e) {

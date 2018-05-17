@@ -12,8 +12,8 @@ import java.security.spec.InvalidKeySpecException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.commons.codec.binary.Hex;
 
+import org.apache.commons.codec.binary.Hex;
 
 
 public class DataBaseCommands {
@@ -47,9 +47,9 @@ public class DataBaseCommands {
 
             while (resultSet.next()) {
                 System.out.println(resultSet.getInt(1) + " " + resultSet.getString(2) + " " +
-                        resultSet.getString(3) + " " +  resultSet.getString(4));
+                        resultSet.getString(3) + " " + resultSet.getString(4));
 
-                }
+            }
             System.out.println("FUCK USERS");
         }
     }
@@ -288,17 +288,18 @@ public class DataBaseCommands {
     } // TODO kontroll enne sisse logimist
 
     public String login(String username, String password) throws SQLException {
-        String userID = "-1";
+        String error = "-1";
 
         try (PreparedStatement statement = conn.prepareStatement(
                 "SELECT * FROM users WHERE username = ?")) {
             statement.setString(1, username);
 
             try (ResultSet resultSet = statement.executeQuery()) {
-                //resultSet.next();
 
-                if (!resultSet.next())
-                    throw new RuntimeException("no such user: " + username);
+                if (!resultSet.next()) {
+                    System.out.println("No such user " + username + " @dbc login");
+                    return error;
+                }
 
                 String usernameFromDB = resultSet.getString("username");
                 String passwordKeyFromDB = resultSet.getString("passwordKey");
@@ -306,16 +307,16 @@ public class DataBaseCommands {
 
                 String userGivenPasswordKey = passwordKeyGen(password, Hex.decodeHex(saltFromDB), 100_000);
 
-                System.out.println(userGivenPasswordKey + " = " + passwordKeyFromDB);
+                System.out.println(userGivenPasswordKey + " = " + passwordKeyFromDB + " @dbc login");
                 if (userGivenPasswordKey.equals(passwordKeyFromDB)) {
                     int userIDInt = resultSet.getInt("id");
 
-                    userID = Integer.toString(userIDInt);
+                    String userID = Integer.toString(userIDInt);
                     System.out.println(userID + " userID @login");
-                    return userID;
+                    return userID;  // tagastab indexi
                 } else {
                     System.out.println("WRONG PASSWORD");
-                    // TODO anna mingi error
+                    return error;
                 }
 
 
@@ -324,7 +325,7 @@ public class DataBaseCommands {
             }
         }
 
-        return userID; // tagastab indexi
+        return error;
     }
 
     public List<TodoList> getAllUserLists(int userID) throws SQLException {
