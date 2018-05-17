@@ -217,7 +217,7 @@ public class DataBaseCommands {
         }
     }
 
-    public boolean checkuserRegister(String username) throws SQLException {
+    private boolean checkuserRegister(String username) throws SQLException {
         try (PreparedStatement statement = conn.prepareStatement(
                 "SELECT * FROM users WHERE username = ?")) {
             statement.setString(1, username);
@@ -226,7 +226,7 @@ public class DataBaseCommands {
         }
 
         return false; // sellist userit ei ole
-    } // TODO kontroll enne regamist
+    }
 
     private boolean checkIfUser(PreparedStatement statement) throws SQLException {
         try (ResultSet resultSet = statement.executeQuery()) {
@@ -241,7 +241,7 @@ public class DataBaseCommands {
             }
         }
         return false;
-    } // TODO checkimisega seotud, kas saab midagi siit ära jätta
+    }
 
     public boolean register(String username, String password) throws SQLException {
         if (checkuserRegister(username)) { // username already exists
@@ -275,18 +275,6 @@ public class DataBaseCommands {
 
         //return true; // uus user lisatud
     }
-
-    public boolean checkuserLogin(String username, String password) throws SQLException {
-        try (PreparedStatement statement = conn.prepareStatement(
-                "SELECT * FROM users WHERE username = ? AND password = ?")) {
-            statement.setString(1, username);
-            statement.setString(2, password);
-
-            if (checkIfUser(statement)) return true;
-        }
-
-        return false;
-    } // TODO kontroll enne sisse logimist
 
     public String login(String username, String password) throws SQLException {
         String error = "-1";

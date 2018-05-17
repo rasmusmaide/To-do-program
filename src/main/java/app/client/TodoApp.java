@@ -10,6 +10,7 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -143,10 +144,8 @@ public class TodoApp extends Application {
             }
 
             if (userID == null || userID.equals("0")) {
-                Stage loginerror = new Stage();
+                Stage loginerror = errorStageMethod("Invalid username or password", loginEvent);
 
-                loginerror.setScene(new Scene(new Label("Invalid username or password"))); // TODO errorStage'ide jaoks teha eraldi klass/meetod(errorMessage)
-                loginerror.setAlwaysOnTop(true);
                 loginerror.show();
             } else {
                 // otsib andmebaasist need todo_listid, millele on kasutajal juurdepääs
@@ -177,17 +176,15 @@ public class TodoApp extends Application {
 
             try {
                 if (commandHandler(registerCommand) == null) {
-                    Stage registererror = new Stage();
+                    Stage registererror = errorStageMethod("Username already taken", registerEvent);
 
-                    registererror.setScene(new Scene(new Label("Username already taken")));
-                    registererror.setAlwaysOnTop(true);
                     registererror.show();
                 } else {
                     System.out.println("läks korda");
                     Stage registersuccess = new Stage();
 
                     registersuccess.setScene(new Scene(new Label("User registered")));
-                    registersuccess.setAlwaysOnTop(true); // TODO kas setAlwaysOnTop ära võtta igalt poolt, kui see owner ja modality on?
+                    registersuccess.setAlwaysOnTop(true);
                     registersuccess.show();
                 }
             } catch (Exception e) {
@@ -218,7 +215,7 @@ public class TodoApp extends Application {
         loginStage.requestFocus();
 
         loginStage.setScene(loginScene);
-        loginStage.setAlwaysOnTop(true);
+        //loginStage.setAlwaysOnTop(true);
         loginStage.setOnCloseRequest(loginStageCloseEvent -> {
             Platform.exit();
         });
@@ -656,8 +653,7 @@ public class TodoApp extends Application {
                         break;
                     case TypeId.ERROR:
                         System.out.println("Midagi läks valesti");
-                        // siin võiks vist mingi exceptioni visata või öelda kasutajale, et midagi läks valesti
-                        // errorStage(String errorMessage)?
+                        // errorit näidatakse vastavalt kohale
                         break;
                     default:
                         System.out.println("ei tule siit midagi");
@@ -676,6 +672,16 @@ public class TodoApp extends Application {
         return o;
 
 
+    }
+
+    private Stage errorStageMethod(String errorMessage, Event errorTriggerEvent) {
+        Stage errorStage = new Stage();
+        errorStage.setScene(new Scene(new Label(errorMessage)));
+        errorStage.initOwner(((Node) (errorTriggerEvent.getSource())).getScene().getWindow());
+        errorStage.initModality(Modality.WINDOW_MODAL);
+        errorStage.requestFocus();
+
+        return errorStage;
     }
 
     public void addTaskButtonEventMethod(ActionEvent addTaskButtonEvent) {
