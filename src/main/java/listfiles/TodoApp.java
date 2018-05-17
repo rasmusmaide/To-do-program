@@ -14,6 +14,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.DataInputStream;
@@ -223,6 +224,11 @@ public class TodoApp extends Application {
 
         Scene loginScene = new Scene(loginPane);
         Stage loginStage = new Stage();
+
+        loginStage.initOwner(primaryStage);
+        loginStage.initModality(Modality.WINDOW_MODAL);
+        loginStage.requestFocus();
+
         loginStage.setScene(loginScene);
         loginStage.setAlwaysOnTop(true);
         loginStage.setOnCloseRequest(loginStageCloseEvent -> {
@@ -273,6 +279,11 @@ public class TodoApp extends Application {
 
             Scene renamelistScene = new Scene(renamefield);
             Stage renamelistStage = new Stage();
+
+            renamelistStage.initOwner(((Node) (event.getSource())).getScene().getWindow());
+            renamelistStage.initModality(Modality.WINDOW_MODAL);
+            renamelistStage.requestFocus();
+
             renamelistStage.setTitle("Rename list");
             renamelistStage.setScene(renamelistScene);
             renamelistStage.show();
@@ -380,6 +391,11 @@ public class TodoApp extends Application {
 
 
             addstage.setScene(new Scene(addtaskpane, 450, 160));
+
+            addstage.initOwner(((Node) (addEvent.getSource())).getScene().getWindow());
+            addstage.initModality(Modality.WINDOW_MODAL);
+            addstage.requestFocus();
+
             addstage.show();
 
         });
@@ -433,6 +449,11 @@ public class TodoApp extends Application {
             Scene headScene = new Scene(headEditField);
             Stage headStage = new Stage();
             headStage.setScene(headScene);
+
+            headStage.initOwner(((Node) (headEditEvent.getSource())).getScene().getWindow());
+            headStage.initModality(Modality.WINDOW_MODAL);
+            headStage.requestFocus();
+
             headStage.setAlwaysOnTop(true);
             headStage.show();
         });
@@ -495,6 +516,11 @@ public class TodoApp extends Application {
 
             Scene dateScene = new Scene(dateTimeEditBox);
             Stage dateStage = new Stage();
+
+            dateStage.initOwner(((Node) (dateEditEvent.getSource())).getScene().getWindow());
+            dateStage.initModality(Modality.WINDOW_MODAL);
+            dateStage.requestFocus();
+
             dateStage.setScene(dateScene);
             dateStage.setAlwaysOnTop(true);
 
@@ -527,6 +553,11 @@ public class TodoApp extends Application {
 
             Scene descScene = new Scene(descEditField);
             Stage descStage = new Stage();
+
+            descStage.initOwner(((Node) (descEditEvent.getSource())).getScene().getWindow());
+            descStage.initModality(Modality.WINDOW_MODAL);
+            descStage.requestFocus();
+
             descStage.setScene(descScene);
             descStage.setAlwaysOnTop(true);
             descStage.show();
