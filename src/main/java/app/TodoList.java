@@ -5,18 +5,18 @@ import java.util.List;
 public class TodoList {
     private List<Task> tasks;
     private String description;
-    private String todoListID;
+    private int todoListID;
 
     public TodoList(List<Task> tasks, String description) {
         this.tasks = tasks;
         this.description = description;
     }
 
-    public String getTodoListID() {
+    public int getTodoListID() {
         return todoListID;
     }
 
-    public void setTodoListID(String todoListID) {
+    public void setTodoListID(int todoListID) {
         this.todoListID = todoListID;
     }
 

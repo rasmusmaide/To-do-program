@@ -33,8 +33,8 @@ public class DataBaseCommands {
                         resultSet.getString("headline"),
                         resultSet.getString("description"),
                         Boolean.parseBoolean(resultSet.getString("done")));
-                oneTask.setTodoListID(resultSet.getString("todo_id"));
-                oneTask.setTaskID(resultSet.getString("id"));
+                oneTask.setTodoListID(resultSet.getInt("todo_id"));
+                oneTask.setTaskID(resultSet.getInt("id"));
 
                 System.out.println(oneTask + " task @show all");
             }
@@ -57,8 +57,8 @@ public class DataBaseCommands {
     }
 
 
-    public DataBaseCommands(String dataBaseURL) throws Exception { //, String un, String pw
-        conn = DriverManager.getConnection(dataBaseURL);//, un, pw);
+    public DataBaseCommands(String dataBaseURL) throws Exception {
+        conn = DriverManager.getConnection(dataBaseURL);
 
     }
 
@@ -74,11 +74,11 @@ public class DataBaseCommands {
         RunScript.execute(conn, reader);
     }
 
-    private List<Task> getAllTasks(String todoID) throws SQLException {
+    private List<Task> getAllTasks(int todoID) throws SQLException {
 
         List<Task> allTasks = new ArrayList<>();
         try (PreparedStatement statement = conn.prepareStatement("SELECT * FROM tasks WHERE todo_id = ?")) {
-            statement.setString(1, todoID);
+            statement.setString(1, String.valueOf(todoID));
 
             try (ResultSet resultSet = statement.executeQuery()) {
 
@@ -90,7 +90,7 @@ public class DataBaseCommands {
                             resultSet.getString("description"),
                             Boolean.parseBoolean(resultSet.getString("done")));
                     oneTask.setTodoListID(todoID);
-                    oneTask.setTaskID(resultSet.getString("id"));
+                    oneTask.setTaskID(resultSet.getInt("id"));
 
                     allTasks.add(oneTask);
 
@@ -101,9 +101,9 @@ public class DataBaseCommands {
         return allTasks;
     }
 
-    public String addTask(Task task) throws SQLException {
-        //takes the valeus from task as strings and add them to the sql execution statement
-        String taskID = null;
+    public int addTask(Task task) throws SQLException {
+        //takes the values from task and add them to the sql execution statement
+        int taskID = TypeId.ERROR;
         System.out.println(task.getTodoListID() + " todoID @addtask");
 
         try (PreparedStatement statement = conn.prepareStatement(
@@ -114,14 +114,13 @@ public class DataBaseCommands {
             statement.setString(3, task.getHeadline());
             statement.setString(4, task.getDescription());
             statement.setBoolean(5, task.getDone());
-            statement.setString(6, task.getTodoListID());
+            statement.setString(6, String.valueOf(task.getTodoListID()));
             statement.executeUpdate();
 
             try (ResultSet insertedKey = statement.getGeneratedKeys()) {
                 while (insertedKey.next()) { // kas siin tsüklit üldse on mul vaja?
-                    int idString = insertedKey.getInt("id"); // long vist mõistlikum, aga ABs on hetkel int, hiljem muudab kui vaja
-                    taskID = Integer.toString(idString); // todo eh...
-                    System.out.println("        Inserted and returned task: " + idString);
+                    taskID = insertedKey.getInt("id"); // long vist mõistlikum, aga ABs on hetkel int, hiljem muudab kui vaja
+                    System.out.println("        Inserted and returned task: " + taskID);
                 }
             }
         }
@@ -187,8 +186,8 @@ public class DataBaseCommands {
         }
     }
 
-    public String newTodo(int userID) throws SQLException {
-        String todoID = null;
+    public int newTodo(int userID) throws SQLException {
+        int todoID = TypeId.ERROR;
 
         try (PreparedStatement statement = conn.prepareStatement(
                 "INSERT INTO todos(description, user_id) VALUES (?, ?);",
@@ -199,10 +198,9 @@ public class DataBaseCommands {
 
             try (ResultSet insertedKey = statement.getGeneratedKeys()) {
                 while (insertedKey.next()) { // kas siin tsüklit üldse on mul vaja?
-                    int idString = insertedKey.getInt("id"); // long vist mõistlikum, aga ABs on hetkel int, hiljem muudab kui vaja
+                    todoID = insertedKey.getInt("id"); // long vist mõistlikum, aga ABs on hetkel int, hiljem muudab kui vaja
 
-                    todoID = Integer.toString(idString); // todo eh...
-                    System.out.println("Inserted and returned: " + todoID);
+                    System.out.println("    Inserted and returned todoID: " + todoID);
                 }
             }
         }
@@ -274,7 +272,6 @@ public class DataBaseCommands {
             return true; // user added
         }
 
-        //return true; // uus user lisatud
     }
 
     public int login(String username, String password) throws SQLException {
@@ -328,7 +325,7 @@ public class DataBaseCommands {
 
                 while (resultSet.next()) {
                     String todoDescription = resultSet.getString("description");
-                    String todoID = resultSet.getString("id");
+                    int todoID = resultSet.getInt("id");
 
                     TodoList todoFromDB = new TodoList(new ArrayList<>(), todoDescription);
                     todoFromDB.setTodoListID(todoID);
@@ -339,7 +336,7 @@ public class DataBaseCommands {
         }
 
         for (TodoList todo_list : allUserLists) {
-            String todoID = todo_list.getTodoListID();
+            int todoID = todo_list.getTodoListID();
             System.out.println(todoID + " todoID @ alluserlists");
             List<Task> taskList = getAllTasks(todoID);
             todo_list.setTasks(taskList);

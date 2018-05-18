@@ -57,7 +57,7 @@ public class TodoApp extends Application {
             String[] command = {"addlist", String.valueOf(userID)};
 
             try {
-                ntodo.setTodoListID((String) commandHandler(command));
+                ntodo.setTodoListID((int) commandHandler(command));
                 System.out.println("läks korda");
             } catch (Exception e) {
                 e.printStackTrace();
@@ -246,7 +246,7 @@ public class TodoApp extends Application {
                 todoList.setDescription(fieldtext);
                 renameTodo.setText(fieldtext);
 
-                String[] command = {"renametodo", todoList.getTodoListID(), fieldtext};
+                String[] command = {"renametodo", String.valueOf(todoList.getTodoListID()), fieldtext};
                 try {
                     commandHandler(command);
                     System.out.println("läks korda");
@@ -322,12 +322,12 @@ public class TodoApp extends Application {
                 } else {
 
 
-                    String[] command = {"addtask", duedate, headlinefield.getText(), descriptionfield.getText(), todoList.getTodoListID()};
-                    String taskID = "0";
+                    String[] command = {"addtask", duedate, headlinefield.getText(), descriptionfield.getText(), String.valueOf(todoList.getTodoListID())};
+                    int taskID = 0;
 
                     try {
                         System.out.println("läks korda");
-                        taskID = (String) commandHandler(command);
+                        taskID = (int) commandHandler(command);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -378,12 +378,12 @@ public class TodoApp extends Application {
         todolistTab.setContent(todoTabPane);
         todolistTab.setClosable(false);
 
-        todolistTab.setOnSelectionChanged(t -> {
+        /*todolistTab.setOnSelectionChanged(t -> {
             if (todolistTab.isSelected()) {
                 this.selectedTodo = todoList.getTodoListID(); // kas nüüd üldse on vaja seda?
                 System.out.println("Add nupp kehtib sellele listile");
             }
-        });
+        });*/
 
         return todolistTab;
     }
@@ -422,7 +422,7 @@ public class TodoApp extends Application {
 
                 task.setHeadline(fieldtext);
 
-                String[] command = {"renametask", task.getTaskID(), fieldtext};
+                String[] command = {"renametask", String.valueOf(task.getTaskID()), fieldtext};
 
                 try {
                     commandHandler(command);
@@ -476,7 +476,7 @@ public class TodoApp extends Application {
                     task.setDeadline(duedate);
                     duedateLabel.setText(duedate);
 
-                    String[] command = {"dateedit", task.getTaskID(), duedate};
+                    String[] command = {"dateedit", String.valueOf(task.getTaskID()), duedate};
 
                     try {
                         commandHandler(command);
@@ -519,7 +519,7 @@ public class TodoApp extends Application {
 
                 task.setDescription(fieldtext);
 
-                String[] command = {"descedit", task.getTaskID(), fieldtext};
+                String[] command = {"descedit", String.valueOf(task.getTaskID()), fieldtext};
 
                 try {
                     commandHandler(command);
@@ -551,7 +551,7 @@ public class TodoApp extends Application {
 
         Button deleteTaskButton = new Button("Delete");
         deleteTaskButton.setOnAction(editEvent -> {
-            String[] command = {"deletetask", task.getTaskID()};
+            String[] command = {"deletetask", String.valueOf(task.getTaskID())};
 
             try {
                 commandHandler(command);
@@ -569,7 +569,7 @@ public class TodoApp extends Application {
         doneCheckBox.setSelected(task.getDone());
         doneCheckBox.setOnAction(doneActionEvent -> {
             if (doneCheckBox.isSelected()) {
-                String[] command = {"done", task.getTaskID()};
+                String[] command = {"done", String.valueOf(task.getTaskID())};
 
                 try {
                     commandHandler(command);
@@ -579,7 +579,7 @@ public class TodoApp extends Application {
                 }
             }
             if (!doneCheckBox.isSelected()) {
-                String[] command = {"undone", task.getTaskID()};
+                String[] command = {"undone", String.valueOf(task.getTaskID())};
 
                 try {
                     commandHandler(command);

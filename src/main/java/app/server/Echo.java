@@ -87,11 +87,11 @@ public class Echo implements Runnable {
                                 throw new RuntimeException(e);
                             }
 
-                            String todoID = dbc.newTodo(userID);
+                            int todoID = dbc.newTodo(userID);
 
                             System.out.println("Added new todo list for user " + userID);
-                            out.writeInt(TypeId.STRING);
-                            out.writeUTF(todoID);
+                            out.writeInt(TypeId.INT);
+                            out.writeInt(todoID);
                             break;
                         case "addtask":
                             DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -105,12 +105,12 @@ public class Echo implements Runnable {
 
 
                             Task ntask = new Task(entrydate, date, head, description, false);
-                            ntask.setTodoListID(todoIdForTask);
+                            ntask.setTodoListID(Integer.valueOf(todoIdForTask));
                             System.out.println("Add task: " + ntask);
                             try {
-                                String taskID = dbc.addTask(ntask);
-                                out.writeInt(TypeId.STRING);
-                                out.writeUTF(taskID);
+                                int taskID = dbc.addTask(ntask);
+                                out.writeInt(TypeId.INT);
+                                out.writeInt(taskID);
 
                             } catch (SQLException e) {
                                 e.printStackTrace();
