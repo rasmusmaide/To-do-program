@@ -320,32 +320,32 @@ public class TodoApp extends Application {
                 String duedate = datePicker.getValue() + " " + duedateHoursSpinner.getValue() + ":" + duedateMinutesSpinner.getValue() + ":00";
 
                 if (datePicker.getValue() == null) {
-                    duedate = "2020-01-01";
                     Stage kuupäevaviga = errorStageMethod("Pole sobiv kuupäev",addEvent);
                     kuupäevaviga.show();
+                } else {
+
+
+                    String[] command = {"addtask", duedate, headlinefield.getText(), descriptionfield.getText(), todoList.getTodoListID()};
+                    String taskID = "0";
+
+                    try {
+                        System.out.println("läks korda");
+                        taskID = (String) commandHandler(command);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                    Task ntask = new Task(duedate, duedate, headlinefield.getText(), descriptionfield.getText(), false);
+                    ntask.setTaskID(taskID);
+
+                    todoList.getTasks().add(ntask);
+
+                    tasksPane.add(taskPaneAdder(ntask), 0, todoList.getTasks().size());
+                    //taskPaneAdder(ntask);
+
+                    //System.out.println(ntask);
+                    addstage.close(); // kui additud, siis paneb kinni akna
                 }
-
-
-                String[] command = {"addtask", duedate, headlinefield.getText(), descriptionfield.getText(), todoList.getTodoListID()};
-                String taskID = "0";
-
-                try {
-                    System.out.println("läks korda");
-                    taskID = (String) commandHandler(command);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-                Task ntask = new Task(duedate, duedate, headlinefield.getText(), descriptionfield.getText(), false);
-                ntask.setTaskID(taskID);
-
-                todoList.getTasks().add(ntask);
-
-                tasksPane.add(taskPaneAdder(ntask), 0, todoList.getTasks().size());
-                //taskPaneAdder(ntask);
-
-                //System.out.println(ntask);
-                addstage.close(); // kui additud, siis paneb kinni akna
 
             }); // ADD
 
@@ -473,23 +473,23 @@ public class TodoApp extends Application {
             dateEditButton.setOnAction(dateEditButtonEvent -> {
                 String duedate = datePicker.getValue() + " " + duedateHoursSpinner.getValue() + ":" + duedateMinutesSpinner.getValue() + ":00";
                 if (datePicker.getValue() == null) {
-                    duedate = "2020-01-01";
-                    Stage kuupäevaviga = errorStageMethod("Pole sobiv kuupäev", dateEditEvent);
+                    Stage kuupäevaviga = errorStageMethod("Pole sobiv kuupäev", dateEditButtonEvent);
                     kuupäevaviga.show();
+                } else {
+                    task.setDeadline(duedate);
+                    duedateLabel.setText(duedate);
+
+                    String[] command = {"dateedit", task.getTaskID(), duedate};
+
+                    try {
+                        commandHandler(command);
+                        System.out.println("läks korda");
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                    ((Node) (dateEditButtonEvent.getSource())).getScene().getWindow().hide();
                 }
-                task.setDeadline(duedate);
-                duedateLabel.setText(duedate);
-
-                String[] command = {"dateedit", task.getTaskID(), duedate};
-
-                try {
-                    commandHandler(command);
-                    System.out.println("läks korda");
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-                ((Node) (dateEditButtonEvent.getSource())).getScene().getWindow().hide();
 
             });
 
