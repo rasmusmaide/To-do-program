@@ -610,8 +610,8 @@ public class TodoApp extends Application {
         System.out.println("connecting to server: " + server);
         Object o = null;
         //Stage errorStage = new ErrorStage().getError();
-
-        while (true) {
+        int katseid = 0;
+        while (katseid<3) {
             try (
                     Socket socket = new Socket("localhost", server);
                     DataOutputStream out = new DataOutputStream(socket.getOutputStream());
@@ -661,6 +661,11 @@ public class TodoApp extends Application {
 
                 break;
             } catch (ConnectException e) {
+                e.printStackTrace();
+                katseid+=1;
+                if (katseid==3){
+                    throw new ConnectException("Serveriga ei õnnestunud ühendada");
+                }
 
                 System.out.println("Ühendus puudub, proovin uuesti");
                 //errorStage.show();
