@@ -22,7 +22,7 @@ public class Server {
                 //dbc.removeTodos();
                 dbc.initialize();//esmakordsel käivitamisel
             } catch (SQLException e) {
-                e.printStackTrace();
+                System.out.println("tabel juba olemas");
             }
             dbc.showAbsolutelyAllTasks(); // testimiseks
             dbc.showAbsolutelyAllUsers(); // testimiseks

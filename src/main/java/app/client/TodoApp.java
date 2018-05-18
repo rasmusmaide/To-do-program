@@ -296,20 +296,7 @@ public class TodoApp extends Application {
             ObservableList<String> hours = FXCollections.observableArrayList(new ArrayList<>());
             ObservableList<String> minutes = FXCollections.observableArrayList(new ArrayList<>());
 
-            for (int i = 0; i < 60; i++) {
-                String hrs = "";
-                String mins = "";
-                if (i < 10) {
-                    hrs += "0";
-                    mins += "0";
-                }
-                if (i < 24) {
-                    hrs += i;
-                    hours.add(hrs);
-                }
-                mins += i;
-                minutes.add(mins);
-            }
+            ajateisendus(hours, minutes);
 
             SpinnerValueFactory<String> duedateHours = new SpinnerValueFactory.ListSpinnerValueFactory(hours);
             Spinner<String> duedateHoursSpinner = new Spinner<>();
@@ -334,6 +321,8 @@ public class TodoApp extends Application {
 
                 if (datePicker.getValue() == null) {
                     duedate = "2020-01-01";
+                    Stage kuupäevaviga = errorStageMethod("Pole sobiv kuupäev",addEvent);
+                    kuupäevaviga.show();
                 }
 
 
@@ -402,6 +391,23 @@ public class TodoApp extends Application {
         return todolistTab;
     }
 
+    private void ajateisendus(ObservableList<String> hours, ObservableList<String> minutes) {
+        for (int i = 0; i < 60; i++) {
+            String hrs = "";
+            String mins = "";
+            if (i < 10) {
+                hrs += "0";
+                mins += "0";
+            }
+            if (i < 24) {
+                hrs += i;
+                hours.add(hrs);
+            }
+            mins += i;
+            minutes.add(mins);
+        }
+    }
+
     private BorderPane taskPaneAdder(Task task) {
         BorderPane taskBorderPane = new BorderPane();
         taskBorderPane.setPrefWidth(500);
@@ -448,20 +454,7 @@ public class TodoApp extends Application {
             ObservableList<String> hours = FXCollections.observableArrayList(new ArrayList<>());
             ObservableList<String> minutes = FXCollections.observableArrayList(new ArrayList<>());
 
-            for (int i = 0; i < 60; i++) {
-                String hrs = "";
-                String mins = "";
-                if (i < 10) {
-                    hrs += "0";
-                    mins += "0";
-                }
-                if (i < 24) {
-                    hrs += i;
-                    hours.add(hrs);
-                }
-                mins += i;
-                minutes.add(mins);
-            }
+            ajateisendus(hours, minutes);
 
             SpinnerValueFactory<String> duedateHours = new SpinnerValueFactory.ListSpinnerValueFactory(hours);
             Spinner<String> duedateHoursSpinner = new Spinner<>();
@@ -479,6 +472,11 @@ public class TodoApp extends Application {
             Button dateEditButton = new Button("Edit");
             dateEditButton.setOnAction(dateEditButtonEvent -> {
                 String duedate = datePicker.getValue() + " " + duedateHoursSpinner.getValue() + ":" + duedateMinutesSpinner.getValue() + ":00";
+                if (datePicker.getValue() == null) {
+                    duedate = "2020-01-01";
+                    Stage kuupäevaviga = errorStageMethod("Pole sobiv kuupäev", dateEditEvent);
+                    kuupäevaviga.show();
+                }
                 task.setDeadline(duedate);
                 duedateLabel.setText(duedate);
 
