@@ -2,6 +2,7 @@ package app.server;
 
 import app.Task;
 import app.TodoList;
+import app.TypeId;
 import org.h2.tools.RunScript;
 
 import javax.crypto.SecretKeyFactory;
@@ -276,8 +277,7 @@ public class DataBaseCommands {
         //return true; // uus user lisatud
     }
 
-    public String login(String username, String password) throws SQLException {
-        String error = "-1";
+    public int login(String username, String password) throws SQLException {
 
         try (PreparedStatement statement = conn.prepareStatement(
                 "SELECT * FROM users WHERE username = ?")) {
@@ -287,7 +287,7 @@ public class DataBaseCommands {
 
                 if (!resultSet.next()) {
                     System.out.println("No such user " + username + " @dbc login");
-                    return error;
+                    return TypeId.ERROR;
                 }
 
                 String usernameFromDB = resultSet.getString("username");
@@ -298,14 +298,14 @@ public class DataBaseCommands {
 
                 System.out.println(userGivenPasswordKey + " = " + passwordKeyFromDB + " @dbc login");
                 if (userGivenPasswordKey.equals(passwordKeyFromDB)) {
-                    int userIDInt = resultSet.getInt("id");
+                    int userID = resultSet.getInt("id");
 
-                    String userID = Integer.toString(userIDInt);
-                    System.out.println(userID + " userID @login");
+                    //String userID = Integer.toString(userIDInt);
+                    System.out.println("userID:" + userID + " username:" + usernameFromDB + " @login");
                     return userID;  // tagastab indexi
                 } else {
                     System.out.println("WRONG PASSWORD");
-                    return error;
+                    return TypeId.ERROR;
                 }
 
 
@@ -314,7 +314,7 @@ public class DataBaseCommands {
             }
         }
 
-        return error;
+        return TypeId.ERROR;
     }
 
     public List<TodoList> getAllUserLists(int userID) throws SQLException {

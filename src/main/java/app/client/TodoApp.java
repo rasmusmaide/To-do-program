@@ -32,7 +32,7 @@ import java.util.List;
 public class TodoApp extends Application {
     static int server = 1337;
     private String selectedTodo = "0";
-    private String userID;
+    private int userID;
     private String selectedTask = "0"; // hetkel pole neid selectedT-sid vaja, aga addTaskButtonMethodiga on vist
 
     public static void main(String[] args) {
@@ -54,7 +54,7 @@ public class TodoApp extends Application {
         addListButton.setOnAction(event -> {
             TodoList ntodo = new TodoList(new ArrayList<>(), "New To-do list");
 
-            String[] command = {"addlist", userID};
+            String[] command = {"addlist", String.valueOf(userID)};
 
             try {
                 ntodo.setTodoListID((String) commandHandler(command));
@@ -138,18 +138,18 @@ public class TodoApp extends Application {
             String[] loginCommand = {"login", username, password};
 
             try {
-                userID = (String) commandHandler(loginCommand); // siit peab tulema kas ID või null kui error
+                userID = (Integer) commandHandler(loginCommand); // siit peab tulema kas ID või null kui error
             } catch (Exception e) {
                 e.printStackTrace();
             }
 
-            if (userID == null || userID.equals("0")) {
+            if (userID == TypeId.EMPTY || userID == TypeId.ERROR) {
                 Stage loginerror = errorStageMethod("Invalid username or password", loginEvent);
 
                 loginerror.show();
             } else {
                 // otsib andmebaasist need todo_listid, millele on kasutajal juurdepääs
-                String[] getListsCommand = {"get lists", userID};
+                String[] getListsCommand = {"get lists", String.valueOf(userID)};
                 try {
                     allUserTodoLists = (List<TodoList>) commandHandler(getListsCommand);
                 } catch (Exception e) {
@@ -165,7 +165,6 @@ public class TodoApp extends Application {
             }
 
 
-
         });
         Button registerButton = new Button("Sign up");
         registerButton.setOnAction(registerEvent -> {
@@ -175,7 +174,7 @@ public class TodoApp extends Application {
             String[] registerCommand = {"register", username, password};
 
             try {
-                if (commandHandler(registerCommand) == null) {
+                if ((Integer) commandHandler(registerCommand) == TypeId.ERROR) {
                     Stage registererror = errorStageMethod("Username already taken", registerEvent);
 
                     registererror.show();
@@ -216,9 +215,7 @@ public class TodoApp extends Application {
 
         loginStage.setScene(loginScene);
         //loginStage.setAlwaysOnTop(true);
-        loginStage.setOnCloseRequest(loginStageCloseEvent -> {
-            Platform.exit();
-        });
+        loginStage.setOnCloseRequest(loginStageCloseEvent -> Platform.exit());
         loginStage.show();
 
 
@@ -296,7 +293,7 @@ public class TodoApp extends Application {
             ObservableList<String> hours = FXCollections.observableArrayList(new ArrayList<>());
             ObservableList<String> minutes = FXCollections.observableArrayList(new ArrayList<>());
 
-            ajateisendus(hours, minutes);
+            timeLists(hours, minutes);
 
             SpinnerValueFactory<String> duedateHours = new SpinnerValueFactory.ListSpinnerValueFactory(hours);
             Spinner<String> duedateHoursSpinner = new Spinner<>();
@@ -320,8 +317,8 @@ public class TodoApp extends Application {
                 String duedate = datePicker.getValue() + " " + duedateHoursSpinner.getValue() + ":" + duedateMinutesSpinner.getValue() + ":00";
 
                 if (datePicker.getValue() == null) {
-                    Stage kuupäevaviga = errorStageMethod("Pole sobiv kuupäev",addEvent);
-                    kuupäevaviga.show();
+                    Stage dateErrorStage = errorStageMethod("Pole sobiv kuupäev",addEvent);
+                    dateErrorStage.show();
                 } else {
 
 
@@ -391,7 +388,7 @@ public class TodoApp extends Application {
         return todolistTab;
     }
 
-    private void ajateisendus(ObservableList<String> hours, ObservableList<String> minutes) {
+    private void timeLists(ObservableList<String> hours, ObservableList<String> minutes) {
         for (int i = 0; i < 60; i++) {
             String hrs = "";
             String mins = "";
@@ -454,7 +451,7 @@ public class TodoApp extends Application {
             ObservableList<String> hours = FXCollections.observableArrayList(new ArrayList<>());
             ObservableList<String> minutes = FXCollections.observableArrayList(new ArrayList<>());
 
-            ajateisendus(hours, minutes);
+            timeLists(hours, minutes);
 
             SpinnerValueFactory<String> duedateHours = new SpinnerValueFactory.ListSpinnerValueFactory(hours);
             Spinner<String> duedateHoursSpinner = new Spinner<>();
@@ -608,8 +605,8 @@ public class TodoApp extends Application {
         System.out.println("connecting to server: " + server);
         Object o = null;
         //Stage errorStage = new ErrorStage().getError();
-        int katseid = 0;
-        while (katseid<3) {
+        int noOfTries = 0;
+        while (noOfTries < 3) {
             try (
                     Socket socket = new Socket("localhost", server);
                     DataOutputStream out = new DataOutputStream(socket.getOutputStream());
@@ -647,10 +644,15 @@ public class TodoApp extends Application {
                         break;
                     case TypeId.EMPTY:
                         System.out.println("ei tule siit midagi, meelega");
-                        o = 0;
+                        o = TypeId.EMPTY;
+                        break;
+                    case TypeId.INT:
+                        int receivedInt = in.readInt();
+                        o = receivedInt;
                         break;
                     case TypeId.ERROR:
                         System.out.println("Midagi läks valesti");
+                        o = TypeId.ERROR;
                         // errorit näidatakse vastavalt kohale
                         break;
                     default:
@@ -659,10 +661,13 @@ public class TodoApp extends Application {
 
                 break;
             } catch (ConnectException e) {
-                e.printStackTrace();
-                katseid+=1;
-                if (katseid==3){
-                    throw new ConnectException("Serveriga ei õnnestunud ühendada");
+                //e.printStackTrace();
+                noOfTries += 1;
+                if (noOfTries == 3) {
+                    e.printStackTrace();
+                    //throw new ConnectException("Serveriga ei õnnestunud ühendada");
+                    o = String.valueOf(TypeId.NOCONNECTION); // TODO ajutiselt string
+                    return o;
                 }
 
                 System.out.println("Ühendus puudub, proovin uuesti");

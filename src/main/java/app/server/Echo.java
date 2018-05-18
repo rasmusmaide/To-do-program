@@ -241,7 +241,7 @@ public class Echo implements Runnable {
                                 out.writeInt(TypeId.EMPTY); // TODO siin võiks saata TypeId.SUCCESS
                             } else {
                                 System.out.println("Username already exists! @echo");
-                                out.writeInt(TypeId.ERROR); // TODO siin võiks saata TypeId.ERRORi ja errormessage
+                                out.writeInt(TypeId.ERROR);
                             }
 
 
@@ -250,16 +250,16 @@ public class Echo implements Runnable {
 
                             username = infoIn.get(1);
                             password = infoIn.get(2);
-                            String userIDString = dbc.login(username, password);
+                            userID = dbc.login(username, password);
 
-                            if (userIDString.equals("-1")) { // TODO muuda need kõik intiks ja kasuta TypeId
+                            if (userID == TypeId.ERROR) {
                                 out.writeInt(TypeId.ERROR);
                                 //out.writeUTF(userIDString); TODO errormessage
                             } else {
                                 System.out.println("User logged in: " + username + " " + password);
 
-                                out.writeInt(TypeId.STRING);
-                                out.writeUTF(userIDString);
+                                out.writeInt(TypeId.INT);
+                                out.writeInt(userID);
                             }
 
                             break;
