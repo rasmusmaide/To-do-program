@@ -53,30 +53,21 @@ public class TodoApp extends Application {
         Button addListButton = new Button("New to-do");
         addListButton.setOnAction(event -> {
             TodoList ntodo = new TodoList(new ArrayList<>(), "New To-do list");
-            Stage promptstage= new Stage();
+            Stage promptstage = new Stage();
             TextField renamefield = new TextField();
             renamefield.setPromptText("Insert new name");
             promptstage.setScene(new Scene(renamefield));
             promptstage.show();
-            renamefield.setOnAction(event1 -> {
-                String name = renamefield.getText();
-                ntodo.setDescription(name);
-                String[] command = {"renametodo", String.valueOf(ntodo.getTodoListID()), name};
-                try {
-                    commandHandler(command);
-                    System.out.println("läks korda");
+            renamefield.setOnAction(setTodoNameEvent -> {
+                String todoDescription = renamefield.getText();
+                ntodo.setDescription(todoDescription);
 
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                ((Node) (setTodoNameEvent.getSource())).getScene().getWindow().hide();
 
-                ((Node) (event1.getSource())).getScene().getWindow().hide();
-
-                String[] command2 = {"addlist", String.valueOf(userID)};
-
+                String[] addTodoCommand = {"addlist", todoDescription, String.valueOf(userID)};
 
                 try {
-                    ntodo.setTodoListID((int) commandHandler(command2));
+                    ntodo.setTodoListID((int) commandHandler(addTodoCommand));
                     System.out.println("läks korda");
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -86,7 +77,6 @@ public class TodoApp extends Application {
                 tabPane.getTabs().add(tabAdder(ntodo));
                 tabPane.getSelectionModel().selectLast();
             });
-
 
 
         }); // CREATE NEW TO-DO LIST
@@ -161,19 +151,29 @@ public class TodoApp extends Application {
 
             try {
                 userID = (Integer) commandHandler(loginCommand); // siit peab tulema kas ID või null kui error
+            } catch (ConnectException e) { // TODO midagi sellist peaks igale poole panema
+                userID = -1;
             } catch (Exception e) {
                 e.printStackTrace();
             }
 
+            System.out.println(userID + " userID @loginbutton");
             if (userID == TypeId.EMPTY || userID == TypeId.ERROR) {
                 Stage loginerror = errorStageMethod("Invalid username or password", loginEvent);
 
                 loginerror.show();
+            } else if (userID == -1) { //TODO see lahendus on ajutine
+                Stage connectionError = errorStageMethod("No connection", loginEvent);
+                connectionError.show();
             } else {
                 // otsib andmebaasist need todo_listid, millele on kasutajal juurdepääs
                 String[] getListsCommand = {"get lists", String.valueOf(userID)};
                 try {
                     allUserTodoLists = (List<TodoList>) commandHandler(getListsCommand);
+                } catch (ConnectException e) {
+                    Stage connectionError = errorStageMethod("No connection", loginEvent);
+
+                    connectionError.show();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -339,7 +339,7 @@ public class TodoApp extends Application {
                 String duedate = datePicker.getValue() + " " + duedateHoursSpinner.getValue() + ":" + duedateMinutesSpinner.getValue() + ":00";
 
                 if (datePicker.getValue() == null) {
-                    Stage dateErrorStage = errorStageMethod("Pole sobiv kuupäev",addEvent);
+                    Stage dateErrorStage = errorStageMethod("Pole sobiv kuupäev", addEvent);
                     dateErrorStage.show();
                 } else {
 
@@ -398,9 +398,10 @@ public class TodoApp extends Application {
 
         });
 
-        todoTabPane.setTop(new HBox(renameTodo));
         todoTabPane.setCenter(tasksPane);
-        todoTabPane.setBottom(addTaskButton);
+        HBox bottomToolbar = new HBox();
+        bottomToolbar.getChildren().addAll(addTaskButton, renameTodo);
+        todoTabPane.setBottom(bottomToolbar);
 
         todolistTab.setContent(todoTabPane);
 
@@ -654,8 +655,6 @@ public class TodoApp extends Application {
                     System.out.println("sent " + command[i]);
                 }
 
-                //String commandtype = command[0];
-                //System.out.println(commandtype);
                 int returnType = in.readInt(); // tuleb tagastustyyp
 
                 switch (returnType) {
@@ -695,10 +694,7 @@ public class TodoApp extends Application {
                 //e.printStackTrace();
                 noOfTries += 1;
                 if (noOfTries == 3) {
-                    e.printStackTrace();
-                    //throw new ConnectException("Serveriga ei õnnestunud ühendada");
-                    o = String.valueOf(TypeId.NOCONNECTION); // TODO ajutiselt string
-                    return o;
+                    throw new ConnectException("Serveriga ei õnnestunud ühendada");
                 }
 
                 System.out.println("Ühendus puudub, proovin uuesti");

@@ -54,6 +54,7 @@ public class Echo implements Runnable {
                     String indexString;
                     String username;
                     String password;
+                    String todoDescription;
 
                     switch (command) {
                         case "get lists": // {"get lists", userID}
@@ -78,8 +79,9 @@ public class Echo implements Runnable {
                             out.writeUTF(userListsString); // saadab tagasi
 
                             break;
-                        case "addlist": // {"addlist", userID}
-                            userIDstring = infoIn.get(1);
+                        case "addlist": // {"addlist", todoDescription, userID}
+                            todoDescription = infoIn.get(1);
+                            userIDstring = infoIn.get(2);
 
                             try {
                                 userID = Integer.parseInt(userIDstring);
@@ -87,7 +89,7 @@ public class Echo implements Runnable {
                                 throw new RuntimeException(e);
                             }
 
-                            int todoID = dbc.newTodo(userID);
+                            int todoID = dbc.newTodo(todoDescription, userID);
 
                             System.out.println("Added new todo list for user " + userID);
                             out.writeInt(TypeId.INT);
@@ -222,7 +224,7 @@ public class Echo implements Runnable {
                             } catch (NumberFormatException e) {
                                 throw new RuntimeException(e);
                             }
-                            String todoDescription = infoIn.get(2);
+                            todoDescription = infoIn.get(2);
                             dbc.changeTodoDescription(index, todoDescription);
 
                             System.out.println("Todolist name changed to: " + todoDescription);

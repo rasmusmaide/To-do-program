@@ -186,13 +186,13 @@ public class DataBaseCommands {
         }
     }
 
-    public int newTodo(int userID) throws SQLException {
+    public int newTodo(String todoDescription, int userID) throws SQLException {
         int todoID = TypeId.ERROR;
 
         try (PreparedStatement statement = conn.prepareStatement(
                 "INSERT INTO todos(description, user_id) VALUES (?, ?);",
                 Statement.RETURN_GENERATED_KEYS)) {
-            statement.setString(1, "New To-do list");
+            statement.setString(1, todoDescription);
             statement.setString(2, Integer.toString(userID));
             statement.executeUpdate();
 
