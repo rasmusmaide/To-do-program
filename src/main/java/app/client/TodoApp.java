@@ -253,6 +253,7 @@ public class TodoApp extends Application {
 
         GridPane tasksPane = new GridPane();
 
+
         for (int i = 0; i < tasks.size(); i++) {
             tasksPane.add(taskPaneAdder(tasks.get(i)), 0, i);
         }
@@ -367,6 +368,11 @@ public class TodoApp extends Application {
 
             }); // ADD
 
+            todoTabPane.setCenter(tasksPane);
+            HBox bottomToolbar = new HBox();
+            bottomToolbar.getChildren().addAll(addTaskButton, renameTodo);
+            todoTabPane.setBottom(bottomToolbar);
+
 
             Button canceladd = new Button("Cancel");
             canceladd.setOnAction(event1 -> addstage.close()); // CLOSE
@@ -397,7 +403,11 @@ public class TodoApp extends Application {
         todoTabPane.setBottom(addTaskButton);
 
         todolistTab.setContent(todoTabPane);
-        todolistTab.setClosable(false);
+
+        todolistTab.setOnClosed(event -> {
+
+        });
+
 
         /*todolistTab.setOnSelectionChanged(t -> {
             if (todolistTab.isSelected()) {
@@ -491,8 +501,8 @@ public class TodoApp extends Application {
             dateEditButton.setOnAction(dateEditButtonEvent -> {
                 String duedate = datePicker.getValue() + " " + duedateHoursSpinner.getValue() + ":" + duedateMinutesSpinner.getValue() + ":00";
                 if (datePicker.getValue() == null) {
-                    Stage kuupäevaviga = errorStageMethod("Pole sobiv kuupäev", dateEditButtonEvent);
-                    kuupäevaviga.show();
+                    Stage dateerror = errorStageMethod("Invalid date", dateEditButtonEvent);
+                    dateerror.show();
                 } else {
                     task.setDeadline(duedate);
                     duedateLabel.setText(duedate);
