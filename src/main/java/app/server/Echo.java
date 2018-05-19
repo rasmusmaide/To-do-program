@@ -1,7 +1,10 @@
 package app.server;
 
+import app.Task;
+import app.TodoList;
+import app.TypeId;
+import app.UserTodoLists;
 import com.google.gson.Gson;
-import app.*;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -56,6 +59,19 @@ public class Echo implements Runnable {
                     String password;
 
                     switch (command) {
+                        case "removelist":
+                            String liststring = infoIn.get(1);
+                            Integer listID=null;
+
+                            try {
+                                listID = Integer.parseInt(liststring);
+                            } catch (NumberFormatException e) {
+                                throw new RuntimeException(e);
+                            }
+                            dbc.deleteList(listID);
+                            System.out.println("List deleted successfully");
+                            out.writeInt(TypeId.EMPTY);
+
                         case "get lists": // {"get lists", userID}
                             userIDstring = infoIn.get(1);
 
@@ -65,7 +81,7 @@ public class Echo implements Runnable {
                                 throw new RuntimeException(e);
                             }
 
-                            List<TodoList> userLists = dbc.getAllUserLists(userID);
+                            List <TodoList>userLists = dbc.getAllUserLists(userID);
 
                             for (TodoList todo_list : userLists) {
                                 System.out.println(todo_list.toString() + " " + todo_list.getTasks());
@@ -234,6 +250,14 @@ public class Echo implements Runnable {
 
                             username = infoIn.get(1);
                             password = infoIn.get(2);
+                            if (username.length()<3){
+                                System.out.println("Username too short (echo)");
+                                out.writeInt(TypeId.ERROR);
+                            }
+                            if (password.length()<3){
+                                System.out.println("Username too long (echo");
+                                out.writeInt(TypeId.ERROR);
+                            }
                             boolean isSuccess = dbc.register(username, password);
 
                             if (isSuccess) {

@@ -3,19 +3,19 @@ package app.server;
 import app.Task;
 import app.TodoList;
 import app.TypeId;
+import org.apache.commons.codec.binary.Hex;
 import org.h2.tools.RunScript;
 
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
-import java.io.*;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.apache.commons.codec.binary.Hex;
 
 
 public class DataBaseCommands {
@@ -143,6 +143,14 @@ public class DataBaseCommands {
             //statement3.executeUpdate();
         }
     } // TODO transaction
+
+    public void deleteList(int listID) throws SQLException {
+        try (PreparedStatement statement = conn.prepareStatement("DELETE FROM TASKS WHERE id = ?");) {
+            statement.setString(1, Integer.toString(listID));
+            statement.executeUpdate();
+
+        }
+    }
 
     public void markAsDone(int row) throws SQLException {
         try (PreparedStatement statement = conn.prepareStatement("UPDATE tasks SET done = 'TRUE' WHERE id = ?")) {

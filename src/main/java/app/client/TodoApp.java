@@ -243,7 +243,7 @@ public class TodoApp extends Application {
 
     }
 
-    private Tab tabAdder(TodoList todoList) {
+    private Tab tabAdder(TodoList todoList){
         BorderPane todoTabPane = new BorderPane();
         Tab todolistTab = new Tab();
 
@@ -261,7 +261,7 @@ public class TodoApp extends Application {
         Button renameTodo = new Button("Rename list"); // TODO v-o see nupp kuskile mujale
         renameTodo.setOnAction(event -> {
             TextField renamefield = new TextField();
-            renamefield.setPromptText("Insert new name");
+            renamefield.setPromptText("Insert list name");
             renamefield.setOnAction(event1 -> {
 
                 String fieldtext = renamefield.getText();
@@ -404,9 +404,18 @@ public class TodoApp extends Application {
 
         todolistTab.setContent(todoTabPane);
 
-        todolistTab.setOnClosed(event -> {
 
+        todolistTab.setOnClosed(event -> {
+            String[] removeListsCommand = {"removelist", String.valueOf(todoList.getTodoListID())};
+            try {
+                commandHandler(removeListsCommand);
+            } catch (Exception e) {
+                System.out.println("Viga listi eemaldamisel");
+                e.printStackTrace();
+            }
         });
+
+
 
 
         /*todolistTab.setOnSelectionChanged(t -> {
@@ -635,8 +644,8 @@ public class TodoApp extends Application {
 
         System.out.println("connecting to server: " + server);
         Object o = null;
-        //Stage errorStage = new ErrorStage().getError();
         int noOfTries = 0;
+        //Stage errorStage = new ErrorStage().getError();
         while (noOfTries < 3) {
             try (
                     Socket socket = new Socket("localhost", server);
