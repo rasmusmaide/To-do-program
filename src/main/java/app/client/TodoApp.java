@@ -53,21 +53,15 @@ public class TodoApp extends Application {
         Button addListButton = new Button("New to-do");
         addListButton.setOnAction(event -> {
             TodoList ntodo = new TodoList(new ArrayList<>(), "New To-do list");
-            Stage nameprompt = new Stage();
-            VBox vBox = new VBox(10);
-            Scene namescene = new Scene(vBox);
-            nameprompt.setScene(namescene);
+            Stage promptstage= new Stage();
             TextField renamefield = new TextField();
-            vBox.getChildren().add(renamefield);
-            renamefield.setPromptText("Insert list name");
-            nameprompt.show();
+            renamefield.setPromptText("Insert new name");
+            promptstage.setScene(new Scene(renamefield));
+            promptstage.show();
             renamefield.setOnAction(event1 -> {
-
-                String fieldtext = renamefield.getText();
-                ntodo.setDescription(fieldtext);
-
-<<<<<<< HEAD
-                String[] command = {"renametodo", ntodo.getTodoListID(), fieldtext};
+                String name = renamefield.getText();
+                ntodo.setDescription(name);
+                String[] command = {"renametodo", String.valueOf(ntodo.getTodoListID()), name};
                 try {
                     commandHandler(command);
                     System.out.println("läks korda");
@@ -77,25 +71,23 @@ public class TodoApp extends Application {
                 }
 
                 ((Node) (event1.getSource())).getScene().getWindow().hide();
+
+                String[] command2 = {"addlist", String.valueOf(userID)};
+
+
+                try {
+                    ntodo.setTodoListID((int) commandHandler(command2));
+                    System.out.println("läks korda");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+
+                tabPane.getTabs().add(tabAdder(ntodo));
+                tabPane.getSelectionModel().selectLast();
             });
 
-            try {
-                String[]command = {"addlist", userID};
-                ntodo.setTodoListID((String) commandHandler(command));
-=======
-            String[] command = {"addlist", String.valueOf(userID)};
 
-            try {
-                ntodo.setTodoListID((int) commandHandler(command));
->>>>>>> 1ecbd27d26ea44aa3ed1fb2205a288dff2eeee61
-                System.out.println("läks korda");
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-
-            tabPane.getTabs().add(tabAdder(ntodo));
-            tabPane.getSelectionModel().selectLast();
 
         }); // CREATE NEW TO-DO LIST
 
@@ -274,7 +266,6 @@ public class TodoApp extends Application {
                 String fieldtext = renamefield.getText();
                 todolistTab.setText(fieldtext);
                 todoList.setDescription(fieldtext);
-                renameTodo.setText(fieldtext);
 
                 String[] command = {"renametodo", String.valueOf(todoList.getTodoListID()), fieldtext};
                 try {
@@ -347,13 +338,8 @@ public class TodoApp extends Application {
                 String duedate = datePicker.getValue() + " " + duedateHoursSpinner.getValue() + ":" + duedateMinutesSpinner.getValue() + ":00";
 
                 if (datePicker.getValue() == null) {
-<<<<<<< HEAD
-                    Stage kuupäevaviga = errorStageMethod("Invalid date", addEvent);
-                    kuupäevaviga.show();
-=======
                     Stage dateErrorStage = errorStageMethod("Pole sobiv kuupäev",addEvent);
                     dateErrorStage.show();
->>>>>>> 1ecbd27d26ea44aa3ed1fb2205a288dff2eeee61
                 } else {
 
 
@@ -505,7 +491,7 @@ public class TodoApp extends Application {
             dateEditButton.setOnAction(dateEditButtonEvent -> {
                 String duedate = datePicker.getValue() + " " + duedateHoursSpinner.getValue() + ":" + duedateMinutesSpinner.getValue() + ":00";
                 if (datePicker.getValue() == null) {
-                    Stage kuupäevaviga = errorStageMethod("Invalid date", dateEditButtonEvent);
+                    Stage kuupäevaviga = errorStageMethod("Pole sobiv kuupäev", dateEditButtonEvent);
                     kuupäevaviga.show();
                 } else {
                     task.setDeadline(duedate);
@@ -640,13 +626,8 @@ public class TodoApp extends Application {
         System.out.println("connecting to server: " + server);
         Object o = null;
         //Stage errorStage = new ErrorStage().getError();
-<<<<<<< HEAD
-        int katseid = 0;
-        while (katseid < 3) {
-=======
         int noOfTries = 0;
         while (noOfTries < 3) {
->>>>>>> 1ecbd27d26ea44aa3ed1fb2205a288dff2eeee61
             try (
                     Socket socket = new Socket("localhost", server);
                     DataOutputStream out = new DataOutputStream(socket.getOutputStream());
@@ -701,12 +682,6 @@ public class TodoApp extends Application {
 
                 break;
             } catch (ConnectException e) {
-<<<<<<< HEAD
-                e.printStackTrace();
-                katseid += 1;
-                if (katseid == 3) {
-                    throw new ConnectException("Serveriga ei õnnestunud ühendada");
-=======
                 //e.printStackTrace();
                 noOfTries += 1;
                 if (noOfTries == 3) {
@@ -714,7 +689,6 @@ public class TodoApp extends Application {
                     //throw new ConnectException("Serveriga ei õnnestunud ühendada");
                     o = String.valueOf(TypeId.NOCONNECTION); // TODO ajutiselt string
                     return o;
->>>>>>> 1ecbd27d26ea44aa3ed1fb2205a288dff2eeee61
                 }
 
                 System.out.println("Ühendus puudub, proovin uuesti");
@@ -744,4 +718,3 @@ public class TodoApp extends Application {
         // siis saab selle eraldi meetodiks tõsta
     }
 }            // TODO tuleb kontrollida ühendust serveriga, muidu viskab errorisse
-
