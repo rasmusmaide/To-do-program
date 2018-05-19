@@ -409,6 +409,7 @@ public class TodoApp extends Application {
             String[] removeListsCommand = {"removelist", String.valueOf(todoList.getTodoListID())};
             try {
                 commandHandler(removeListsCommand);
+                System.out.println("läks korda");
             } catch (Exception e) {
                 System.out.println("Viga listi eemaldamisel");
                 e.printStackTrace();

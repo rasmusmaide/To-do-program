@@ -130,9 +130,7 @@ public class DataBaseCommands {
 
     public void deleteTask(int row) throws SQLException {
 
-        try (PreparedStatement statement = conn.prepareStatement("DELETE FROM TASKS WHERE id = ?");
-             //PreparedStatement statement2 = conn.prepareStatement("SET @count = 0");
-             //PreparedStatement statement3 = conn.prepareStatement("UPDATE `TASKS` SET `TASKS`.`id` = @count:= @count + 1") // TODO miks seda vaja üldse on?
+        try (PreparedStatement statement = conn.prepareStatement("DELETE FROM TASKS WHERE id = ?")
         ) {
 
 
@@ -145,7 +143,7 @@ public class DataBaseCommands {
     } // TODO transaction
 
     public void deleteList(int listID) throws SQLException {
-        try (PreparedStatement statement = conn.prepareStatement("DELETE FROM TASKS WHERE id = ?");) {
+        try (PreparedStatement statement = conn.prepareStatement("DELETE FROM todos WHERE id = ?");) {
             statement.setString(1, Integer.toString(listID));
             statement.executeUpdate();
 
