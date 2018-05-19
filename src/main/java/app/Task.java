@@ -6,8 +6,8 @@ public class Task {
     private String headline;
     private String description;
     private boolean done;
-    private String taskID;
-    private String todoListID;
+    private int taskID;
+    private int todoListID;
 
     public Task(String creationDate, String deadline, String headline, String description, boolean done) {
         this.creationDate = creationDate;
@@ -17,19 +17,19 @@ public class Task {
         this.done = done;
     }
 
-    public String getTaskID() {
+    public int getTaskID() {
         return taskID;
     }
 
-    public void setTaskID(String taskID) {
+    public void setTaskID(int taskID) {
         this.taskID = taskID;
     }
 
-    public String getTodoListID() {
+    public int getTodoListID() {
         return todoListID;
     }
 
-    public void setTodoListID(String todoListID) {
+    public void setTodoListID(int todoListID) {
         this.todoListID = todoListID;
     }
 
