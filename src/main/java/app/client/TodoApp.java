@@ -53,10 +53,33 @@ public class TodoApp extends Application {
         Button addListButton = new Button("New to-do");
         addListButton.setOnAction(event -> {
             TodoList ntodo = new TodoList(new ArrayList<>(), "New To-do list");
+            Stage nameprompt = new Stage();
+            VBox vBox = new VBox(10);
+            Scene namescene = new Scene(vBox);
+            nameprompt.setScene(namescene);
+            TextField renamefield = new TextField();
+            vBox.getChildren().add(renamefield);
+            renamefield.setPromptText("Insert list name");
+            nameprompt.show();
+            renamefield.setOnAction(event1 -> {
 
-            String[] command = {"addlist", userID};
+                String fieldtext = renamefield.getText();
+                ntodo.setDescription(fieldtext);
+
+                String[] command = {"renametodo", ntodo.getTodoListID(), fieldtext};
+                try {
+                    commandHandler(command);
+                    System.out.println("läks korda");
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                ((Node) (event1.getSource())).getScene().getWindow().hide();
+            });
 
             try {
+                String[]command = {"addlist", userID};
                 ntodo.setTodoListID((String) commandHandler(command));
                 System.out.println("läks korda");
             } catch (Exception e) {
@@ -163,7 +186,6 @@ public class TodoApp extends Application {
                 }
                 ((Node) (loginEvent.getSource())).getScene().getWindow().hide();
             }
-
 
 
         });
@@ -320,7 +342,7 @@ public class TodoApp extends Application {
                 String duedate = datePicker.getValue() + " " + duedateHoursSpinner.getValue() + ":" + duedateMinutesSpinner.getValue() + ":00";
 
                 if (datePicker.getValue() == null) {
-                    Stage kuupäevaviga = errorStageMethod("Pole sobiv kuupäev",addEvent);
+                    Stage kuupäevaviga = errorStageMethod("Invalid date", addEvent);
                     kuupäevaviga.show();
                 } else {
 
@@ -473,7 +495,7 @@ public class TodoApp extends Application {
             dateEditButton.setOnAction(dateEditButtonEvent -> {
                 String duedate = datePicker.getValue() + " " + duedateHoursSpinner.getValue() + ":" + duedateMinutesSpinner.getValue() + ":00";
                 if (datePicker.getValue() == null) {
-                    Stage kuupäevaviga = errorStageMethod("Pole sobiv kuupäev", dateEditButtonEvent);
+                    Stage kuupäevaviga = errorStageMethod("Invalid date", dateEditButtonEvent);
                     kuupäevaviga.show();
                 } else {
                     task.setDeadline(duedate);
@@ -609,7 +631,7 @@ public class TodoApp extends Application {
         Object o = null;
         //Stage errorStage = new ErrorStage().getError();
         int katseid = 0;
-        while (katseid<3) {
+        while (katseid < 3) {
             try (
                     Socket socket = new Socket("localhost", server);
                     DataOutputStream out = new DataOutputStream(socket.getOutputStream());
@@ -660,8 +682,8 @@ public class TodoApp extends Application {
                 break;
             } catch (ConnectException e) {
                 e.printStackTrace();
-                katseid+=1;
-                if (katseid==3){
+                katseid += 1;
+                if (katseid == 3) {
                     throw new ConnectException("Serveriga ei õnnestunud ühendada");
                 }
 
