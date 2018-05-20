@@ -63,8 +63,8 @@ public class TodoApp extends Application {
             promptstage.show();
             renamefield.setOnAction(setTodoNameEvent -> {
                 String todoDescription = renamefield.getText();
-                if (todoDescription.trim().length()==0){
-                    Stage errorstage = errorStageMethod("List name can't be empty",setTodoNameEvent);
+                if (todoDescription.trim().length() == 0) {
+                    Stage errorstage = errorStageMethod("List name can't be empty", setTodoNameEvent);
                     errorstage.show();
                 } else {
                     ntodo.setDescription(todoDescription);
@@ -77,12 +77,11 @@ public class TodoApp extends Application {
                     try {
                         ntodo.setTodoListID((int) commandHandler(addTodoCommand));
                         System.out.println("läks korda");
-                    } catch (ConnectException ce){
+                    } catch (ConnectException ce) {
                         Stage errorstage = errorStageMethod("No connection", setTodoNameEvent);
                         errorstage.show();
                         delete = true;
-                    }
-                    catch (Exception e) {
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
 
@@ -168,7 +167,7 @@ public class TodoApp extends Application {
 
             try {
                 userID = (Integer) commandHandler(loginCommand); // siit peab tulema kas ID või null kui error
-            } catch (ConnectException e) { // TODO midagi sellist peaks igale poole panema
+            } catch (ConnectException e) {
                 userID = -1;
             } catch (Exception e) {
                 e.printStackTrace();
@@ -179,7 +178,7 @@ public class TodoApp extends Application {
                 Stage loginerror = errorStageMethod("Invalid username or password", loginEvent);
 
                 loginerror.show();
-            } else if (userID == -1) { //TODO see lahendus on ajutine
+            } else if (userID == -1) {
                 Stage connectionError = errorStageMethod("No connection", loginEvent);
                 connectionError.show();
             } else {
@@ -211,25 +210,23 @@ public class TodoApp extends Application {
         registerButton.setOnAction(registerEvent -> {
             String username = usernameField.getText();
             String password = passwordField.getText();
-            String[] registerCommand=new String[3];
-            if (username.length()!=username.replace(" ","").length()){
+            String[] registerCommand = new String[3];
+            if (username.length() != username.replace(" ", "").length()) {
                 Stage errorstage = errorStageMethod("Username can't contain spaces", registerEvent);
                 errorstage.show();
-            }
-            else if (username.length()<3){
-                Stage errorstage = errorStageMethod("Username too short",registerEvent);
+            } else if (username.length() < 3) {
+                Stage errorstage = errorStageMethod("Username too short", registerEvent);
                 errorstage.show();
-            }
-            else if (password.length()<3){
+            } else if (password.length() < 3) {
                 Stage errorstage = errorStageMethod("Password too short", registerEvent);
                 errorstage.show();
             } else {
-                registerCommand[0]="register";
-                registerCommand[1]=username;
-                registerCommand[2]=password;
+                registerCommand[0] = "register";
+                registerCommand[1] = username;
+                registerCommand[2] = password;
             }
 
-            if (registerCommand[2]!=null) {
+            if (registerCommand[2] != null) {
 
                 try {
                     if ((Integer) commandHandler(registerCommand) == TypeId.ERROR) {
@@ -244,6 +241,9 @@ public class TodoApp extends Application {
                         registersuccess.setAlwaysOnTop(true);
                         registersuccess.show();
                     }
+                } catch (ConnectException ce) {
+                    Stage errorstage = errorStageMethod("No connection",registerEvent);
+                    errorstage.show();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -302,18 +302,21 @@ public class TodoApp extends Application {
             renamefield.setOnAction(event1 -> {
 
                 String fieldtext = renamefield.getText();
-                if (fieldtext.trim().length()==0){
+                if (fieldtext.trim().length() == 0) {
                     Stage errorstage = errorStageMethod("List name can't be empty", event);
                     errorstage.show();
                 } else {
-                    todolistTab.setText(fieldtext);
                     todoList.setDescription(fieldtext);
 
                     String[] command = {"renametodo", String.valueOf(todoList.getTodoListID()), fieldtext};
                     try {
                         commandHandler(command);
+                        todolistTab.setText(fieldtext);
                         System.out.println("läks korda");
 
+                    } catch (ConnectException ce) {
+                        Stage errorstage = errorStageMethod("No connection",event);
+                        errorstage.show();
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -383,15 +386,13 @@ public class TodoApp extends Application {
                 if (datePicker.getValue() == null) {
                     Stage dateErrorStage = errorStageMethod("Invalid date", addEvent);
                     dateErrorStage.show();
-                } else if(headlinefield.getText().trim().length()==0){
-                    Stage headlineErrorStage = errorStageMethod("Title can't be empty",addEvent);
+                } else if (headlinefield.getText().trim().length() == 0) {
+                    Stage headlineErrorStage = errorStageMethod("Title can't be empty", addEvent);
                     headlineErrorStage.show();
-                } else if (descriptionfield.getText().trim().length()==0){
-                    Stage descriptionErrorStage = errorStageMethod("Description can't be empty",addEvent);
+                } else if (descriptionfield.getText().trim().length() == 0) {
+                    Stage descriptionErrorStage = errorStageMethod("Description can't be empty", addEvent);
                     descriptionErrorStage.show();
-                }
-
-                else {
+                } else {
 
 
                     String[] command = {"addtask", duedate, headlinefield.getText(), descriptionfield.getText(), String.valueOf(todoList.getTodoListID())};
@@ -488,11 +489,10 @@ public class TodoApp extends Application {
                 clicked.set(true);
 
             });
-            if (!clicked.get()){
+            if (!clicked.get()) {
                 try {
                     wait();
-                }
-                catch (InterruptedException e){
+                } catch (InterruptedException e) {
                     //Pole õrna aimugi mis siin teha
                     e.printStackTrace();
                 }
@@ -709,11 +709,10 @@ public class TodoApp extends Application {
                 clicked.set(true);
 
             });
-            if (!clicked.get()){
+            if (!clicked.get()) {
                 try {
                     wait();
-                }
-                catch (InterruptedException e){
+                } catch (InterruptedException e) {
                     //Pole õrna aimugi mis siin teha
                     e.printStackTrace();
                 }
