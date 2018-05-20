@@ -26,13 +26,19 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.net.ConnectException;
 import java.net.Socket;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 public class TodoApp extends Application {
     static int server = 1337;
     private String selectedTodo = "0";
     private int userID;
+    public boolean isClosed = false;
     private String selectedTask = "0"; // hetkel pole neid selectedT-sid vaja, aga addTaskButtonMethodiga on vist
 
     public static void main(String[] args) {
@@ -41,6 +47,8 @@ public class TodoApp extends Application {
 
     @Override
     public void start(Stage primaryStage) {
+
+        Thread lõime = new checkTodos();
 
         BorderPane borderPane = new BorderPane();
 
@@ -123,6 +131,7 @@ public class TodoApp extends Application {
 
         primaryStage.setOnCloseRequest(event -> {
             System.out.println("Bye!");
+            isClosed = false;
 
         });
 
@@ -166,6 +175,8 @@ public class TodoApp extends Application {
                 Stage connectionError = errorStageMethod("No connection", loginEvent);
                 connectionError.show();
             } else {
+
+                lõime.start();
                 // otsib andmebaasist need todo_listid, millele on kasutajal juurdepääs
                 String[] getListsCommand = {"get lists", String.valueOf(userID)};
                 try {
@@ -718,6 +729,80 @@ public class TodoApp extends Application {
 
 
     }
+
+    class checkTodos extends Thread {
+
+        public void run() {
+            while (isClosed == false) {
+
+
+                int userID = 1;
+                List<TodoList> allUserTodoLists = new ArrayList<>();
+                String[] getListsCommand = {"get lists", String.valueOf(userID)};
+                try {
+                    allUserTodoLists = (List<TodoList>) commandHandler(getListsCommand);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                System.out.println(allUserTodoLists);
+
+                for (TodoList taskList : allUserTodoLists) {
+                    //System.out.println(taskList.getTasks());
+                    for (Task task : taskList.getTasks()) {
+
+                        if (task.getDone() == false) {
+                            System.out.println(task);
+                            System.out.println(task.getDeadline().getClass().getName());
+
+
+                            // Convert input string into a date
+                            DateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+                            Date date = null;
+                            Date minusDay = null;
+
+
+                            //String toDayString = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S").format(Calendar.getInstance().getTime());
+                            String minusOneDay = new SimpleDateFormat("yyyy-MM-dd HH:mm").format(Calendar.getInstance().getTime());
+                            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+                            Calendar c = Calendar.getInstance();
+                            try {
+                                c.setTime(sdf.parse(minusOneDay));
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
+                            c.add(Calendar.DATE,  1);  // number of days to add
+                            minusOneDay = sdf.format(c.getTime());  // dt is now the new date
+
+
+                            try {
+                                date = inputFormat.parse(task.getDeadline());
+                                minusDay = inputFormat.parse(minusOneDay);
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
+
+// Format date into output format
+                            System.out.println(date);
+                            System.out.println(minusDay);
+
+                            if (date.compareTo(minusDay) == 0){
+                                System.out.println("JAPP");
+                                isClosed = true;
+
+                            }
+
+
+                        }
+                    }
+                }
+
+            }
+            System.out.println("on kinni");
+
+        }
+
+    }
+
 
     private Stage errorStageMethod(String errorMessage, Event errorTriggerEvent) {
         Stage errorStage = new Stage();
