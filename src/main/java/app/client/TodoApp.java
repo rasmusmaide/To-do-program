@@ -734,6 +734,9 @@ public class TodoApp extends Application {
                     taskBorderPane.setManaged(false);
                     taskBorderPane.setVisible(false);
 
+                }catch(ConnectException ce){
+                    Stage errorstage = errorStageMethod("No connection",editEvent);
+                    errorstage.show();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -765,6 +768,10 @@ public class TodoApp extends Application {
                 try {
                     commandHandler(command);
                     System.out.println("läks korda");
+                }catch(ConnectException ce){
+                    Stage errorstage = errorStageMethod("No connection",doneActionEvent);
+                    errorstage.show();
+                    doneCheckBox.setSelected(false);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -775,6 +782,10 @@ public class TodoApp extends Application {
                 try {
                     commandHandler(command);
                     System.out.println("läks korda");
+                }catch(ConnectException ce){
+                    Stage errorstage = errorStageMethod("No connection",doneActionEvent);
+                    errorstage.show();
+                    doneCheckBox.setSelected(true);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
