@@ -63,22 +63,27 @@ public class TodoApp extends Application {
             promptstage.show();
             renamefield.setOnAction(setTodoNameEvent -> {
                 String todoDescription = renamefield.getText();
-                ntodo.setDescription(todoDescription);
+                if (todoDescription.trim().length()==0){
+                    Stage errorstage = errorStageMethod("List name can't be empty",setTodoNameEvent);
+                    errorstage.show();
+                } else {
+                    ntodo.setDescription(todoDescription);
 
-                ((Node) (setTodoNameEvent.getSource())).getScene().getWindow().hide();
+                    ((Node) (setTodoNameEvent.getSource())).getScene().getWindow().hide();
 
-                String[] addTodoCommand = {"addlist", todoDescription, String.valueOf(userID)};
+                    String[] addTodoCommand = {"addlist", todoDescription, String.valueOf(userID)};
 
-                try {
-                    ntodo.setTodoListID((int) commandHandler(addTodoCommand));
-                    System.out.println("läks korda");
-                } catch (Exception e) {
-                    e.printStackTrace();
+                    try {
+                        ntodo.setTodoListID((int) commandHandler(addTodoCommand));
+                        System.out.println("läks korda");
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+
+                    tabPane.getTabs().add(tabAdder(ntodo));
+                    tabPane.getSelectionModel().selectLast();
                 }
-
-
-                tabPane.getTabs().add(tabAdder(ntodo));
-                tabPane.getSelectionModel().selectLast();
             });
 
 
@@ -203,17 +208,14 @@ public class TodoApp extends Application {
             if (username.length()!=username.replace(" ","").length()){
                 Stage errorstage = errorStageMethod("Username can't contain spaces", registerEvent);
                 errorstage.show();
-                System.out.println("Username can't contain spaces (todoapp)");
             }
             else if (username.length()<3){
                 Stage errorstage = errorStageMethod("Username too short",registerEvent);
                 errorstage.show();
-                System.out.println("Username too short (todoapp)");
             }
             else if (password.length()<3){
                 Stage errorstage = errorStageMethod("Password too short", registerEvent);
                 errorstage.show();
-                System.out.println("Password too short (todoapp)");
             } else {
                 registerCommand[0]="register";
                 registerCommand[1]=username;
@@ -293,19 +295,24 @@ public class TodoApp extends Application {
             renamefield.setOnAction(event1 -> {
 
                 String fieldtext = renamefield.getText();
-                todolistTab.setText(fieldtext);
-                todoList.setDescription(fieldtext);
+                if (fieldtext.trim().length()==0){
+                    Stage errorstage = errorStageMethod("List name can't be empty", event);
+                    errorstage.show();
+                } else {
+                    todolistTab.setText(fieldtext);
+                    todoList.setDescription(fieldtext);
 
-                String[] command = {"renametodo", String.valueOf(todoList.getTodoListID()), fieldtext};
-                try {
-                    commandHandler(command);
-                    System.out.println("läks korda");
+                    String[] command = {"renametodo", String.valueOf(todoList.getTodoListID()), fieldtext};
+                    try {
+                        commandHandler(command);
+                        System.out.println("läks korda");
 
-                } catch (Exception e) {
-                    e.printStackTrace();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                    ((Node) (event1.getSource())).getScene().getWindow().hide();
                 }
-
-                ((Node) (event1.getSource())).getScene().getWindow().hide();
             });
 
 
@@ -369,10 +376,10 @@ public class TodoApp extends Application {
                 if (datePicker.getValue() == null) {
                     Stage dateErrorStage = errorStageMethod("Invalid date", addEvent);
                     dateErrorStage.show();
-                } else if(headlinefield.getText().length()==0){
+                } else if(headlinefield.getText().trim().length()==0){
                     Stage headlineErrorStage = errorStageMethod("Title can't be empty",addEvent);
                     headlineErrorStage.show();
-                } else if (descriptionfield.getText().length()==0){
+                } else if (descriptionfield.getText().trim().length()==0){
                     Stage descriptionErrorStage = errorStageMethod("Description can't be empty",addEvent);
                     descriptionErrorStage.show();
                 }
