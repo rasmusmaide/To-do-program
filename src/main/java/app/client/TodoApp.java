@@ -72,17 +72,24 @@ public class TodoApp extends Application {
                     ((Node) (setTodoNameEvent.getSource())).getScene().getWindow().hide();
 
                     String[] addTodoCommand = {"addlist", todoDescription, String.valueOf(userID)};
+                    boolean delete = false;
 
                     try {
                         ntodo.setTodoListID((int) commandHandler(addTodoCommand));
                         System.out.println("läks korda");
-                    } catch (Exception e) {
+                    } catch (ConnectException ce){
+                        Stage errorstage = errorStageMethod("No connection", setTodoNameEvent);
+                        errorstage.show();
+                        delete = true;
+                    }
+                    catch (Exception e) {
                         e.printStackTrace();
                     }
 
-
-                    tabPane.getTabs().add(tabAdder(ntodo));
-                    tabPane.getSelectionModel().selectLast();
+                    if (!delete) {
+                        tabPane.getTabs().add(tabAdder(ntodo));
+                        tabPane.getSelectionModel().selectLast();
+                    }
                 }
             });
 
