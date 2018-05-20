@@ -5,13 +5,16 @@ import app.TodoList;
 import app.TypeId;
 import app.UserTodoLists;
 import com.google.gson.Gson;
+import javafx.animation.PauseTransition;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -19,8 +22,12 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Modality;
+import javafx.stage.Popup;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -803,7 +810,46 @@ public class TodoApp extends Application {
 
     }
 
+    private Popup createPopup() {
+        final Popup popup = new Popup();
+        Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
 
+        Rectangle rectangle = new Rectangle(primaryScreenBounds.getMinX() + primaryScreenBounds.getWidth() - 350, primaryScreenBounds.getMinY() + primaryScreenBounds.getHeight() - 150, 350, 150);
+        rectangle.setFill(Color.AQUAMARINE);
+        popup.getContent().addAll(rectangle);
+
+
+
+        Button closePopup = new Button();
+        closePopup.setLayoutX(primaryScreenBounds.getMinX() + primaryScreenBounds.getWidth() - 33);
+        closePopup.setLayoutY(primaryScreenBounds.getMinY() + primaryScreenBounds.getHeight() - 149);
+
+
+
+        Image image = new Image("fileclose.png", 20.0, 20.0, true, true);
+        closePopup.setGraphic(new ImageView(image));
+
+        closePopup.setOnAction(new EventHandler<ActionEvent>() {
+            @Override public void handle(ActionEvent e) {
+                popup.hide();
+            }
+        });
+
+        popup.getContent().addAll(closePopup);
+
+
+
+        PauseTransition pause = new PauseTransition(Duration.seconds(30));
+        pause.setOnFinished(e -> popup.hide());
+        pause.play();
+
+
+
+        return popup;
+    }
+
+
+    
     private Stage errorStageMethod(String errorMessage, Event errorTriggerEvent) {
         Stage errorStage = new Stage();
         errorStage.setScene(new Scene(new Label(errorMessage)));
