@@ -398,19 +398,25 @@ public class TodoApp extends Application {
                     String[] command = {"addtask", duedate, headlinefield.getText(), descriptionfield.getText(), String.valueOf(todoList.getTodoListID())};
                     int taskID = 0;
 
+                    boolean delete = false;
                     try {
                         System.out.println("läks korda");
                         taskID = (int) commandHandler(command);
-                    } catch (Exception e) {
+                    } catch (ConnectException ce) {
+                        Stage errorstage = errorStageMethod("No connection", addEvent);
+                        errorstage.show();
+                        delete = true;
+                    }catch (Exception e) {
                         e.printStackTrace();
                     }
+                    if (!delete) {
+                        Task ntask = new Task(duedate, duedate, headlinefield.getText(), descriptionfield.getText(), false);
+                        ntask.setTaskID(taskID);
 
-                    Task ntask = new Task(duedate, duedate, headlinefield.getText(), descriptionfield.getText(), false);
-                    ntask.setTaskID(taskID);
+                        todoList.getTasks().add(ntask);
 
-                    todoList.getTasks().add(ntask);
-
-                    tasksPane.add(taskPaneAdder(ntask), 0, todoList.getTasks().size());
+                        tasksPane.add(taskPaneAdder(ntask), 0, todoList.getTasks().size());
+                    }
                     //taskPaneAdder(ntask);
 
                     //System.out.println(ntask);
@@ -472,16 +478,23 @@ public class TodoApp extends Application {
             AtomicBoolean clicked = new AtomicBoolean(false);
             yesButton.setOnMouseClicked(confirmevent -> {
                 String[] removeListsCommand = {"removelist", String.valueOf(todoList.getTodoListID())};
+                boolean delete = false;
                 try {
                     commandHandler(removeListsCommand);
                     System.out.println("läks korda");
-                } catch (Exception e) {
+                } catch (ConnectException ce){
+                    Stage errorstage = errorStageMethod("No connection",confirmevent);
+                    errorstage.show();
+                    delete = true;
+                }catch (Exception e) {
                     System.out.println("Viga listi eemaldamisel");
                     e.printStackTrace();
                 }
                 confirmClose.hide();
                 clicked.set(true);
-                todolistTab.getTabPane().getTabs().remove(todolistTab);
+                if (!delete) {
+                    todolistTab.getTabPane().getTabs().remove(todolistTab);
+                }
             });
             cancelButton.setOnMouseClicked(cancelevent -> {
                 event.consume();
@@ -542,17 +555,26 @@ public class TodoApp extends Application {
                 String fieldtext = headEditField.getText();
                 System.out.println(fieldtext);
 
-                headlineLabel.setText(fieldtext);
-
-                task.setHeadline(fieldtext);
 
                 String[] command = {"renametask", String.valueOf(task.getTaskID()), fieldtext};
+
+                boolean delete = false;
 
                 try {
                     commandHandler(command);
                     System.out.println("läks korda");
+                }catch (ConnectException ce){
+                    Stage errorstage = errorStageMethod("No connection",headEditEvent);
+                    errorstage.show();
+                    delete = true;
                 } catch (Exception e) {
                     e.printStackTrace();
+                }
+
+                if (!delete){
+                    headlineLabel.setText(fieldtext);
+
+                    task.setHeadline(fieldtext);
                 }
 
                 ((Node) (headEditFieldEditEvent.getSource())).getScene().getWindow().hide();
@@ -597,16 +619,24 @@ public class TodoApp extends Application {
                     Stage dateerror = errorStageMethod("Invalid date", dateEditButtonEvent);
                     dateerror.show();
                 } else {
-                    task.setDeadline(duedate);
-                    duedateLabel.setText(duedate);
 
                     String[] command = {"dateedit", String.valueOf(task.getTaskID()), duedate};
+                    boolean delete=false;
 
                     try {
                         commandHandler(command);
                         System.out.println("läks korda");
-                    } catch (Exception e) {
+                    } catch(ConnectException ce){
+                        Stage errorstage = errorStageMethod("No connection",dateEditEvent);
+                        errorstage.show();
+                        delete = true;
+                    }catch (Exception e) {
                         e.printStackTrace();
+                    }
+
+                    if (!delete){
+                        task.setDeadline(duedate);
+                        duedateLabel.setText(duedate);
                     }
 
                     ((Node) (dateEditButtonEvent.getSource())).getScene().getWindow().hide();
@@ -639,17 +669,24 @@ public class TodoApp extends Application {
 
                 String fieldtext = descEditField.getText();
 
-                descriptionLabel.setText(fieldtext);
-
-                task.setDescription(fieldtext);
-
                 String[] command = {"descedit", String.valueOf(task.getTaskID()), fieldtext};
+                boolean delete= false;
 
                 try {
                     commandHandler(command);
                     System.out.println("läks korda");
+                }catch(ConnectException ce){
+                    Stage errorstage = errorStageMethod("No connection",descEditEvent);
+                    errorstage.show();
+                    delete = true;
                 } catch (Exception e) {
                     e.printStackTrace();
+                }
+
+                if (!delete){
+                    descriptionLabel.setText(fieldtext);
+
+                    task.setDescription(fieldtext);
                 }
 
                 ((Node) (descEditFieldEditEvent.getSource())).getScene().getWindow().hide();
