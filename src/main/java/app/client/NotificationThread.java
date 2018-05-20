@@ -10,12 +10,15 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Popup;
 import javafx.stage.Screen;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import java.io.DataInputStream;
@@ -98,7 +101,21 @@ public class NotificationThread extends Thread {
 
                         if (date.compareTo(minusDay) == 0) {
                             System.out.println("JAPP");
-                            isClosed = true;
+                            //isClosed = true;
+//                            try {
+//
+//                                final Popup popup = createPopup(new Task("2018-05-20 03:22:50.0", "2018-05-20 03:22:50.0", "pealkiri", "sisuasdjfklsdjklasdfjklesdrtfyguhkijloökgydfsghjasdjfklasdjklfasdöljfasdölkjfasdöklfjasdklöfjasdklfjasdklöfjasdkölasdfkljasdfkljfasdökljdfkladsöl", false));
+//                                final HBox layout = new HBox(10);
+//                                popup.show(layout, 0, 0);
+//
+//
+//                            } catch (ParseException e) {
+//                                e.printStackTrace();
+//                            }
+
+
+
+
 
                         }
 
@@ -194,34 +211,129 @@ public class NotificationThread extends Thread {
 
     }
 
+    static Popup createPopup(Task task) throws ParseException {
 
-    private Popup createPopup() {
+
         final Popup popup = new Popup();
         Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
 
-        Rectangle rectangle = new Rectangle(primaryScreenBounds.getMinX() + primaryScreenBounds.getWidth() - 350, primaryScreenBounds.getMinY() + primaryScreenBounds.getHeight() - 150, 350, 150);
+        Rectangle rectangle = new Rectangle(primaryScreenBounds.getMinX() + primaryScreenBounds.getWidth() - 400, primaryScreenBounds.getMinY() + primaryScreenBounds.getHeight() - 150, 400, 150);
         rectangle.setFill(Color.AQUAMARINE);
         popup.getContent().addAll(rectangle);
 
+//ADD////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        Label label = new Label("New Task: " + task.getHeadline());
 
+        label.setStyle("-fx-background-color: #738000; -fx-padding: 14px;");
+
+        label.setLayoutX(primaryScreenBounds.getMinX() + primaryScreenBounds.getWidth() - 400);
+        label.setLayoutY(primaryScreenBounds.getMinY() + primaryScreenBounds.getHeight() - 150);
+
+        popup.getContent().addAll(label);
+
+        ///Label2/////
+
+        DateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+
+        Date dueDate = null;
+        Date creationDate = null;
+
+        dueDate = inputFormat.parse(task.getDeadline());
+        creationDate = inputFormat.parse(task.getCreationDate());
+
+        String dueDateString = inputFormat.format(dueDate);
+        String creationDateString = inputFormat.format(creationDate);
+
+        Label label2 = new Label("Due Date: " + dueDateString + "    " + "Creation Date: " + creationDateString);
+
+        label2.setStyle("-fx-background-color: #738000; -fx-padding: 14px;");
+
+        label2.setLayoutX(primaryScreenBounds.getMinX() + primaryScreenBounds.getWidth() - 400);
+        label2.setLayoutY(primaryScreenBounds.getMinY() + primaryScreenBounds.getHeight() - 120);
+
+        popup.getContent().addAll(label2);
+
+///Label3////////////
+
+
+        Label label3 = null;
+
+        if (task.getDescription().length() > 60) {
+
+            StringBuilder lineOne = new StringBuilder();
+
+            String[] toPieces = task.getDescription().split("(?!^)");
+
+            for (int i = 0; i < 60; i++) {
+                lineOne.append(toPieces[i]);
+            }
+
+            label3 = new Label("Description: " + lineOne);
+
+            Label label4 = null;
+
+            StringBuilder lineTwo = new StringBuilder();
+
+            if (task.getDescription().length() > 130) {
+
+
+                for (int i = 61; i < 129; i++) {
+                    lineTwo.append(toPieces[i]);
+                }
+
+                label4 = new Label("--> " + lineTwo + "...");
+
+
+            } else {
+
+                for (int i = 61; i < task.getDescription().length(); i++) {
+                    lineTwo.append(toPieces[i]);
+                }
+
+                label4 = new Label("--> " + lineTwo);
+            }
+
+            label4.setStyle("-fx-background-color: #738000; -fx-padding: 14px;");
+
+            label4.setLayoutX(primaryScreenBounds.getMinX() + primaryScreenBounds.getWidth() - 400);
+            label4.setLayoutY(primaryScreenBounds.getMinY() + primaryScreenBounds.getHeight() - 60);
+
+
+            popup.getContent().addAll(label4);
+
+
+        } else {
+            label3 = new Label("Description: " + task.getDescription());
+        }
+
+
+        label3.setStyle("-fx-background-color: #738000; -fx-padding: 14px;");
+
+        label3.setLayoutX(primaryScreenBounds.getMinX() + primaryScreenBounds.getWidth() - 400);
+        label3.setLayoutY(primaryScreenBounds.getMinY() + primaryScreenBounds.getHeight() - 90);
+
+        popup.getContent().addAll(label3);
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         Button closePopup = new Button();
         closePopup.setLayoutX(primaryScreenBounds.getMinX() + primaryScreenBounds.getWidth() - 33);
         closePopup.setLayoutY(primaryScreenBounds.getMinY() + primaryScreenBounds.getHeight() - 149);
 
 
-
         Image image = new Image("fileclose.png", 20.0, 20.0, true, true);
         closePopup.setGraphic(new ImageView(image));
 
         closePopup.setOnAction(new EventHandler<ActionEvent>() {
-            @Override public void handle(ActionEvent e) {
+            @Override
+            public void handle(ActionEvent e) {
                 popup.hide();
             }
         });
 
-        popup.getContent().addAll(closePopup);
 
+        popup.getContent().addAll(closePopup);
 
 
         PauseTransition pause = new PauseTransition(Duration.seconds(30));
@@ -229,9 +341,9 @@ public class NotificationThread extends Thread {
         pause.play();
 
 
-
         return popup;
     }
+
 
 }
 
