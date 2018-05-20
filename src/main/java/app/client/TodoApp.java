@@ -5,16 +5,13 @@ import app.TodoList;
 import app.TypeId;
 import app.UserTodoLists;
 import com.google.gson.Gson;
-import javafx.animation.PauseTransition;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -22,23 +19,14 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import javafx.stage.Modality;
-import javafx.stage.Popup;
-import javafx.stage.Screen;
 import javafx.stage.Stage;
-import javafx.util.Duration;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.net.ConnectException;
 import java.net.Socket;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -211,24 +199,45 @@ public class TodoApp extends Application {
         registerButton.setOnAction(registerEvent -> {
             String username = usernameField.getText();
             String password = passwordField.getText();
+            String[] registerCommand=new String[3];
+            if (username.length()!=username.replace(" ","").length()){
+                Stage errorstage = errorStageMethod("Username can't contain spaces", registerEvent);
+                errorstage.show();
+                System.out.println("Username can't contain spaces (todoapp)");
+            }
+            else if (username.length()<3){
+                Stage errorstage = errorStageMethod("Username too short",registerEvent);
+                errorstage.show();
+                System.out.println("Username too short (todoapp)");
+            }
+            else if (password.length()<3){
+                Stage errorstage = errorStageMethod("Password too short", registerEvent);
+                errorstage.show();
+                System.out.println("Password too short (todoapp)");
+            } else {
+                registerCommand[0]="register";
+                registerCommand[1]=username;
+                registerCommand[2]=password;
+            }
 
-            String[] registerCommand = {"register", username, password};
+            if (registerCommand[2]!=null) {
 
-            try {
-                if ((Integer) commandHandler(registerCommand) == TypeId.ERROR) {
-                    Stage registererror = errorStageMethod("Username already taken", registerEvent);
+                try {
+                    if ((Integer) commandHandler(registerCommand) == TypeId.ERROR) {
+                        Stage registererror = errorStageMethod("Username already taken", registerEvent);
 
-                    registererror.show();
-                } else {
-                    System.out.println("läks korda");
-                    Stage registersuccess = new Stage();
+                        registererror.show();
+                    } else {
+                        System.out.println("läks korda");
+                        Stage registersuccess = new Stage();
 
-                    registersuccess.setScene(new Scene(new Label("User registered")));
-                    registersuccess.setAlwaysOnTop(true);
-                    registersuccess.show();
+                        registersuccess.setScene(new Scene(new Label("User registered")));
+                        registersuccess.setAlwaysOnTop(true);
+                        registersuccess.show();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
             }
 
         });

@@ -252,14 +252,6 @@ public class Echo implements Runnable {
 
                             username = infoIn.get(1);
                             password = infoIn.get(2);
-                            if (username.length()<3){
-                                System.out.println("Username too short (echo)");
-                                out.writeInt(TypeId.ERROR);
-                            }
-                            if (password.length()<3){
-                                System.out.println("Username too long (echo");
-                                out.writeInt(TypeId.ERROR);
-                            }
                             boolean isSuccess = dbc.register(username, password);
 
                             if (isSuccess) {
