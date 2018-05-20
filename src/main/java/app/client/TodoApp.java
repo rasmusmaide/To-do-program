@@ -56,7 +56,6 @@ public class TodoApp extends Application {
     @Override
     public void start(Stage primaryStage) {
 
-        Thread lõime = new checkTodos();
 
         BorderPane borderPane = new BorderPane();
 
@@ -141,6 +140,7 @@ public class TodoApp extends Application {
             System.out.println("Bye!");
             isClosed = false;
 
+
         });
 
         Scene scene = new Scene(borderPane, 400, 500, Color.SNOW);
@@ -183,8 +183,8 @@ public class TodoApp extends Application {
                 Stage connectionError = errorStageMethod("No connection", loginEvent);
                 connectionError.show();
             } else {
-
-                lõime.start();
+                Thread notificationThread = new NotificationThread(server, userID);
+                notificationThread.start();
                 // otsib andmebaasist need todo_listid, millele on kasutajal juurdepääs
                 String[] getListsCommand = {"get lists", String.valueOf(userID)};
                 try {
@@ -262,7 +262,7 @@ public class TodoApp extends Application {
 
     }
 
-    private Tab tabAdder(TodoList todoList){
+    private Tab tabAdder(TodoList todoList) {
         BorderPane todoTabPane = new BorderPane();
         Tab todolistTab = new Tab();
 
@@ -778,119 +778,6 @@ public class TodoApp extends Application {
 
     }
 
-    class checkTodos extends Thread {
-
-        public void run() {
-            while (isClosed == false) {
-
-
-                int userID = 1;
-                List<TodoList> allUserTodoLists = new ArrayList<>();
-                String[] getListsCommand = {"get lists", String.valueOf(userID)};
-                try {
-                    allUserTodoLists = (List<TodoList>) commandHandler(getListsCommand);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                System.out.println(allUserTodoLists);
-
-                for (TodoList taskList : allUserTodoLists) {
-                    //System.out.println(taskList.getTasks());
-                    for (Task task : taskList.getTasks()) {
-
-                        if (task.getDone() == false) {
-                            System.out.println(task);
-                            System.out.println(task.getDeadline().getClass().getName());
-
-
-                            // Convert input string into a date
-                            DateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-                            Date date = null;
-                            Date minusDay = null;
-
-
-                            //String toDayString = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S").format(Calendar.getInstance().getTime());
-                            String minusOneDay = new SimpleDateFormat("yyyy-MM-dd HH:mm").format(Calendar.getInstance().getTime());
-                            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-                            Calendar c = Calendar.getInstance();
-                            try {
-                                c.setTime(sdf.parse(minusOneDay));
-                            } catch (ParseException e) {
-                                e.printStackTrace();
-                            }
-                            c.add(Calendar.DATE,  1);  // number of days to add
-                            minusOneDay = sdf.format(c.getTime());  // dt is now the new date
-
-
-                            try {
-                                date = inputFormat.parse(task.getDeadline());
-                                minusDay = inputFormat.parse(minusOneDay);
-                            } catch (ParseException e) {
-                                e.printStackTrace();
-                            }
-
-// Format date into output format
-                            System.out.println(date);
-                            System.out.println(minusDay);
-
-                            if (date.compareTo(minusDay) == 0){
-                                System.out.println("JAPP");
-                                isClosed = true;
-
-                            }
-
-
-                        }
-                    }
-                }
-
-            }
-            System.out.println("on kinni");
-
-        }
-
-    }
-
-    private Popup createPopup() {
-        final Popup popup = new Popup();
-        Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
-
-        Rectangle rectangle = new Rectangle(primaryScreenBounds.getMinX() + primaryScreenBounds.getWidth() - 350, primaryScreenBounds.getMinY() + primaryScreenBounds.getHeight() - 150, 350, 150);
-        rectangle.setFill(Color.AQUAMARINE);
-        popup.getContent().addAll(rectangle);
-
-
-
-        Button closePopup = new Button();
-        closePopup.setLayoutX(primaryScreenBounds.getMinX() + primaryScreenBounds.getWidth() - 33);
-        closePopup.setLayoutY(primaryScreenBounds.getMinY() + primaryScreenBounds.getHeight() - 149);
-
-
-
-        Image image = new Image("fileclose.png", 20.0, 20.0, true, true);
-        closePopup.setGraphic(new ImageView(image));
-
-        closePopup.setOnAction(new EventHandler<ActionEvent>() {
-            @Override public void handle(ActionEvent e) {
-                popup.hide();
-            }
-        });
-
-        popup.getContent().addAll(closePopup);
-
-
-
-        PauseTransition pause = new PauseTransition(Duration.seconds(30));
-        pause.setOnFinished(e -> popup.hide());
-        pause.play();
-
-
-
-        return popup;
-    }
-
-
-    
     private Stage errorStageMethod(String errorMessage, Event errorTriggerEvent) {
         Stage errorStage = new Stage();
         errorStage.setScene(new Scene(new Label(errorMessage)));
