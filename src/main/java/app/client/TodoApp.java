@@ -358,9 +358,17 @@ public class TodoApp extends Application {
                 String duedate = datePicker.getValue() + " " + duedateHoursSpinner.getValue() + ":" + duedateMinutesSpinner.getValue() + ":00";
 
                 if (datePicker.getValue() == null) {
-                    Stage dateErrorStage = errorStageMethod("Pole sobiv kuupäev", addEvent);
+                    Stage dateErrorStage = errorStageMethod("Invalid date", addEvent);
                     dateErrorStage.show();
-                } else {
+                } else if(headlinefield.getText().length()==0){
+                    Stage headlineErrorStage = errorStageMethod("Title can't be empty",addEvent);
+                    headlineErrorStage.show();
+                } else if (descriptionfield.getText().length()==0){
+                    Stage descriptionErrorStage = errorStageMethod("Description can't be empty",addEvent);
+                    descriptionErrorStage.show();
+                }
+
+                else {
 
 
                     String[] command = {"addtask", duedate, headlinefield.getText(), descriptionfield.getText(), String.valueOf(todoList.getTodoListID())};
