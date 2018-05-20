@@ -40,6 +40,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class TodoApp extends Application {
     static int server = 1337;
@@ -424,14 +425,46 @@ public class TodoApp extends Application {
         todolistTab.setContent(todoTabPane);
 
 
-        todolistTab.setOnClosed(event -> {
-            String[] removeListsCommand = {"removelist", String.valueOf(todoList.getTodoListID())};
-            try {
-                commandHandler(removeListsCommand);
-                System.out.println("läks korda");
-            } catch (Exception e) {
-                System.out.println("Viga listi eemaldamisel");
-                e.printStackTrace();
+        todolistTab.setOnCloseRequest(event -> {
+            Stage confirmClose = new Stage();
+            Label label = new Label("Do you want to close the list?");
+            Button yesButton = new Button("Yes");
+            Button cancelButton = new Button("Cancel");
+            FlowPane pane = new FlowPane(10, 10);
+            pane.getChildren().addAll(yesButton, cancelButton);
+            VBox vBox = new VBox(10);
+            vBox.getChildren().addAll(label, pane);
+            Scene confirmscene = new Scene(vBox);
+            confirmClose.setScene(confirmscene);
+            confirmClose.show();
+            AtomicBoolean clicked = new AtomicBoolean(false);
+            yesButton.setOnMouseClicked(confirmevent -> {
+                String[] removeListsCommand = {"removelist", String.valueOf(todoList.getTodoListID())};
+                try {
+                    commandHandler(removeListsCommand);
+                    System.out.println("läks korda");
+                } catch (Exception e) {
+                    System.out.println("Viga listi eemaldamisel");
+                    e.printStackTrace();
+                }
+                confirmClose.hide();
+                clicked.set(true);
+                todolistTab.getTabPane().getTabs().remove(todolistTab);
+            });
+            cancelButton.setOnMouseClicked(cancelevent -> {
+                event.consume();
+                confirmClose.hide();
+                clicked.set(true);
+
+            });
+            if (!clicked.get()){
+                try {
+                    wait();
+                }
+                catch (InterruptedException e){
+                    //Pole õrna aimugi mis siin teha
+                    e.printStackTrace();
+                }
             }
         });
 
