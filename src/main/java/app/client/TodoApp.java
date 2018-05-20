@@ -435,7 +435,7 @@ public class TodoApp extends Application {
 
         todolistTab.setOnCloseRequest(event -> {
             Stage confirmClose = new Stage();
-            Label label = new Label("Do you want to close the list?");
+            Label label = new Label("Do you want to delete the list?");
             Button yesButton = new Button("Yes");
             Button cancelButton = new Button("Cancel");
             FlowPane pane = new FlowPane(10, 10);
@@ -652,18 +652,49 @@ public class TodoApp extends Application {
 
         Button deleteTaskButton = new Button("Delete");
         deleteTaskButton.setOnAction(editEvent -> {
-            String[] command = {"deletetask", String.valueOf(task.getTaskID())};
+            Stage confirmClose = new Stage();
+            Label label = new Label("Do you want to delete the task?");
+            Button yesButton = new Button("Yes");
+            Button cancelButton = new Button("Cancel");
+            FlowPane pane = new FlowPane(10, 10);
+            pane.getChildren().addAll(yesButton, cancelButton);
+            VBox vBox = new VBox(10);
+            vBox.getChildren().addAll(label, pane);
+            Scene confirmscene = new Scene(vBox);
+            confirmClose.setScene(confirmscene);
+            confirmClose.show();
+            AtomicBoolean clicked = new AtomicBoolean(false);
+            yesButton.setOnMouseClicked(confirmevent -> {
 
-            try {
-                commandHandler(command);
-                System.out.println("läks korda");
-                taskBorderPane.setManaged(false);
-                taskBorderPane.setVisible(false);
+                String[] command = {"deletetask", String.valueOf(task.getTaskID())};
 
-            } catch (Exception e) {
-                e.printStackTrace();
+                try {
+                    commandHandler(command);
+                    System.out.println("läks korda");
+                    taskBorderPane.setManaged(false);
+                    taskBorderPane.setVisible(false);
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                confirmClose.hide();
+                clicked.set(true);
+            });
+            cancelButton.setOnMouseClicked(cancelevent -> {
+                editEvent.consume();
+                confirmClose.hide();
+                clicked.set(true);
+
+            });
+            if (!clicked.get()){
+                try {
+                    wait();
+                }
+                catch (InterruptedException e){
+                    //Pole õrna aimugi mis siin teha
+                    e.printStackTrace();
+                }
             }
-
 
         });
         CheckBox doneCheckBox = new CheckBox("Done");
