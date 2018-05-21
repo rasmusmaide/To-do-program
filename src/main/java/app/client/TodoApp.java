@@ -32,10 +32,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class TodoApp extends Application {
     static int server = 1337;
-    private String selectedTodo = "0";
     private int userID;
-    public boolean isClosed = false;
-    private String selectedTask = "0"; // hetkel pole neid selectedT-sid vaja, aga addTaskButtonMethodiga on vist
 
     public static void main(String[] args) {
         launch(args);
@@ -99,23 +96,8 @@ public class TodoApp extends Application {
         Region region2 = new Region();
         VBox.setVgrow(region2, Priority.ALWAYS);
 
-        Image imagerefresh = new Image("filerefresh.png");
-        ImageView refreshimage = new ImageView(imagerefresh);
-        refreshimage.setFitHeight(45);
-        refreshimage.setFitWidth(45);
-        Button refreshbutton = new Button();
-        refreshbutton.setGraphic(refreshimage); // natuke väike, aga töötab ja hetkel rohkema aega ei kulutaks
-        refreshbutton.setStyle("-fx-background-color: transparent");
-
-        refreshbutton.setOnAction(event -> {
-            System.out.println("haha, no refresh for u");
-            /*for (Todo_list todo_list : testlist) {
-                tabPane.getTabs().add(tabAdder(todo_list));
-            }*/
-        }); // TODO hetkel ei tee midagi
-
         VBox vBox = new VBox();
-        vBox.getChildren().addAll(addListButton, region2, new Label("[Sidebar]"), refreshbutton);
+        vBox.getChildren().addAll(addListButton, region2);
 
 
         ///// [primaryStage setup] /////////////////////////////////////////////////////////////////////////////////////
@@ -137,8 +119,6 @@ public class TodoApp extends Application {
 
         primaryStage.setOnCloseRequest(event -> {
             System.out.println("Bye!");
-            isClosed = false;
-
 
         });
 
@@ -182,8 +162,8 @@ public class TodoApp extends Application {
                 Stage connectionError = errorStageMethod("No connection", loginEvent);
                 connectionError.show();
             } else {
-                Thread notificationThread = new NotificationThread(server, userID);
-                notificationThread.start();
+                //Thread notificationThread = new NotificationThread(server, userID);
+                //notificationThread.start();
                 // otsib andmebaasist need todo_listid, millele on kasutajal juurdepääs
                 String[] getListsCommand = {"get lists", String.valueOf(userID)};
                 try {
@@ -295,7 +275,7 @@ public class TodoApp extends Application {
             tasksPane.add(taskPaneAdder(tasks.get(i)), 0, i);
         }
 
-        Button renameTodo = new Button("Rename list"); // TODO v-o see nupp kuskile mujale
+        Button renameTodo = new Button("Rename list");
         renameTodo.setOnAction(event -> {
             TextField renamefield = new TextField();
             renamefield.setPromptText("Insert list name");
@@ -798,6 +778,9 @@ public class TodoApp extends Application {
         taskBorderPane.setTop(taskHead);
         taskBorderPane.setLeft(descriptionLabel);
         taskBorderPane.setRight(taskRight);
+
+        taskBorderPane.setOnMouseEntered(event -> taskBorderPane.setBackground(new Background(new BackgroundFill(Color.LIGHTGRAY, CornerRadii.EMPTY, Insets.EMPTY))));
+        taskBorderPane.setOnMouseExited(event -> taskBorderPane.setBackground(new Background(new BackgroundFill(Color.SNOW, CornerRadii.EMPTY, Insets.EMPTY))));
 
         return taskBorderPane;
     }
