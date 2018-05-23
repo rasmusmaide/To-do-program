@@ -91,6 +91,7 @@ public class TodoApp extends Application {
 
 
         }); // CREATE NEW TO-DO LIST
+        addListButton.setTooltip(new Tooltip("Add new To-do list"));
 
 
         Region region2 = new Region();
@@ -108,13 +109,18 @@ public class TodoApp extends Application {
         //borderPane.setBottom(hBox2);
         borderPane.setCenter(tabPane);
         borderPane.setRight(vBox);
+        borderPane.setBackground(new Background(new BackgroundFill(Color.SNOW, CornerRadii.EMPTY, Insets.EMPTY)));
 
 
-        //primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("resources/Drop.png"))); // TODO ükski ei tööta, aga pole nii oluline
+        //primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("fileplus.png"))); // TODO ükski ei tööta, aga pole nii oluline
         //primaryStage.getIcons().add(new Image(getClass().getResource("resources/Drop.png").toExternalForm()));
         //primaryStage.getIcons().add(new Image("/resources/Drop.png"));
         //ImageView programicon = new ImageView(new Image(new File("resources/Drop.png").toURI().toString()));
         //primaryStage.getIcons().add(new Image(new File("resources/Drop.png").toURI().toString()));
+
+        primaryStage.getIcons().add(new Image("Drop-icon.png"));
+
+
 
 
         primaryStage.setOnCloseRequest(event -> {
@@ -122,7 +128,7 @@ public class TodoApp extends Application {
 
         });
 
-        Scene scene = new Scene(borderPane, 400, 500, Color.SNOW);
+        Scene scene = new Scene(borderPane, 400, 500);
         primaryStage.setScene(scene);
         primaryStage.setTitle("Drop");
         primaryStage.show();
@@ -242,6 +248,8 @@ public class TodoApp extends Application {
         loginDataPane.add(passwordLabel, 0, 1);
         loginDataPane.add(passwordField, 1, 1);
         loginDataPane.add(buttonBox, 1, 4);
+        loginDataPane.setPadding(new Insets(5, 5, 5, 5));
+        loginDataPane.setBackground(new Background(new BackgroundFill(Color.SNOW, CornerRadii.EMPTY, Insets.EMPTY)));
 
         loginPane.setCenter(loginDataPane);
 
@@ -275,7 +283,12 @@ public class TodoApp extends Application {
             tasksPane.add(taskPaneAdder(tasks.get(i)), 0, i);
         }
 
-        Button renameTodo = new Button("Rename list");
+        Button renameTodo = new Button();//"Rename list"
+        ImageView renameTodoim = new ImageView(new Image("renametodo.png"));
+        renameTodoim.setFitWidth(35);
+        renameTodoim.setFitHeight(35);
+        renameTodo.setGraphic(renameTodoim);
+        renameTodo.setStyle("-fx-background-color: transparent");
         renameTodo.setOnAction(event -> {
             TextField renamefield = new TextField();
             renamefield.setPromptText("Insert list name");
@@ -318,12 +331,18 @@ public class TodoApp extends Application {
             renamelistStage.show();
 
         });
+        renameTodo.setTooltip(new Tooltip("Rename To-do list"));
 
-        Image imageplus = new Image("fileplus.png");
-        ImageView addim = new ImageView(imageplus);
+
+
+
+        ImageView addim = new ImageView(new Image("fileplus2.png"));
+        ImageView addimActive = new ImageView(new Image("fileplusActive.png"));
         Button addTaskButton = new Button();
-        addim.setFitWidth(30);
-        addim.setFitHeight(30);
+        addim.setFitWidth(35);
+        addim.setFitHeight(35);
+        addimActive.setFitWidth(35);
+        addimActive.setFitHeight(35);
         addTaskButton.setGraphic(addim);
         addTaskButton.setStyle("-fx-background-color: transparent");
 
@@ -434,6 +453,10 @@ public class TodoApp extends Application {
             addstage.show();
 
         });
+        addTaskButton.setOnMouseEntered(event -> addTaskButton.setGraphic(addimActive));
+        addTaskButton.setOnMouseExited(event -> addTaskButton.setGraphic(addim));
+        addTaskButton.setTooltip(new Tooltip("Add new Task"));
+
 
         todoTabPane.setCenter(tasksPane);
         HBox bottomToolbar = new HBox();
@@ -494,14 +517,6 @@ public class TodoApp extends Application {
 
 
 
-
-        /*todolistTab.setOnSelectionChanged(t -> {
-            if (todolistTab.isSelected()) {
-                this.selectedTodo = todoList.getTodoListID(); // kas nüüd üldse on vaja seda?
-                System.out.println("Add nupp kehtib sellele listile");
-            }
-        });*/
-
         return todolistTab;
     }
 
@@ -525,6 +540,7 @@ public class TodoApp extends Application {
     private BorderPane taskPaneAdder(Task task) {
         BorderPane taskBorderPane = new BorderPane();
         taskBorderPane.setPrefWidth(500);
+        taskBorderPane.setPadding(new Insets(5, 5, 5, 5));
 
         Label headlineLabel = new Label(task.getHeadline());
         headlineLabel.setOnMouseClicked(headEditEvent -> {
@@ -684,6 +700,10 @@ public class TodoApp extends Application {
             descStage.show();
         });
 
+        headlineLabel.setTooltip(new Tooltip("Click to edit headline"));
+        duedateLabel.setTooltip(new Tooltip("Click to edit due date"));
+        descriptionLabel.setTooltip(new Tooltip("Click to edit description"));
+
 
         HBox taskHead = new HBox();
         Region taskHeadRegion = new Region();
@@ -691,6 +711,7 @@ public class TodoApp extends Application {
         taskHead.getChildren().addAll(headlineLabel, taskHeadRegion, duedateLabel);
 
         Button deleteTaskButton = new Button("Delete");
+        deleteTaskButton.setTooltip(new Tooltip("Delete this task")); /////////////////////////////////////////////////////
         deleteTaskButton.setOnAction(editEvent -> {
             Stage confirmClose = new Stage();
             Label label = new Label("Do you want to delete the task?");
@@ -747,6 +768,7 @@ public class TodoApp extends Application {
 
                 try {
                     commandHandler(command);
+                    headlineLabel.setUnderline(true); // TODO STRIKETHROUGH
                     System.out.println("läks korda");
                 }catch(ConnectException ce){
                     Stage errorstage = errorStageMethod("No connection",doneActionEvent);
@@ -761,6 +783,7 @@ public class TodoApp extends Application {
 
                 try {
                     commandHandler(command);
+                    headlineLabel.setUnderline(false);
                     System.out.println("läks korda");
                 }catch(ConnectException ce){
                     Stage errorstage = errorStageMethod("No connection",doneActionEvent);
@@ -775,11 +798,12 @@ public class TodoApp extends Application {
         HBox taskRight = new HBox();
         taskRight.getChildren().addAll(doneCheckBox, deleteTaskButton);
 
+
         taskBorderPane.setTop(taskHead);
         taskBorderPane.setLeft(descriptionLabel);
         taskBorderPane.setRight(taskRight);
 
-        taskBorderPane.setOnMouseEntered(event -> taskBorderPane.setBackground(new Background(new BackgroundFill(Color.LIGHTGRAY, CornerRadii.EMPTY, Insets.EMPTY))));
+        taskBorderPane.setOnMouseEntered(event -> taskBorderPane.setBackground(new Background(new BackgroundFill(Color.LIGHTGRAY, new CornerRadii(10), Insets.EMPTY))));
         taskBorderPane.setOnMouseExited(event -> taskBorderPane.setBackground(new Background(new BackgroundFill(Color.SNOW, CornerRadii.EMPTY, Insets.EMPTY))));
 
         return taskBorderPane;
